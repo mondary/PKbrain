@@ -4,7 +4,7 @@
 
 [🇬🇧 EN](README_en.md) · [🇫🇷 FR](README.md)
 
-✨ Native macOS notes app inspired by Jorts, with inline calculation, command palette, and advanced shortcut management.
+✨ Native macOS notes app inspired by PKbrain lineage, with inline calculation, command palette, and advanced shortcut management.
 
 ![Jorts Overview](https://github.com/elly-code/jorts/blob/main/data/screenshots/spread.png)
 ![Preferences Light](https://github.com/elly-code/jorts/blob/main/data/screenshots/preferences-light.png)
@@ -12,7 +12,7 @@
 ![Default Theme](https://github.com/elly-code/jorts/blob/main/data/screenshots/default.png)
 
 ## ✅ Features
-- Native macOS port (SwiftUI/AppKit) inspired by Jorts.
+- Native macOS port (SwiftUI/AppKit) inspired by PKbrain lineage.
 - Command palette (`Cmd+K`) with:
   - title/content search
   - keyboard navigation
@@ -121,7 +121,7 @@
 - `swift build`: SwiftPM build
 
 ## 📦 Build & Package
-- `PKbrain/script/build_and_run.sh` rebuilds the local `.app` bundle.
+- `scripts/build_macos.sh` rebuilds the local `.app` bundle.
 - The test bundle is generated at `releases/PKbrain.app`.
 - `PKbrain/dist` points to `../releases`.
 - SwiftPM target path: `PKbrain/macos/PKbrain`.

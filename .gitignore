@@ -10,8 +10,8 @@
 build
 builddir
 dist
-JortsMacOS/dist
-JortsMacOS/.build
+src/dist
+src/.build
 .build
 .git-rewrite/
 releases/
@@ -38,9 +38,13 @@ design/
 /GLM.md
 /OPENCODE.md
 node_modules/
+desktop/frontend/node_modules/
+experiments/desktop-wails/frontend/node_modules/
 dist/
+experiments/clones/**/dist/
 build/
 .env
 .venv/
 __pycache__/
 *.log
+releases/**/*.dSYM

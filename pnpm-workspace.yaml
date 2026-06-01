@@ -1,0 +1,7 @@
+packages:
+  - 'experiments/desktop-wails/frontend'
+  - 'experiments/clones/*/frontend'
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  svelte-preprocess: true

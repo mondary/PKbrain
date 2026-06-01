@@ -5,7 +5,7 @@
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
-✨ Application de notes native macOS inspirée de Jorts, avec calcul inline, palette de commandes et gestion avancée des raccourcis.
+✨ Application de notes native macOS inspirée de la lignée PKbrain, avec calcul inline, palette de commandes et gestion avancée des raccourcis.
 
 ![Aperçu Jorts](https://github.com/elly-code/jorts/blob/main/data/screenshots/spread.png)
 ![Preferences Light](https://github.com/elly-code/jorts/blob/main/data/screenshots/preferences-light.png)
@@ -171,7 +171,7 @@
 - `swift build` : build SwiftPM
 
 ## 📦 Build & Package
-- Le script `PKbrain/script/build_and_run.sh` reconstruit le bundle `.app` local.
+- Le script `scripts/build_macos.sh` reconstruit le bundle `.app` local.
 - Le bundle de test est généré dans `releases/PKbrain.app`.
 - `PKbrain/dist` pointe vers `../releases`.
 - La cible SwiftPM pointe sur `PKbrain/macos/PKbrain`.

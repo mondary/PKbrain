@@ -14,7 +14,7 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "PKbrain",
-            path: "JortsMacOS/macos/JortsMac",
+            path: "src/macos/PKbrain",
             resources: [
                 .copy("Resources/RedactedScript-Regular.ttf"),
                 .copy("Resources/BrandIcons"),

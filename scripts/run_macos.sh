@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MODE="${1:-run}"
+APP_NAME="PKbrain"
+BUNDLE_NAME="PKbrainOS"
+BUNDLE_ID="io.github.mondary.pkbrain"
+MIN_SYSTEM_VERSION="13.0"
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$ROOT_DIR/.." && pwd)"
+DIST_DIR="$REPO_ROOT/releases"
+LEGACY_DIST_LINK="$ROOT_DIR/dist"
+APP_BUNDLE="$DIST_DIR/$BUNDLE_NAME.app"
+APP_CONTENTS="$APP_BUNDLE/Contents"
+APP_MACOS="$APP_CONTENTS/MacOS"
+APP_RESOURCES="$APP_CONTENTS/Resources"
+APP_BINARY="$APP_MACOS/$APP_NAME"
+INFO_PLIST="$APP_CONTENTS/Info.plist"
+
+if pgrep -x "$APP_NAME" >/dev/null 2>&1; then
+  /usr/bin/osascript -e "tell application \"$BUNDLE_NAME\" to quit" >/dev/null 2>&1 || true
+
+  for _ in {1..20}; do
+    if ! pgrep -x "$APP_NAME" >/dev/null 2>&1; then
+      break
+    fi
+    sleep 0.1
+  done
+
+  pkill -x "$APP_NAME" >/dev/null 2>&1 || true
+fi
+
+cd "$ROOT_DIR"
+swift build
+BUILD_DIR="$(swift build --show-bin-path)"
+BUILD_BINARY="$BUILD_DIR/$APP_NAME"
+
+# Keep legacy path for older docs/scripts: src/dist -> ../releases
+if [[ -e "$LEGACY_DIST_LINK" && ! -L "$LEGACY_DIST_LINK" ]]; then
+  rm -rf "$LEGACY_DIST_LINK"
+fi
+if [[ ! -L "$LEGACY_DIST_LINK" ]]; then
+  ln -s "../releases" "$LEGACY_DIST_LINK" || true
+fi
+
+mkdir -p "$DIST_DIR"
+rm -rf "$APP_BUNDLE"
+mkdir -p "$APP_MACOS" "$APP_RESOURCES"
+cp "$BUILD_BINARY" "$APP_BINARY"
+chmod +x "$APP_BINARY"
+
+find "$BUILD_DIR" -maxdepth 1 -name '*.bundle' -exec cp -R {} "$APP_RESOURCES/" \;
+
+ICON_SOURCE="$REPO_ROOT/submodules/jorts/data/icons/default/hicolor/512.png"
+STATUS_ICON_SOURCE="$REPO_ROOT/submodules/jorts/data/icons/default/hicolor/24.png"
+ICONSET="$DIST_DIR/PKbrain.iconset"
+ICON_FILE="$APP_RESOURCES/PKbrain.icns"
+STATUS_ICON_FILE="$APP_RESOURCES/PKbrainStatus.png"
+if [[ -f "$ICON_SOURCE" ]] && command -v sips >/dev/null 2>&1 && command -v iconutil >/dev/null 2>&1; then
+  rm -rf "$ICONSET"
+  mkdir -p "$ICONSET"
+  sips -z 16 16 "$ICON_SOURCE" --out "$ICONSET/icon_16x16.png" >/dev/null
+  sips -z 32 32 "$ICON_SOURCE" --out "$ICONSET/icon_16x16@2x.png" >/dev/null
+  sips -z 32 32 "$ICON_SOURCE" --out "$ICONSET/icon_32x32.png" >/dev/null
+  sips -z 64 64 "$ICON_SOURCE" --out "$ICONSET/icon_32x32@2x.png" >/dev/null
+  sips -z 128 128 "$ICON_SOURCE" --out "$ICONSET/icon_128x128.png" >/dev/null
+  sips -z 256 256 "$ICON_SOURCE" --out "$ICONSET/icon_128x128@2x.png" >/dev/null
+  sips -z 256 256 "$ICON_SOURCE" --out "$ICONSET/icon_256x256.png" >/dev/null
+  sips -z 512 512 "$ICON_SOURCE" --out "$ICONSET/icon_256x256@2x.png" >/dev/null
+  sips -z 512 512 "$ICON_SOURCE" --out "$ICONSET/icon_512x512.png" >/dev/null
+  cp "$ICON_SOURCE" "$ICONSET/icon_512x512@2x.png"
+  iconutil -c icns "$ICONSET" -o "$ICON_FILE"
+  rm -rf "$ICONSET"
+fi
+
+if [[ -f "$STATUS_ICON_SOURCE" ]]; then
+  cp "$STATUS_ICON_SOURCE" "$STATUS_ICON_FILE"
+fi
+
+cat >"$INFO_PLIST" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleExecutable</key>
+  <string>$APP_NAME</string>
+  <key>CFBundleIdentifier</key>
+  <string>$BUNDLE_ID</string>
+  <key>CFBundleName</key>
+  <string>PKbrainOS</string>
+  <key>CFBundleDisplayName</key>
+  <string>PKbrainOS</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key>
+      <string>$BUNDLE_ID</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>pkbrain</string>
+      </array>
+    </dict>
+  </array>
+  <key>CFBundleIconFile</key>
+  <string>PKbrain</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>LSMinimumSystemVersion</key>
+  <string>$MIN_SYSTEM_VERSION</string>
+  <key>NSUserActivityTypes</key>
+  <array>
+    <string>$BUNDLE_ID.newNote</string>
+    <string>$BUNDLE_ID.lastNote</string>
+    <string>$BUNDLE_ID.notesList</string>
+    <string>$BUNDLE_ID.clipboard</string>
+  </array>
+  <key>NSHighResolutionCapable</key>
+  <true/>
+  <key>NSPrincipalClass</key>
+  <string>NSApplication</string>
+</dict>
+</plist>
+PLIST
+
+# Ensure LaunchServices registers the URL scheme for the freshly built bundle.
+LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
+if [[ -x "$LSREGISTER" ]]; then
+  "$LSREGISTER" -f "$APP_BUNDLE" >/dev/null 2>&1 || true
+fi
+
+open_app() {
+  /usr/bin/open -n "$APP_BUNDLE"
+}
+
+case "$MODE" in
+  run)
+    open_app
+    ;;
+  --debug|debug)
+    lldb -- "$APP_BINARY"
+    ;;
+  --logs|logs)
+    open_app
+    /usr/bin/log stream --info --style compact --predicate "process == \"$APP_NAME\""
+    ;;
+  --telemetry|telemetry)
+    open_app
+    /usr/bin/log stream --info --style compact --predicate "subsystem == \"$BUNDLE_ID\""
+    ;;
+  --verify|verify)
+    open_app
+    sleep 1
+    pgrep -x "$APP_NAME" >/dev/null
+    ;;
+  *)
+    echo "usage: $0 [run|--debug|--logs|--telemetry|--verify]" >&2
+    exit 2
+    ;;
+esac
