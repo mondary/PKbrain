@@ -72,6 +72,8 @@
   - correction saisie recherche: plus d'écrasement de la 1re lettre
   - bande animée basse en pleine largeur du drawer
   - cartes format plus carré/polaroid
+  - cartes centrées dans le drawer vertical (left/right)
+  - drawer vertical plus compact (largeur minimale réduite)
   - ouverture drawer priorise l'écran actif (multi-écrans)
   - fallback icône app au lancement direct (`swift run`) pour `Cmd+Tab`
  - Fenêtre standard PKClipboard:

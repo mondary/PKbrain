@@ -50,7 +50,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         panel.collectionBehavior = [.moveToActiveSpace, .transient, .fullScreenAuxiliary]
         panel.level = .floating
         panel.isMovable = false
-        panel.minSize = NSSize(width: 420, height: 320)
+        panel.minSize = NSSize(width: 280, height: 320)
         panel.maxSize = NSSize(width: 100000, height: 100000)
         panel.contentViewController = self.hostingController
         panel.isOpaque = false
@@ -294,6 +294,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
 
     private func presentAnimated() {
         guard let window else { return }
+        updateDrawerMinSize(for: settings.clipboardDrawerEdge)
 
         let activeVisibleFrame = preferredVisibleFrame(fallbackWindow: window)
         let activeScreenFrame = preferredLayoutBounds(
@@ -504,6 +505,16 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         persistDrawerFrameIfVisible()
     }
 
+    private func updateDrawerMinSize(for edge: ClipboardDrawerEdge) {
+        guard let window else { return }
+        switch edge {
+        case .left, .right:
+            window.minSize = NSSize(width: 280, height: 320)
+        case .top, .bottom:
+            window.minSize = NSSize(width: 700, height: 320)
+        }
+    }
+
     private func targetFrame(in visible: NSRect, inset: CGFloat, edge: ClipboardDrawerEdge, current: CGSize) -> NSRect {
         switch edge {
         case .top, .bottom:
@@ -515,7 +526,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
             return NSRect(x: x, y: y, width: width, height: height)
         case .left, .right:
             let height = max(320, visible.height - inset * 2)
-            let width = min(max(420, current.width), min(visible.width * 0.46, 720))
+            let width = min(max(280, current.width), min(visible.width * 0.34, 460))
             let y = visible.minY + inset
             let x: CGFloat = (edge == .left) ? (visible.minX + inset) : (visible.maxX - inset - width)
             return NSRect(x: x, y: y, width: width, height: height)

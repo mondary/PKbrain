@@ -27,6 +27,8 @@ Status: in progress.
 - [x] Drawer action bar includes direct button to open `PKClipboard` standard window
 - [x] Drawer bottom animated strip spans full width
 - [x] Drawer cards shifted to more square/polaroid ratio
+- [x] Drawer vertical: cards centered horizontally in viewport
+- [x] Drawer vertical: reduced minimum width for tighter side panel
 - [x] Drawer opens on active screen in multi-display setups
 - [x] Cmd+Tab icon fallback when app is launched via `swift run`
 - [x] `Cmd+,` now opens PKClipboard in Settings mode (no separate popup window)

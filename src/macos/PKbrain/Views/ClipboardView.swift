@@ -95,7 +95,7 @@ struct ClipboardView: View {
             )
         }
         .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .frame(minWidth: isVerticalDrawer ? 360 : 900, minHeight: isVerticalDrawer ? 560 : 420)
+        .frame(minWidth: isVerticalDrawer ? 55 : 900, minHeight: isVerticalDrawer ? 560 : 420)
         .onAppear {
             installKeyMonitorIfNeeded()
             notifyContextState()
@@ -110,59 +110,66 @@ struct ClipboardView: View {
     }
 
     private var deck2SidebarHeader: some View {
-        HStack {
-            Text("Clipboard")
-                .font(.system(size: 13, weight: .bold))
-                .foregroundStyle(Color.black.opacity(0.75))
-            Spacer()
-            HStack(spacing: 10) {
-                Deck2IconButton(systemName: "macwindow", help: localizedString("clipboard_open_window"), action: onToggleStandardWindow)
-                Deck2IconButton(systemName: "gearshape", help: localizedString("preferences"), action: onShowPreferences)
-                Deck2IconButton(systemName: clipboard.isPaused ? "play.fill" : "pause.fill", help: clipboard.isPaused ? localizedString("resume") : localizedString("pause")) {
-                    clipboard.isPaused.toggle()
+        VStack(spacing: 0) {
+            HStack(spacing: 4) {
+                Text("PK")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(Color(red: 28/255, green: 28/255, blue: 30/255))
+                Spacer()
+                HStack(spacing: 2) {
+                    Deck2IconButton(systemName: clipboard.isPaused ? "play.fill" : "pause.fill", help: clipboard.isPaused ? localizedString("resume") : localizedString("pause")) {
+                        clipboard.isPaused.toggle()
+                    }
+                    Deck2IconButton(systemName: "macwindow", help: localizedString("clipboard_open_window"), action: onToggleStandardWindow)
+                    Deck2IconButton(systemName: "gearshape", help: localizedString("preferences"), action: onShowPreferences)
                 }
             }
+            .padding(.horizontal, 8)
+            .padding(.top, 6)
+            .padding(.bottom, 6)
+            Rectangle()
+                .fill(Color.black.opacity(0.06))
+                .frame(height: 1)
+                .padding(.horizontal, 8)
         }
-        .padding(.horizontal, 14)
-        .padding(.top, 8)
-        .padding(.bottom, 8)
     }
 
     private var deck2SidebarSearch: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
+        VStack(spacing: 6) {
+            HStack(spacing: 6) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color(red: 120/255, green: 120/255, blue: 128/255))
                 TextField(localizedString("search"), text: $query)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 13))
+                    .font(.system(size: 11))
                     .focused($searchFocused)
             }
-            .padding(.horizontal, 10)
-            .frame(height: 32)
-            .background(Color.black.opacity(0.04))
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.black.opacity(0.06), lineWidth: 1))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .padding(.horizontal, 8)
+            .frame(height: 26)
+            .background(Color.white.opacity(0.7))
+            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.black.opacity(0.08), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
 
-            HStack(spacing: 4) {
-                Deck2FilterPill(title: localizedString("filter_all"), systemName: "square.grid.2x2", isSelected: kind == .all) { kind = .all; selectedSource = .all }
-                Deck2FilterPill(title: localizedString("filter_image"), systemName: "photo", isSelected: kind == .image) { kind = .image; selectedSource = .all }
-                Deck2FilterPill(title: localizedString("filter_text"), systemName: "text.alignleft", isSelected: kind == .text && selectedSource == .all) { kind = .text; selectedSource = .all }
-                Deck2FilterPill(title: localizedString("filter_url"), systemName: "link", isSelected: kind == .url) { kind = .url; selectedSource = .all }
+            HStack(spacing: 3) {
+                Deck2FilterPill(title: "", systemName: "square.grid.2x2", isSelected: kind == .all) { kind = .all; selectedSource = .all }
+                Deck2FilterPill(title: "", systemName: "text.alignleft", isSelected: kind == .text && selectedSource == .all) { kind = .text; selectedSource = .all }
+                Deck2FilterPill(title: "", systemName: "link", isSelected: kind == .url) { kind = .url; selectedSource = .all }
+                Deck2FilterPill(title: "", systemName: "photo", isSelected: kind == .image) { kind = .image; selectedSource = .all }
             }
+            .padding(.horizontal, 4)
         }
-        .padding(.horizontal, 14)
-        .padding(.bottom, 8)
-        .overlay(alignment: .bottom) { Rectangle().fill(Color.black.opacity(0.04)).frame(height: 1) }
+        .padding(.horizontal, 8)
+        .padding(.bottom, 6)
+        .overlay(alignment: .bottom) { Rectangle().fill(Color.black.opacity(0.06)).frame(height: 1).padding(.horizontal, 8) }
     }
 
     @ViewBuilder
     private var deck2SidebarViewport: some View {
         let entries = filteredEntries
         ScrollViewReader { proxy in
-            ScrollView(.vertical, showsIndicators: true) {
-                LazyVStack(alignment: .center, spacing: 10) {
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(alignment: .center, spacing: 8) {
                     ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
                         switch entry {
                         case .clipboard(let item):
@@ -173,7 +180,7 @@ struct ClipboardView: View {
                                 onSelect: { selectedID = item.id },
                                 onCopy: { onCopyItem(item) },
                                 onMakeNote: { onCreateNoteFromItem(item) },
-                                scale: 0.82,
+                                scale: 1,
                                 onDelete: { clipboard.delete(item.id) },
                                 onTogglePin: { clipboard.togglePin(item.id) },
                                 onToggleLock: { clipboard.toggleLock(item.id) },
@@ -187,7 +194,7 @@ struct ClipboardView: View {
                             NoteDeckCard(
                                 note: note,
                                 isSelected: selectedID == note.id,
-                                scale: 0.82,
+                                scale: 1,
                                 onSelect: { selectedID = note.id },
                                 onOpen: { onOpenNote(note.id) }
                             )
@@ -195,8 +202,9 @@ struct ClipboardView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 6)
             }
             .onAppear {
                 if selectedID == nil || !entries.contains(where: { $0.id == selectedID }) { selectedID = entries.first?.id }
@@ -210,16 +218,21 @@ struct ClipboardView: View {
     }
 
     private var deck2SidebarFooter: some View {
-        HStack {
-            Deck2IconButton(systemName: "power", help: localizedString("quit_pkbrain")) { NSApp.terminate(nil) }
-            Spacer()
-            Text("PKbrain")
-                .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(.secondary)
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(Color.black.opacity(0.06))
+                .frame(height: 1)
+                .padding(.horizontal, 8)
+            HStack(spacing: 4) {
+                Text("PK")
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(Color(red: 80/255, green: 80/255, blue: 86/255))
+                Spacer()
+                Deck2IconButton(systemName: "power", help: localizedString("quit_pkbrain")) { NSApp.terminate(nil) }
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .overlay(alignment: .top) { Rectangle().fill(Color.black.opacity(0.04)).frame(height: 1) }
     }
 
     private var deck2WindowHeader: some View {
@@ -996,10 +1009,27 @@ private struct NoteDeckCard: View {
     let scale: CGFloat
     let onSelect: () -> Void
     let onOpen: () -> Void
+    let isVerticalDrawer: Bool
     @State private var hovering = false
 
-    private let cardWidth: CGFloat = 232
-    private let cardHeight: CGFloat = 268
+    private var cardWidth: CGFloat { isVerticalDrawer ? 42 : 232 }
+    private var cardHeight: CGFloat { isVerticalDrawer ? 55 : 268 }
+
+    init(
+        note: ClipboardView.NoteDeckItem,
+        isSelected: Bool,
+        scale: CGFloat,
+        isVerticalDrawer: Bool = false,
+        onSelect: @escaping () -> Void,
+        onOpen: @escaping () -> Void
+    ) {
+        self.note = note
+        self.isSelected = isSelected
+        self.scale = scale
+        self.isVerticalDrawer = isVerticalDrawer
+        self.onSelect = onSelect
+        self.onOpen = onOpen
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -2903,10 +2933,45 @@ private struct DeckCard: View {
     let onLightbox: ((NSImage) -> Void)?
     let onLoadFavicon: (String) -> Data?
     let onLoadURLPreviewImage: (String) -> Data?
+    let isVerticalDrawer: Bool
     @State private var hovering = false
 
-    private let cardWidth: CGFloat = 232
-    private let cardHeight: CGFloat = 268
+    private var cardWidth: CGFloat { isVerticalDrawer ? 42 : 232 }
+    private var cardHeight: CGFloat { isVerticalDrawer ? 55 : 268 }
+
+    init(
+        item: ClipboardManager.Item,
+        shortcutIndex: Int,
+        isSelected: Bool,
+        onSelect: @escaping () -> Void,
+        onCopy: @escaping () -> Void,
+        onMakeNote: @escaping () -> Void,
+        scale: CGFloat,
+        isVerticalDrawer: Bool = false,
+        onDelete: (() -> Void)? = nil,
+        onTogglePin: (() -> Void)? = nil,
+        onToggleLock: (() -> Void)? = nil,
+        onQuickLook: (([URL]) -> Void)? = nil,
+        onLightbox: ((NSImage) -> Void)? = nil,
+        onLoadFavicon: @escaping (String) -> Data? = { _ in nil },
+        onLoadURLPreviewImage: @escaping (String) -> Data? = { _ in nil }
+    ) {
+        self.item = item
+        self.shortcutIndex = shortcutIndex
+        self.isSelected = isSelected
+        self.onSelect = onSelect
+        self.onCopy = onCopy
+        self.onMakeNote = onMakeNote
+        self.scale = scale
+        self.isVerticalDrawer = isVerticalDrawer
+        self.onDelete = onDelete
+        self.onTogglePin = onTogglePin
+        self.onToggleLock = onToggleLock
+        self.onQuickLook = onQuickLook
+        self.onLightbox = onLightbox
+        self.onLoadFavicon = onLoadFavicon
+        self.onLoadURLPreviewImage = onLoadURLPreviewImage
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
