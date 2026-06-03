@@ -180,6 +180,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     }
 
     private static func statusIcon() -> NSImage {
+        let isDevBuild = (Bundle.main.object(forInfoDictionaryKey: "PKbrainBuildChannel") as? String)?.lowercased() == "dev"
         let configuration = NSImage.SymbolConfiguration(pointSize: 16, weight: .semibold)
         let symbol = NSImage(systemSymbolName: "note.text", accessibilityDescription: "PKbrain")?
             .withSymbolConfiguration(configuration)
@@ -187,12 +188,22 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         if let appIcon = Bundle.main.url(forResource: "PKbrainStatus", withExtension: "png")
             .flatMap(NSImage.init(contentsOf:)) {
             let image = resizedStatusIcon(from: appIcon)
+            if isDevBuild {
+                let red = tintedStatusIcon(from: image, tint: NSColor.systemRed.withAlphaComponent(0.45))
+                red.isTemplate = false
+                return red
+            }
             image.isTemplate = false
             return image
         }
 
         if let appIcon = NSApp.applicationIconImage, appIcon.size.width > 0, appIcon.size.height > 0 {
             let image = resizedStatusIcon(from: appIcon)
+            if isDevBuild {
+                let red = tintedStatusIcon(from: image, tint: NSColor.systemRed.withAlphaComponent(0.45))
+                red.isTemplate = false
+                return red
+            }
             image.isTemplate = false
             return image
         }
@@ -200,6 +211,16 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         let fallback = symbol ?? NSImage(size: NSSize(width: 18, height: 18))
         fallback.isTemplate = true
         return fallback
+    }
+
+    private static func tintedStatusIcon(from source: NSImage, tint: NSColor) -> NSImage {
+        let image = NSImage(size: source.size)
+        image.lockFocus()
+        source.draw(in: NSRect(origin: .zero, size: source.size))
+        tint.setFill()
+        NSRect(origin: .zero, size: source.size).fill(using: .sourceAtop)
+        image.unlockFocus()
+        return image
     }
 
     private static func resizedStatusIcon(from source: NSImage) -> NSImage {

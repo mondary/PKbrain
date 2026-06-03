@@ -3,12 +3,13 @@ set -euo pipefail
 
 MODE="${1:-run}"
 APP_NAME="PKbrain"
-BUNDLE_NAME="PKbrainOS"
+BUNDLE_NAME="PKbrain"
 BUNDLE_ID="io.github.mondary.pkbrain"
 MIN_SYSTEM_VERSION="13.0"
+BUILD_CHANNEL="dev"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-REPO_ROOT="$(cd "$ROOT_DIR/.." && pwd)"
+REPO_ROOT="$ROOT_DIR"
 DIST_DIR="$REPO_ROOT/releases"
 LEGACY_DIST_LINK="$ROOT_DIR/dist"
 APP_BUNDLE="$DIST_DIR/$BUNDLE_NAME.app"
@@ -88,9 +89,9 @@ cat >"$INFO_PLIST" <<PLIST
   <key>CFBundleIdentifier</key>
   <string>$BUNDLE_ID</string>
   <key>CFBundleName</key>
-  <string>PKbrainOS</string>
+  <string>PKbrain</string>
   <key>CFBundleDisplayName</key>
-  <string>PKbrainOS</string>
+  <string>PKbrain</string>
   <key>CFBundleURLTypes</key>
   <array>
     <dict>
@@ -117,6 +118,8 @@ cat >"$INFO_PLIST" <<PLIST
   </array>
   <key>NSHighResolutionCapable</key>
   <true/>
+  <key>PKbrainBuildChannel</key>
+  <string>$BUILD_CHANNEL</string>
   <key>NSPrincipalClass</key>
   <string>NSApplication</string>
 </dict>

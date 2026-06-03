@@ -1183,6 +1183,7 @@ struct ClipboardStandardWindowView: View {
         case drawer
         case stickies
         case shortcuts
+        case window
         case data
         case lab
         case about
@@ -1194,6 +1195,7 @@ struct ClipboardStandardWindowView: View {
             case .drawer: return "Drawer"
             case .stickies: return "Stickies"
             case .shortcuts: return localizedString("shortcuts")
+            case .window: return localizedString("shortcut_group_window")
             case .data: return "Data"
             case .lab: return "Lab"
             case .about: return localizedString("about_section")
@@ -1206,6 +1208,7 @@ struct ClipboardStandardWindowView: View {
             case .drawer: return "rectangle.bottomthird.inset.filled"
             case .stickies: return "note.text"
             case .shortcuts: return "keyboard"
+            case .window: return "rectangle.split.3x1"
             case .data: return "externaldrive"
             case .lab: return "flask"
             case .about: return "info.circle"
@@ -1422,6 +1425,9 @@ struct ClipboardStandardWindowView: View {
                             .padding(12)
                     case .shortcuts:
                         ShortcutsPreferencesView(settings: settings)
+                            .padding(12)
+                    case .window:
+                        WindowShortcutsPreferencesView(settings: settings)
                             .padding(12)
                     case .data:
                         GeneralPreferencesView(

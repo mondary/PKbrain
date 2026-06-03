@@ -18,6 +18,7 @@ struct PreferencesView: View {
 
                 sidebarButton(.general, title: localizedString("general"), systemImage: "gearshape")
                 sidebarButton(.shortcuts, title: localizedString("shortcuts"), systemImage: "keyboard")
+                sidebarButton(.window, title: localizedString("shortcut_group_window"), systemImage: "rectangle.split.3x1")
                 sidebarButton(.about, title: localizedString("about_section"), systemImage: "info.circle")
 
                 Spacer()
@@ -41,6 +42,8 @@ struct PreferencesView: View {
                         GeneralPreferencesView(settings: settings, storageURL: storageURL, onRestartRequested: onLanguageChanged)
                     case .shortcuts:
                         ShortcutsPreferencesView(settings: settings)
+                    case .window:
+                        WindowShortcutsPreferencesView(settings: settings)
                     case .about:
                         AboutPreferencesView()
                     }
@@ -77,12 +80,14 @@ struct PreferencesView: View {
 private enum PreferencesSection: Hashable {
     case general
     case shortcuts
+    case window
     case about
 
     var title: String {
         switch self {
         case .general: localizedString("general")
         case .shortcuts: localizedString("shortcuts")
+        case .window: localizedString("shortcut_group_window")
         case .about: localizedString("about_section")
         }
     }

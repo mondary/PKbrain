@@ -4,11 +4,40 @@ struct ShortcutsPreferencesView: View {
     @ObservedObject var settings: AppSettings
 
     private var appActions: [ShortcutAction] {
-        ShortcutAction.allCases.filter { $0.group == "App" }
+        [
+            .focusLastNoteGlobal,
+            .newNoteGlobal,
+            .newStickyNote,
+            .showAllNotes,
+            .showNotesList,
+            .showClipboardWindow,
+            .saveAllNotes,
+            .preferences
+        ]
     }
 
     private var noteActions: [ShortcutAction] {
-        ShortcutAction.allCases.filter { $0.group == "Note" }
+        [
+            .closeNoteWindow,
+            .deleteStickyNote,
+            .toggleList,
+            .emojiSymbols,
+            .toggleMonospace,
+            .zoomIn,
+            .zoomOut,
+            .actualSize
+        ]
+    }
+
+    private var windowActions: [ShortcutAction] {
+        [
+            .windowLeftHalf,
+            .windowRightHalf,
+            .windowTopHalf,
+            .windowBottomHalf,
+            .windowMaximize,
+            .windowCenter
+        ]
     }
 
     var body: some View {
@@ -16,6 +45,7 @@ struct ShortcutsPreferencesView: View {
             VStack(alignment: .leading, spacing: 22) {
                 shortcutSection(localizedString("shortcut_group_app"), actions: appActions)
                 shortcutSection(localizedString("shortcut_group_note"), actions: noteActions)
+                shortcutSection(localizedString("shortcut_group_window"), actions: windowActions)
             }
             .padding(24)
         }
