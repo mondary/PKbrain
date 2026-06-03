@@ -78,6 +78,10 @@
 - Native menu bar integration:
   - quick actions
   - settings/about/restart/quit access
+- Standalone app:
+  - `PKwindowsManagement/` contains the dedicated window management app
+  - launch with `cd ../PKwindowsManagement && swift run`
+  - use it to test snap shortcuts outside `PKbrain`
 - Repository refactor:
   - `PKbrain/` for app source
   - `submodules/jorts` for upstream inspiration
@@ -121,8 +125,10 @@
 - `swift build`: SwiftPM build
 
 ## 📦 Build & Package
-- `scripts/build_macos.sh` rebuilds the local `.app` bundle.
+- `scripts/build_macos.sh` rebuilds the local `.app` bundle in `dev` mode.
+- `scripts/package_macos.sh` rebuilds the local `.app` bundle in `release` mode.
 - The test bundle is generated at `releases/PKbrain.app`.
+- The official copy can be placed at `/Applications/PKbrain.app`.
 - `PKbrain/dist` points to `../releases`.
 - SwiftPM target path: `PKbrain/macos/PKbrain`.
 

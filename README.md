@@ -122,6 +122,10 @@
   - comportement natif palette flottante
   - restauration focus fenêtre après palette
   - persistance notes ouvertes/fermées au relaunch (seules les notes ouvertes se rouvrent)
+- App séparée:
+  - `PKwindowsManagement/` contient l’outil standalone de gestion de fenêtres
+  - lancement: `cd ../PKwindowsManagement && swift run`
+  - cible dédiée pour tester les raccourcis de snap hors de `PKbrain`
 - Menubar native:
   - actions rapides
   - entrée dédiée: afficher le tiroir presse-papiers
@@ -173,8 +177,10 @@
 - `swift build` : build SwiftPM
 
 ## 📦 Build & Package
-- Le script `scripts/build_macos.sh` reconstruit le bundle `.app` local.
+- Le script `scripts/build_macos.sh` reconstruit le bundle `.app` local en mode `dev`.
+- Le script `scripts/package_macos.sh` reconstruit le bundle `.app` local en mode `release`.
 - Le bundle de test est généré dans `releases/PKbrain.app`.
+- La copie officielle à lancer peut être placée dans `/Applications/PKbrain.app`.
 - `PKbrain/dist` pointe vers `../releases`.
 - La cible SwiftPM pointe sur `PKbrain/macos/PKbrain`.
 

@@ -1183,7 +1183,6 @@ struct ClipboardStandardWindowView: View {
         case drawer
         case stickies
         case shortcuts
-        case window
         case data
         case lab
         case about
@@ -1195,7 +1194,6 @@ struct ClipboardStandardWindowView: View {
             case .drawer: return "Drawer"
             case .stickies: return "Stickies"
             case .shortcuts: return localizedString("shortcuts")
-            case .window: return localizedString("shortcut_group_window")
             case .data: return "Data"
             case .lab: return "Lab"
             case .about: return localizedString("about_section")
@@ -1208,7 +1206,6 @@ struct ClipboardStandardWindowView: View {
             case .drawer: return "rectangle.bottomthird.inset.filled"
             case .stickies: return "note.text"
             case .shortcuts: return "keyboard"
-            case .window: return "rectangle.split.3x1"
             case .data: return "externaldrive"
             case .lab: return "flask"
             case .about: return "info.circle"
@@ -1425,9 +1422,6 @@ struct ClipboardStandardWindowView: View {
                             .padding(12)
                     case .shortcuts:
                         ShortcutsPreferencesView(settings: settings)
-                            .padding(12)
-                    case .window:
-                        WindowShortcutsPreferencesView(settings: settings)
                             .padding(12)
                     case .data:
                         GeneralPreferencesView(
@@ -1846,12 +1840,23 @@ struct ClipboardStandardWindowView: View {
     }
 
     private func moveSelection(delta: Int) {
-        guard let id = selectedID, let idx = entries.firstIndex(where: { $0.id == id }) else {
-            selectedID = entries.first?.id
-            return
+        guard !entries.isEmpty else { return }
+
+        let currentIndex: Int
+        if let id = selectedID, let idx = entries.firstIndex(where: { $0.id == id }) {
+            currentIndex = idx
+        } else {
+            currentIndex = min(entries.count - 1, max(0, (currentPage - 1) * itemsPerPage))
         }
-        let next = max(0, min(entries.count - 1, idx + delta))
-        selectedID = entries[next].id
+
+        let targetIndex = max(0, min(entries.count - 1, currentIndex + delta))
+        let targetPage = max(1, min(totalPages, (targetIndex / max(itemsPerPage, 1)) + 1))
+
+        if currentPage != targetPage {
+            currentPage = targetPage
+        }
+
+        selectedID = entries[targetIndex].id
     }
 
     private func performPrimaryAction(for entry: GridEntry) {
@@ -3134,13 +3139,18 @@ private struct DeckCard: View {
             switch item.payload {
         case .imageData(let data):
             if let image = NSImage(data: data) {
-                GeometryReader { geo in
+                ZStack {
+                    Color(NSColor.controlBackgroundColor)
                     Image(nsImage: image)
                         .resizable()
+                        .interpolation(.high)
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .clipped()
                 }
+                .frame(maxWidth: .infinity)
                 .frame(height: 128)
+                .clipped()
                 .background(
                     RoundedRectangle(cornerRadius: 6)
                         .fill(Color(NSColor.controlBackgroundColor))
@@ -3185,15 +3195,18 @@ private struct DeckCard: View {
                 if let previewName = item.metadataImageName,
                    let previewData = onLoadURLPreviewImage(previewName),
                    let previewImage = NSImage(data: previewData) {
-                    GeometryReader { geo in
+                    ZStack {
+                        Color(NSColor.controlBackgroundColor)
                         Image(nsImage: previewImage)
                             .resizable()
                             .interpolation(.high)
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: geo.size.width, height: geo.size.height)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .clipped()
                     }
+                    .frame(maxWidth: .infinity)
                     .frame(height: 92 * scale)
+                    .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)

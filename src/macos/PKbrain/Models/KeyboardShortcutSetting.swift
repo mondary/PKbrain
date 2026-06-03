@@ -132,21 +132,6 @@ enum ShortcutAction: String, CaseIterable, Identifiable {
     case zoomIn
     case zoomOut
     case actualSize
-    case windowLeftHalf
-    case windowRightHalf
-    case windowTopHalf
-    case windowBottomHalf
-    case windowMaximize
-    case windowCenter
-    case windowTopLeft
-    case windowTopRight
-    case windowBottomLeft
-    case windowBottomRight
-    case windowFirstThird
-    case windowCenterThird
-    case windowLastThird
-    case windowNextDisplay
-    case windowPreviousDisplay
 
     var id: String { rawValue }
 
@@ -168,21 +153,6 @@ enum ShortcutAction: String, CaseIterable, Identifiable {
         case .zoomIn: localizedString("zoom_in")
         case .zoomOut: localizedString("zoom_out")
         case .actualSize: localizedString("actual_size")
-        case .windowLeftHalf: localizedString("window_left_half")
-        case .windowRightHalf: localizedString("window_right_half")
-        case .windowTopHalf: localizedString("window_top_half")
-        case .windowBottomHalf: localizedString("window_bottom_half")
-        case .windowMaximize: localizedString("window_maximize")
-        case .windowCenter: localizedString("window_center")
-        case .windowTopLeft: localizedString("window_top_left")
-        case .windowTopRight: localizedString("window_top_right")
-        case .windowBottomLeft: localizedString("window_bottom_left")
-        case .windowBottomRight: localizedString("window_bottom_right")
-        case .windowFirstThird: localizedString("window_first_third")
-        case .windowCenterThird: localizedString("window_center_third")
-        case .windowLastThird: localizedString("window_last_third")
-        case .windowNextDisplay: localizedString("window_next_display")
-        case .windowPreviousDisplay: localizedString("window_previous_display")
         }
     }
 
@@ -192,10 +162,6 @@ enum ShortcutAction: String, CaseIterable, Identifiable {
             localizedString("shortcut_group_app")
         case .closeNoteWindow, .deleteStickyNote, .toggleList, .emojiSymbols, .toggleMonospace, .zoomIn, .zoomOut, .actualSize:
             localizedString("shortcut_group_note")
-        case .windowLeftHalf, .windowRightHalf, .windowTopHalf, .windowBottomHalf, .windowMaximize, .windowCenter,
-             .windowTopLeft, .windowTopRight, .windowBottomLeft, .windowBottomRight,
-             .windowFirstThird, .windowCenterThird, .windowLastThird, .windowNextDisplay, .windowPreviousDisplay:
-            localizedString("shortcut_group_window")
         }
     }
 
@@ -221,21 +187,6 @@ enum ShortcutAction: String, CaseIterable, Identifiable {
         case .zoomIn: KeyboardShortcutSetting(key: "+", modifier: .command)
         case .zoomOut: KeyboardShortcutSetting(key: "-", modifier: .command)
         case .actualSize: KeyboardShortcutSetting(key: "0", modifier: .command)
-        case .windowLeftHalf: KeyboardShortcutSetting(key: "h", modifier: .controlOption)
-        case .windowRightHalf: KeyboardShortcutSetting(key: "l", modifier: .controlOption)
-        case .windowTopHalf: KeyboardShortcutSetting(key: "k", modifier: .controlOption)
-        case .windowBottomHalf: KeyboardShortcutSetting(key: "j", modifier: .controlOption)
-        case .windowMaximize: KeyboardShortcutSetting(key: "m", modifier: .controlOption)
-        case .windowCenter: KeyboardShortcutSetting(key: "c", modifier: .controlOption)
-        case .windowTopLeft: KeyboardShortcutSetting(key: "u", modifier: .controlOption)
-        case .windowTopRight: KeyboardShortcutSetting(key: "i", modifier: .controlOption)
-        case .windowBottomLeft: KeyboardShortcutSetting(key: "n", modifier: .controlOption)
-        case .windowBottomRight: KeyboardShortcutSetting(key: "o", modifier: .controlOption)
-        case .windowFirstThird: KeyboardShortcutSetting(key: "1", modifier: .controlOption)
-        case .windowCenterThird: KeyboardShortcutSetting(key: "2", modifier: .controlOption)
-        case .windowLastThird: KeyboardShortcutSetting(key: "3", modifier: .controlOption)
-        case .windowNextDisplay: KeyboardShortcutSetting(key: "]", modifier: .controlOption)
-        case .windowPreviousDisplay: KeyboardShortcutSetting(key: "[", modifier: .controlOption)
         }
     }
 }

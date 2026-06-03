@@ -95,13 +95,8 @@ struct NoteView: View {
         HStack(spacing: 10) {
             iconButton("plus", help: localizedString("new_sticky_note"), action: onNew)
             iconButton("trash", role: .destructive, help: localizedString("delete_sticky_note"), action: onDelete)
-            iconButton("note.text", help: localizedString("show_notes_list"), action: onShowList)
 
             Spacer()
-
-            if !settings.listItemPrefix.isEmpty {
-                iconButton("list.bullet", help: localizedString("toggle_list"), action: document.toggleList)
-            }
 
             iconButton("face.smiling", help: localizedString("insert_emoji"), action: onShowEmoji)
 
@@ -119,7 +114,7 @@ struct NoteView: View {
             Button {
                 isPreferencesPopoverPresented.toggle()
             } label: {
-                Image(systemName: "slider.horizontal.3")
+                Image(systemName: "textformat.size")
                     .renderingMode(.template)
                     .frame(width: 26, height: 26)
             }

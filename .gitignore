@@ -37,6 +37,7 @@ design/
 /GEMINI.md
 /GLM.md
 /OPENCODE.md
+PKwindowsManagement/
 node_modules/
 desktop/frontend/node_modules/
 experiments/desktop-wails/frontend/node_modules/

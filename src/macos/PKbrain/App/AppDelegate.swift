@@ -16,27 +16,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var globalHotKeyClipboardRef: EventHotKeyRef?
     private var globalHotKeyClipboardWindowRef: EventHotKeyRef?
     private var globalHotKeyClipboardWindowFallbackRef: EventHotKeyRef?
-    private var globalHotKeyWindowLeftRef: EventHotKeyRef?
-    private var globalHotKeyWindowRightRef: EventHotKeyRef?
-    private var globalHotKeyWindowTopRef: EventHotKeyRef?
-    private var globalHotKeyWindowBottomRef: EventHotKeyRef?
-    private var globalHotKeyWindowMaximizeRef: EventHotKeyRef?
-    private var globalHotKeyWindowCenterRef: EventHotKeyRef?
-    private var globalHotKeyWindowTopLeftRef: EventHotKeyRef?
-    private var globalHotKeyWindowTopRightRef: EventHotKeyRef?
-    private var globalHotKeyWindowBottomLeftRef: EventHotKeyRef?
-    private var globalHotKeyWindowBottomRightRef: EventHotKeyRef?
-    private var globalHotKeyWindowFirstThirdRef: EventHotKeyRef?
-    private var globalHotKeyWindowCenterThirdRef: EventHotKeyRef?
-    private var globalHotKeyWindowLastThirdRef: EventHotKeyRef?
-    private var globalHotKeyWindowNextDisplayRef: EventHotKeyRef?
-    private var globalHotKeyWindowPreviousDisplayRef: EventHotKeyRef?
     private var globalHotKeyHandlerRef: EventHandlerRef?
     private lazy var clipboard = ClipboardManager(
         persistence: ClipboardPersistence(baseDirectory: manager.storageURL.deletingLastPathComponent())
     )
-    private let windowSnapService = WindowSnapService()
-
     func applicationDidFinishLaunching(_ notification: Notification) {
         FontRegistrar.registerBundledFonts()
         ensureApplicationIconForDirectRuns()
@@ -214,22 +197,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let focusLastShortcut = settings.shortcut(for: .focusLastNoteGlobal)
         let newNoteShortcut = settings.shortcut(for: .newNoteGlobal)
         let clipboardWindowShortcut = settings.shortcut(for: .showClipboardWindow)
-        let leftHalfShortcut = settings.shortcut(for: .windowLeftHalf)
-        let rightHalfShortcut = settings.shortcut(for: .windowRightHalf)
-        let topHalfShortcut = settings.shortcut(for: .windowTopHalf)
-        let bottomHalfShortcut = settings.shortcut(for: .windowBottomHalf)
-        let maximizeShortcut = settings.shortcut(for: .windowMaximize)
-        let centerShortcut = settings.shortcut(for: .windowCenter)
-        let topLeftShortcut = settings.shortcut(for: .windowTopLeft)
-        let topRightShortcut = settings.shortcut(for: .windowTopRight)
-        let bottomLeftShortcut = settings.shortcut(for: .windowBottomLeft)
-        let bottomRightShortcut = settings.shortcut(for: .windowBottomRight)
-        let firstThirdShortcut = settings.shortcut(for: .windowFirstThird)
-        let centerThirdShortcut = settings.shortcut(for: .windowCenterThird)
-        let lastThirdShortcut = settings.shortcut(for: .windowLastThird)
-        let nextDisplayShortcut = settings.shortcut(for: .windowNextDisplay)
-        let previousDisplayShortcut = settings.shortcut(for: .windowPreviousDisplay)
-
         // Focus last note (or create if none)
         let newID = EventHotKeyID(signature: signature, id: 1)
         let focusStatus = RegisterEventHotKey(
@@ -291,108 +258,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         if fallbackStatus != noErr { globalHotKeyClipboardWindowFallbackRef = nil }
 
-        let windowLeftID = EventHotKeyID(signature: signature, id: 10)
-        let leftStatus = RegisterEventHotKey(
-            keyCode(for: leftHalfShortcut.key),
-            leftHalfShortcut.modifier.carbonFlags,
-            windowLeftID,
-            GetApplicationEventTarget(),
-            0,
-            &globalHotKeyWindowLeftRef
-        )
-        if leftStatus != noErr { globalHotKeyWindowLeftRef = nil }
-
-        let windowRightID = EventHotKeyID(signature: signature, id: 11)
-        let rightStatus = RegisterEventHotKey(
-            keyCode(for: rightHalfShortcut.key),
-            rightHalfShortcut.modifier.carbonFlags,
-            windowRightID,
-            GetApplicationEventTarget(),
-            0,
-            &globalHotKeyWindowRightRef
-        )
-        if rightStatus != noErr { globalHotKeyWindowRightRef = nil }
-
-        let windowTopID = EventHotKeyID(signature: signature, id: 12)
-        let topStatus = RegisterEventHotKey(
-            keyCode(for: topHalfShortcut.key),
-            topHalfShortcut.modifier.carbonFlags,
-            windowTopID,
-            GetApplicationEventTarget(),
-            0,
-            &globalHotKeyWindowTopRef
-        )
-        if topStatus != noErr { globalHotKeyWindowTopRef = nil }
-
-        let windowBottomID = EventHotKeyID(signature: signature, id: 13)
-        let bottomStatus = RegisterEventHotKey(
-            keyCode(for: bottomHalfShortcut.key),
-            bottomHalfShortcut.modifier.carbonFlags,
-            windowBottomID,
-            GetApplicationEventTarget(),
-            0,
-            &globalHotKeyWindowBottomRef
-        )
-        if bottomStatus != noErr { globalHotKeyWindowBottomRef = nil }
-
-        let windowMaximizeID = EventHotKeyID(signature: signature, id: 14)
-        let maximizeStatus = RegisterEventHotKey(
-            keyCode(for: maximizeShortcut.key),
-            maximizeShortcut.modifier.carbonFlags,
-            windowMaximizeID,
-            GetApplicationEventTarget(),
-            0,
-            &globalHotKeyWindowMaximizeRef
-        )
-        if maximizeStatus != noErr { globalHotKeyWindowMaximizeRef = nil }
-
-        let windowCenterID = EventHotKeyID(signature: signature, id: 15)
-        let centerStatus = RegisterEventHotKey(
-            keyCode(for: centerShortcut.key),
-            centerShortcut.modifier.carbonFlags,
-            windowCenterID,
-            GetApplicationEventTarget(),
-            0,
-            &globalHotKeyWindowCenterRef
-        )
-        if centerStatus != noErr { globalHotKeyWindowCenterRef = nil }
-
-        let topLeftID = EventHotKeyID(signature: signature, id: 16)
-        let topLeftStatus = RegisterEventHotKey(keyCode(for: topLeftShortcut.key), topLeftShortcut.modifier.carbonFlags, topLeftID, GetApplicationEventTarget(), 0, &globalHotKeyWindowTopLeftRef)
-        if topLeftStatus != noErr { globalHotKeyWindowTopLeftRef = nil }
-
-        let topRightID = EventHotKeyID(signature: signature, id: 17)
-        let topRightStatus = RegisterEventHotKey(keyCode(for: topRightShortcut.key), topRightShortcut.modifier.carbonFlags, topRightID, GetApplicationEventTarget(), 0, &globalHotKeyWindowTopRightRef)
-        if topRightStatus != noErr { globalHotKeyWindowTopRightRef = nil }
-
-        let bottomLeftID = EventHotKeyID(signature: signature, id: 18)
-        let bottomLeftStatus = RegisterEventHotKey(keyCode(for: bottomLeftShortcut.key), bottomLeftShortcut.modifier.carbonFlags, bottomLeftID, GetApplicationEventTarget(), 0, &globalHotKeyWindowBottomLeftRef)
-        if bottomLeftStatus != noErr { globalHotKeyWindowBottomLeftRef = nil }
-
-        let bottomRightID = EventHotKeyID(signature: signature, id: 19)
-        let bottomRightStatus = RegisterEventHotKey(keyCode(for: bottomRightShortcut.key), bottomRightShortcut.modifier.carbonFlags, bottomRightID, GetApplicationEventTarget(), 0, &globalHotKeyWindowBottomRightRef)
-        if bottomRightStatus != noErr { globalHotKeyWindowBottomRightRef = nil }
-
-        let firstThirdID = EventHotKeyID(signature: signature, id: 20)
-        let firstThirdStatus = RegisterEventHotKey(keyCode(for: firstThirdShortcut.key), firstThirdShortcut.modifier.carbonFlags, firstThirdID, GetApplicationEventTarget(), 0, &globalHotKeyWindowFirstThirdRef)
-        if firstThirdStatus != noErr { globalHotKeyWindowFirstThirdRef = nil }
-
-        let centerThirdID = EventHotKeyID(signature: signature, id: 21)
-        let centerThirdStatus = RegisterEventHotKey(keyCode(for: centerThirdShortcut.key), centerThirdShortcut.modifier.carbonFlags, centerThirdID, GetApplicationEventTarget(), 0, &globalHotKeyWindowCenterThirdRef)
-        if centerThirdStatus != noErr { globalHotKeyWindowCenterThirdRef = nil }
-
-        let lastThirdID = EventHotKeyID(signature: signature, id: 22)
-        let lastThirdStatus = RegisterEventHotKey(keyCode(for: lastThirdShortcut.key), lastThirdShortcut.modifier.carbonFlags, lastThirdID, GetApplicationEventTarget(), 0, &globalHotKeyWindowLastThirdRef)
-        if lastThirdStatus != noErr { globalHotKeyWindowLastThirdRef = nil }
-
-        let nextDisplayID = EventHotKeyID(signature: signature, id: 23)
-        let nextDisplayStatus = RegisterEventHotKey(keyCode(for: nextDisplayShortcut.key), nextDisplayShortcut.modifier.carbonFlags, nextDisplayID, GetApplicationEventTarget(), 0, &globalHotKeyWindowNextDisplayRef)
-        if nextDisplayStatus != noErr { globalHotKeyWindowNextDisplayRef = nil }
-
-        let previousDisplayID = EventHotKeyID(signature: signature, id: 24)
-        let previousDisplayStatus = RegisterEventHotKey(keyCode(for: previousDisplayShortcut.key), previousDisplayShortcut.modifier.carbonFlags, previousDisplayID, GetApplicationEventTarget(), 0, &globalHotKeyWindowPreviousDisplayRef)
-        if previousDisplayStatus != noErr { globalHotKeyWindowPreviousDisplayRef = nil }
-
         installGlobalHotKeyHandlerIfNeeded()
     }
 
@@ -416,66 +281,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let globalHotKeyClipboardWindowFallbackRef {
             UnregisterEventHotKey(globalHotKeyClipboardWindowFallbackRef)
             self.globalHotKeyClipboardWindowFallbackRef = nil
-        }
-        if let globalHotKeyWindowLeftRef {
-            UnregisterEventHotKey(globalHotKeyWindowLeftRef)
-            self.globalHotKeyWindowLeftRef = nil
-        }
-        if let globalHotKeyWindowRightRef {
-            UnregisterEventHotKey(globalHotKeyWindowRightRef)
-            self.globalHotKeyWindowRightRef = nil
-        }
-        if let globalHotKeyWindowTopRef {
-            UnregisterEventHotKey(globalHotKeyWindowTopRef)
-            self.globalHotKeyWindowTopRef = nil
-        }
-        if let globalHotKeyWindowBottomRef {
-            UnregisterEventHotKey(globalHotKeyWindowBottomRef)
-            self.globalHotKeyWindowBottomRef = nil
-        }
-        if let globalHotKeyWindowMaximizeRef {
-            UnregisterEventHotKey(globalHotKeyWindowMaximizeRef)
-            self.globalHotKeyWindowMaximizeRef = nil
-        }
-        if let globalHotKeyWindowCenterRef {
-            UnregisterEventHotKey(globalHotKeyWindowCenterRef)
-            self.globalHotKeyWindowCenterRef = nil
-        }
-        if let globalHotKeyWindowTopLeftRef {
-            UnregisterEventHotKey(globalHotKeyWindowTopLeftRef)
-            self.globalHotKeyWindowTopLeftRef = nil
-        }
-        if let globalHotKeyWindowTopRightRef {
-            UnregisterEventHotKey(globalHotKeyWindowTopRightRef)
-            self.globalHotKeyWindowTopRightRef = nil
-        }
-        if let globalHotKeyWindowBottomLeftRef {
-            UnregisterEventHotKey(globalHotKeyWindowBottomLeftRef)
-            self.globalHotKeyWindowBottomLeftRef = nil
-        }
-        if let globalHotKeyWindowBottomRightRef {
-            UnregisterEventHotKey(globalHotKeyWindowBottomRightRef)
-            self.globalHotKeyWindowBottomRightRef = nil
-        }
-        if let globalHotKeyWindowFirstThirdRef {
-            UnregisterEventHotKey(globalHotKeyWindowFirstThirdRef)
-            self.globalHotKeyWindowFirstThirdRef = nil
-        }
-        if let globalHotKeyWindowCenterThirdRef {
-            UnregisterEventHotKey(globalHotKeyWindowCenterThirdRef)
-            self.globalHotKeyWindowCenterThirdRef = nil
-        }
-        if let globalHotKeyWindowLastThirdRef {
-            UnregisterEventHotKey(globalHotKeyWindowLastThirdRef)
-            self.globalHotKeyWindowLastThirdRef = nil
-        }
-        if let globalHotKeyWindowNextDisplayRef {
-            UnregisterEventHotKey(globalHotKeyWindowNextDisplayRef)
-            self.globalHotKeyWindowNextDisplayRef = nil
-        }
-        if let globalHotKeyWindowPreviousDisplayRef {
-            UnregisterEventHotKey(globalHotKeyWindowPreviousDisplayRef)
-            self.globalHotKeyWindowPreviousDisplayRef = nil
         }
     }
 
@@ -578,36 +383,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.showClipboardWindow(nil)
             case 5:
                 self.showClipboardWindow(nil)
-            case 10:
-                self.windowSnapService.perform(.leftHalf)
-            case 11:
-                self.windowSnapService.perform(.rightHalf)
-            case 12:
-                self.windowSnapService.perform(.topHalf)
-            case 13:
-                self.windowSnapService.perform(.bottomHalf)
-            case 14:
-                self.windowSnapService.perform(.maximize)
-            case 15:
-                self.windowSnapService.perform(.center)
-            case 16:
-                self.windowSnapService.perform(.topLeft)
-            case 17:
-                self.windowSnapService.perform(.topRight)
-            case 18:
-                self.windowSnapService.perform(.bottomLeft)
-            case 19:
-                self.windowSnapService.perform(.bottomRight)
-            case 20:
-                self.windowSnapService.perform(.firstThird)
-            case 21:
-                self.windowSnapService.perform(.centerThird)
-            case 22:
-                self.windowSnapService.perform(.lastThird)
-            case 23:
-                self.windowSnapService.perform(.nextDisplay)
-            case 24:
-                self.windowSnapService.perform(.previousDisplay)
             default:
                 break
             }

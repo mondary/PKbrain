@@ -29,23 +29,11 @@ struct ShortcutsPreferencesView: View {
         ]
     }
 
-    private var windowActions: [ShortcutAction] {
-        [
-            .windowLeftHalf,
-            .windowRightHalf,
-            .windowTopHalf,
-            .windowBottomHalf,
-            .windowMaximize,
-            .windowCenter
-        ]
-    }
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 shortcutSection(localizedString("shortcut_group_app"), actions: appActions)
                 shortcutSection(localizedString("shortcut_group_note"), actions: noteActions)
-                shortcutSection(localizedString("shortcut_group_window"), actions: windowActions)
             }
             .padding(24)
         }
