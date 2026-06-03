@@ -102,8 +102,8 @@
 "import" = "Importa…";
 "import_export_hint" = "L’importazione sostituisce il file note attuale e richiede un riavvio.";
 "cleanup" = "Pulizia";
-"archive_duplicates_backups" = "Archivia duplicati / backup…";
-"archive_duplicates_backups_hint" = "Sposta duplicati e backup in una cartella Archivio.";
+"archive_legacy_backups" = "Archivia cartelle vecchie / backup…";
+"archive_legacy_backups_hint" = "Sposta cartelle vecchie e backup in una cartella Archivio.";
 "choose" = "Scegli";
 "choose_color" = "Scegli colore";
 "key" = "Tasto";

@@ -103,8 +103,8 @@
 "import" = "Import…";
 "import_export_hint" = "Import replaces your current notes file and requires a restart.";
 "cleanup" = "Cleanup";
-"archive_duplicates_backups" = "Archive Duplicates / Backups…";
-"archive_duplicates_backups_hint" = "Moves duplicate and backup files into an Archive folder.";
+"archive_legacy_backups" = "Archive Legacy Folders / Backups…";
+"archive_legacy_backups_hint" = "Moves legacy folders and backup files into an Archive folder.";
 "choose" = "Choose";
 "choose_color" = "Choose Color";
 "key" = "Key";

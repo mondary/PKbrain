@@ -102,8 +102,8 @@
 "import" = "Importieren…";
 "import_export_hint" = "Der Import ersetzt Ihre aktuelle Notizdatei und erfordert einen Neustart.";
 "cleanup" = "Bereinigung";
-"archive_duplicates_backups" = "Duplikate / Backups archivieren…";
-"archive_duplicates_backups_hint" = "Verschiebt Duplikate und Backups in einen Archivordner.";
+"archive_legacy_backups" = "Alte Ordner / Backups archivieren…";
+"archive_legacy_backups_hint" = "Verschiebt alte Ordner und Backups in einen Archivordner.";
 "choose" = "Auswählen";
 "choose_color" = "Farbe auswählen";
 "key" = "Taste";

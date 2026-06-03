@@ -102,8 +102,8 @@
 "import" = "Importar…";
 "import_export_hint" = "La importación reemplaza tu archivo actual de notas y requiere reiniciar.";
 "cleanup" = "Limpieza";
-"archive_duplicates_backups" = "Archivar duplicados / copias…";
-"archive_duplicates_backups_hint" = "Mueve duplicados y copias de seguridad a una carpeta Archivo.";
+"archive_legacy_backups" = "Archivar carpetas antiguas / copias…";
+"archive_legacy_backups_hint" = "Mueve carpetas antiguas y copias de seguridad a una carpeta Archivo.";
 "choose" = "Elegir";
 "choose_color" = "Elegir color";
 "key" = "Tecla";

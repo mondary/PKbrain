@@ -103,8 +103,8 @@
 "import" = "Importer…";
 "import_export_hint" = "L’import remplace votre fichier de notes actuel et nécessite un redémarrage.";
 "cleanup" = "Nettoyage";
-"archive_duplicates_backups" = "Archiver doublons / sauvegardes…";
-"archive_duplicates_backups_hint" = "Déplace les doublons et sauvegardes dans un dossier Archive.";
+"archive_legacy_backups" = "Archiver anciens dossiers / sauvegardes…";
+"archive_legacy_backups_hint" = "Déplace les anciens dossiers et sauvegardes dans un dossier Archive.";
 "choose" = "Choisir";
 "choose_color" = "Choisir une couleur";
 "key" = "Touche";

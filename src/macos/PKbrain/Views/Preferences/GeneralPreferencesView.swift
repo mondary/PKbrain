@@ -175,11 +175,11 @@ struct GeneralPreferencesView: View {
                 Text(localizedString("cleanup"))
                     .font(.headline)
 
-                Button(localizedString("archive_duplicates_backups")) {
-                    archiveDuplicatesAndBackups()
+                Button(localizedString("archive_legacy_backups")) {
+                    archiveLegacyBackups()
                 }
 
-                Text(localizedString("archive_duplicates_backups_hint"))
+                Text(localizedString("archive_legacy_backups_hint"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -277,7 +277,7 @@ struct GeneralPreferencesView: View {
         }
     }
 
-    private func archiveDuplicatesAndBackups() {
+    private func archiveLegacyBackups() {
         let storageDir = storageURL.deletingLastPathComponent()
         let candidates: [URL] = [
             storageDir.appendingPathComponent("Notes/Duplicates", isDirectory: true),
@@ -290,14 +290,14 @@ struct GeneralPreferencesView: View {
         guard !existing.isEmpty else {
             let alert = NSAlert()
             alert.messageText = "Nothing to archive"
-            alert.informativeText = "No Duplicates folders or backup files were found."
+            alert.informativeText = "No legacy folders or backup files were found."
             alert.runModal()
             return
         }
 
         let alert = NSAlert()
-        alert.messageText = "Archive duplicates and backups?"
-        alert.informativeText = "This will move Duplicates folders and saved_state backup files into an Archive folder inside your storage directory."
+        alert.messageText = "Archive legacy folders and backups?"
+        alert.informativeText = "This will move legacy folders and saved_state backup files into an Archive folder inside your storage directory."
         alert.addButton(withTitle: "Archive")
         alert.addButton(withTitle: "Cancel")
         guard alert.runModal() == .alertFirstButtonReturn else { return }

@@ -45,8 +45,7 @@ final class NoteStorage {
         migrateJSONToMarkdownIfNeeded()
         migrateForcedSeedJSONIfNeeded()
 
-        // Cleanup: if duplicate md files exist for the same UUID, consolidate into one file (versions merged)
-        consolidateDuplicateMarkdownNotesIfNeeded()
+        collapseDuplicateFoldersIfNeeded()
         externalizeInlineVersionsIfNeeded()
         canonicalizeMarkdownStateIfNeeded()
     }
@@ -133,90 +132,31 @@ final class NoteStorage {
         }
     }
 
-    private func consolidateDuplicateMarkdownNotesIfNeeded() {
+    private func collapseDuplicateFoldersIfNeeded() {
         do {
-            try consolidateDuplicates(in: notesDirectory, duplicatesSubdirName: "Duplicates")
-            try consolidateDuplicates(in: trashDirectory, duplicatesSubdirName: "Duplicates")
+            try collapseDuplicateFolder(in: notesDirectory)
+            try collapseDuplicateFolder(in: trashDirectory)
         } catch {
-            NSLog("PKbrainMac: duplicate consolidation failed: \(error)")
+            NSLog("PKbrainMac: duplicate folder cleanup failed: \(error)")
         }
     }
 
-    private func consolidateDuplicates(in directory: URL, duplicatesSubdirName: String) throws {
-        let files = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: [.contentModificationDateKey])) ?? []
-        let mdFiles = files.filter { $0.pathExtension.lowercased() == "md" }
-        guard mdFiles.count > 1 else { return }
+    private func collapseDuplicateFolder(in directory: URL) throws {
+        let duplicatesDir = directory.appendingPathComponent("Duplicates", isDirectory: true)
+        guard fileManager.fileExists(atPath: duplicatesDir.path) else { return }
 
-        var byID: [UUID: [(url: URL, note: NoteData, deletedAt: Date?)]] = [:]
-
-        for url in mdFiles {
-            guard let raw = try? String(contentsOf: url, encoding: .utf8) else { continue }
-            let (fm, body) = parseFrontMatter(raw)
-            guard let idString = fm["id"], let id = UUID(uuidString: idString) else { continue }
-
-            let (cleanBody, versions) = extractVersions(from: body)
-            var note = decodeNote(frontMatter: fm, body: cleanBody)
-            note.id = id
-            note.versions = mergedVersions(readVersions(forMarkdownURL: url), versions)
-            let deletedAt = decodeDate(fm["deletedAt"])
-            byID[id, default: []].append((url: url, note: note, deletedAt: deletedAt))
+        let files = (try? fileManager.contentsOfDirectory(at: duplicatesDir, includingPropertiesForKeys: nil)) ?? []
+        for url in files {
+            let target = directory.appendingPathComponent(url.lastPathComponent)
+            if fileManager.fileExists(atPath: target.path) {
+                continue
+            }
+            try? fileManager.moveItem(at: url, to: target)
         }
 
-        let duplicatesDir = directory.appendingPathComponent(duplicatesSubdirName, isDirectory: true)
-        prepareStorageDirectory(duplicatesDir)
-
-        for (_, entries) in byID where entries.count > 1 {
-            // Merge: pick the most recently modified file as base, merge versions/content.
-            let sorted = entries.sorted { lhs, rhs in
-                let ldate = (try? lhs.url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                let rdate = (try? rhs.url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                return ldate > rdate
-            }
-            var merged = sorted.first!.note
-
-            // Merge versions (union by version.id, keep latest by date if duplicates)
-            var versionsByID: [UUID: NoteVersion] = [:]
-            for entry in sorted {
-                for v in entry.note.versions {
-                    if let existing = versionsByID[v.id] {
-                        versionsByID[v.id] = (v.date > existing.date) ? v : existing
-                    } else {
-                        versionsByID[v.id] = v
-                    }
-                }
-            }
-            merged.versions = versionsByID.values.sorted { $0.date < $1.date }
-
-            // If some duplicates have longer content/title, prefer that.
-            if let best = sorted.max(by: { $0.note.content.count < $1.note.content.count }) {
-                merged.content = best.note.content
-            }
-            if let bestTitle = sorted.max(by: { $0.note.title.count < $1.note.title.count }) {
-                merged.title = bestTitle.note.title
-            }
-
-            // For trash notes, keep the most recent deletedAt we can find.
-            let deletedAt = sorted.compactMap(\.deletedAt).max()
-
-            // Write canonical human-readable file.
-            let canonicalURL = markdownURL(for: merged, in: directory, usedNames: [])
-            let text: String
-            if let deletedAt {
-                text = serialize(note: merged, extraFrontMatter: ["deletedAt": encodeDate(deletedAt)])
-            } else {
-                text = serialize(note: merged)
-            }
-            try text.write(to: canonicalURL, atomically: true, encoding: .utf8)
-            try saveVersions(merged.versions, forMarkdownURL: canonicalURL)
-
-            // Move all other files to Duplicates/
-            for entry in entries {
-                if entry.url.lastPathComponent == canonicalURL.lastPathComponent { continue }
-                try? fileManager.removeItem(at: versionsURL(forMarkdownURL: entry.url))
-                let target = duplicatesDir.appendingPathComponent(entry.url.lastPathComponent)
-                try? fileManager.removeItem(at: target)
-                try? fileManager.moveItem(at: entry.url, to: target)
-            }
+        let remaining = (try? fileManager.contentsOfDirectory(at: duplicatesDir, includingPropertiesForKeys: nil)) ?? []
+        if remaining.isEmpty {
+            try? fileManager.removeItem(at: duplicatesDir)
         }
     }
 
@@ -408,10 +348,6 @@ final class NoteStorage {
 
     private func saveVersions(_ versions: [NoteVersion], forMarkdownURL markdownURL: URL) throws {
         let url = versionsURL(forMarkdownURL: markdownURL)
-        guard !versions.isEmpty else {
-            try? fileManager.removeItem(at: url)
-            return
-        }
         let data = try encoder.encode(versions)
         try data.write(to: url, options: .atomic)
     }
