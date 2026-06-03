@@ -120,29 +120,16 @@ struct GeneralPreferencesView: View {
                     .foregroundStyle(.secondary)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text("Copy sound")
-                        Spacer()
-                        Picker("", selection: $settings.clipboardCopySound) {
-                            ForEach(ClipboardFeedbackSound.allCases) { sound in
-                                Text(sound.displayName).tag(sound)
-                            }
-                        }
-                        .labelsHidden()
-                        .frame(width: 180)
-                    }
-
-                    HStack {
-                        Text("Paste sound")
-                        Spacer()
-                        Picker("", selection: $settings.clipboardPasteSound) {
-                            ForEach(ClipboardFeedbackSound.allCases) { sound in
-                                Text(sound.displayName).tag(sound)
-                            }
-                        }
-                        .labelsHidden()
-                        .frame(width: 180)
-                    }
+                    soundRow(
+                        title: "Copy sound",
+                        selection: $settings.clipboardCopySound,
+                        testAction: { ClipboardSoundPlayer.play(settings.clipboardCopySound) }
+                    )
+                    soundRow(
+                        title: "Paste sound",
+                        selection: $settings.clipboardPasteSound,
+                        testAction: { ClipboardSoundPlayer.play(settings.clipboardPasteSound) }
+                    )
                 }
             }
 
@@ -201,6 +188,25 @@ struct GeneralPreferencesView: View {
             .padding(24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func soundRow(title: String, selection: Binding<ClipboardFeedbackSound>, testAction: @escaping () -> Void) -> some View {
+        HStack(spacing: 10) {
+            Text(title)
+            Spacer()
+            Picker("", selection: selection) {
+                ForEach(ClipboardFeedbackSound.allCases) { sound in
+                    Text(sound.displayName).tag(sound)
+                }
+            }
+            .labelsHidden()
+            .frame(width: 180)
+
+            Button("Test") {
+                testAction()
+            }
+            .buttonStyle(.bordered)
+        }
     }
 
     private func chooseStorageDirectory() {
