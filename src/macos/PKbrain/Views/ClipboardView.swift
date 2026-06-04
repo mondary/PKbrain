@@ -1499,6 +1499,9 @@ struct ClipboardStandardWindowView: View {
                             onRemoveTag: { id, tag in clipboard.removeTag(tag, from: id) },
                             onRestoreItem: { id in clipboard.restore(id) },
                             onDeletePermanently: { id in clipboard.deletePermanently(id) },
+                            onTogglePin: { id in clipboard.togglePin(id) },
+                            onToggleLock: { id in clipboard.toggleLock(id) },
+                            onDeleteItem: { id in clipboard.delete(id) },
                             noteTags: noteTags,
                             onAddNoteTag: { id, tag in
                                 let normalized = tag.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -2323,6 +2326,9 @@ private struct StandardClipboardCard: View {
     let onRemoveTag: (UUID, String) -> Void
     let onRestoreItem: (UUID) -> Void
     let onDeletePermanently: (UUID) -> Void
+    let onTogglePin: (UUID) -> Void
+    let onToggleLock: (UUID) -> Void
+    let onDeleteItem: (UUID) -> Void
     let noteTags: [UUID: [String]]
     let onAddNoteTag: (UUID, String) -> Void
     let onRemoveNoteTag: (UUID, String) -> Void
@@ -2358,7 +2364,7 @@ private struct StandardClipboardCard: View {
             }
         }
         .contextMenu {
-            contextTagMenu
+            contextActionsMenu
         }
         .popover(isPresented: $showExpandedPreview, attachmentAnchor: .rect(.bounds), arrowEdge: .bottom) {
             expandedPreviewView
@@ -2503,41 +2509,11 @@ private struct StandardClipboardCard: View {
                 .lineLimit(1)
             Spacer()
             if case .clipboard(let item) = entry {
-                if let primary = item.tags.first {
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(tagColor(for: primary))
-                            .frame(width: 10, height: 10)
-                            .overlay(Circle().stroke(Color.white.opacity(0.85), lineWidth: 1))
-                        if item.tags.count > 1 {
-                            Text("+\(item.tags.count - 1)")
-                                .font(.system(size: 9, weight: .semibold))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
+                clipboardQuickActions(for: item)
                 Menu {
-                    let existing = item.tags
-                    if item.isTrashed {
-                        Button(localizedString("restore")) { onRestoreItem(item.id) }
-                        Button(localizedString("delete"), role: .destructive) { onDeletePermanently(item.id) }
-                        Divider()
-                    }
-                    if !availableTags.isEmpty {
-                        ForEach(availableTags, id: \.self) { tag in
-                            if existing.contains(where: { $0.caseInsensitiveCompare(tag) == .orderedSame }) {
-                                Button("Retirer tag: \(tag)") { onRemoveTag(item.id, tag) }
-                            } else {
-                                Button("Taguer: \(tag)") { onAddTag(item.id, tag) }
-                            }
-                        }
-                        Divider()
-                    }
-                    Button("Nouveau tag…") {
-                        if let newTag = promptForTagName(), !newTag.isEmpty {
-                            onAddTag(item.id, newTag)
-                        }
-                    }
+                    clipboardActionsMenu(for: item)
+                    Divider()
+                    tagMenu(for: item)
                 } label: {
                     Image(systemName: "ellipsis.circle")
                         .font(.system(size: 13))
@@ -2708,23 +2684,84 @@ private struct StandardClipboardCard: View {
     }
 
     @ViewBuilder
-    private var contextTagMenu: some View {
+    private var contextActionsMenu: some View {
         if case .clipboard(let item) = entry {
-            let existing = item.tags
-            if !availableTags.isEmpty {
-                ForEach(availableTags, id: \.self) { tag in
-                    if existing.contains(where: { $0.caseInsensitiveCompare(tag) == .orderedSame }) {
-                        Button("Retirer tag: \(tag)") { onRemoveTag(item.id, tag) }
-                    } else {
-                        Button("Taguer: \(tag)") { onAddTag(item.id, tag) }
-                    }
-                }
-                Divider()
+            clipboardActionsMenu(for: item)
+            Divider()
+            tagMenu(for: item)
+        } else if case .note(let note) = entry {
+            Button(localizedString("open")) { onOpenNote(note.id) }
+        }
+    }
+
+    @ViewBuilder
+    private func clipboardQuickActions(for item: ClipboardManager.Item) -> some View {
+        if item.isTrashed {
+            compactActionButton(localizedString("restore"), systemName: "arrow.uturn.backward") {
+                onRestoreItem(item.id)
             }
-            Button("Nouveau tag…") {
-                if let newTag = promptForTagName(), !newTag.isEmpty {
-                    onAddTag(item.id, newTag)
+            compactActionButton(localizedString("delete"), systemName: "trash") {
+                onDeletePermanently(item.id)
+            }
+        } else {
+            compactActionButton(localizedString("pin"), systemName: item.isPinned ? "pin.slash" : "pin") {
+                onTogglePin(item.id)
+            }
+            compactActionButton(localizedString("lock"), systemName: item.isLocked ? "lock.open" : "lock") {
+                onToggleLock(item.id)
+            }
+            compactActionButton(localizedString("copy"), systemName: "doc.on.doc") {
+                onCopyItem(item)
+            }
+            compactActionButton(localizedString("convert_to_note"), systemName: "note.text.badge.plus") {
+                onCreateNoteFromItem(item)
+            }
+            compactActionButton(localizedString("delete"), systemName: "trash") {
+                onDeleteItem(item.id)
+            }
+        }
+    }
+
+    private func compactActionButton(_ help: String, systemName: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 10.5, weight: .semibold))
+                .frame(width: 18, height: 18)
+        }
+        .buttonStyle(.plain)
+        .help(help)
+    }
+
+    @ViewBuilder
+    private func clipboardActionsMenu(for item: ClipboardManager.Item) -> some View {
+        if item.isTrashed {
+            Button(localizedString("restore")) { onRestoreItem(item.id) }
+            Button(localizedString("delete"), role: .destructive) { onDeletePermanently(item.id) }
+        } else {
+            Button(localizedString("pin")) { onTogglePin(item.id) }
+            Button(localizedString("lock")) { onToggleLock(item.id) }
+            Button(localizedString("copy")) { onCopyItem(item) }
+            Button(localizedString("convert_to_note")) { onCreateNoteFromItem(item) }
+            Button(localizedString("delete"), role: .destructive) { onDeleteItem(item.id) }
+        }
+    }
+
+    @ViewBuilder
+    private func tagMenu(for item: ClipboardManager.Item) -> some View {
+        let existing = item.tags
+        if !availableTags.isEmpty {
+            ForEach(availableTags, id: \.self) { tag in
+                if existing.contains(where: { $0.caseInsensitiveCompare(tag) == .orderedSame }) {
+                    Button("Retirer tag: \(tag)") { onRemoveTag(item.id, tag) }
+                } else {
+                    Button("Taguer: \(tag)") { onAddTag(item.id, tag) }
                 }
+            }
+            Divider()
+        }
+        Button("Nouveau tag…") {
+            if let newTag = promptForTagName(), !newTag.isEmpty {
+                onAddTag(item.id, newTag)
             }
         }
     }
