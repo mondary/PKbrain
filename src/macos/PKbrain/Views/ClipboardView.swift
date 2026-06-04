@@ -1,5 +1,28 @@
 import SwiftUI
 
+private struct BottomRoundedRectangle: Shape {
+    let radius: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        let cornerRadius = min(radius, rect.width / 2, rect.height / 2)
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - cornerRadius))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX - cornerRadius, y: rect.maxY),
+            control: CGPoint(x: rect.maxX, y: rect.maxY)
+        )
+        path.addLine(to: CGPoint(x: rect.minX + cornerRadius, y: rect.maxY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX, y: rect.maxY - cornerRadius),
+            control: CGPoint(x: rect.minX, y: rect.maxY)
+        )
+        path.closeSubpath()
+        return path
+    }
+}
+
 struct ClipboardView: View {
     struct NoteDeckItem: Identifiable, Equatable {
         let id: UUID
@@ -81,20 +104,20 @@ struct ClipboardView: View {
                     deck2BottomStrip
                 }
             }
-            .padding(.top, 12)
+            .padding(.top, isVerticalDrawer ? 12 : 2)
             .padding(.horizontal, 0)
             .padding(.bottom, 0)
             .background(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                BottomRoundedRectangle(radius: 28)
                     .fill(Color(red: 223/255, green: 227/255, blue: 236/255).opacity(0.88))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        BottomRoundedRectangle(radius: 28)
                             .stroke(Color.white.opacity(0.45), lineWidth: 1)
                     )
                     .shadow(color: .black.opacity(0.35), radius: 34, x: 0, y: 20)
             )
         }
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .clipShape(BottomRoundedRectangle(radius: 28))
         .frame(minWidth: isVerticalDrawer ? 55 : 900, minHeight: isVerticalDrawer ? 560 : 420)
         .onAppear {
             installKeyMonitorIfNeeded()
@@ -249,8 +272,8 @@ struct ClipboardView: View {
                 .offset(y: 2)
         }
         .padding(.horizontal, 24)
-        .padding(.top, 2)
-        .padding(.bottom, 6)
+        .padding(.top, 0)
+        .padding(.bottom, 2)
     }
 
     private var deck2Toolbar: some View {
@@ -384,10 +407,10 @@ struct ClipboardView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
-                .padding(.bottom, 20)
+                .padding(.bottom, 8)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 340)
+            .frame(height: 308)
             .onAppear {
                 if selectedID == nil || !entries.contains(where: { $0.id == selectedID }) {
                     selectedID = entries.first?.id
@@ -435,7 +458,11 @@ struct ClipboardView: View {
                 Color.black.opacity(0.015)
                 HStack(spacing: 0) {
                     Text(line)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
                     Text(line)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
                 }
                 .font(.system(size: 12, weight: .medium, design: .monospaced))
                 .foregroundStyle(Color(red: 60/255, green: 64/255, blue: 73/255).opacity(0.25))
