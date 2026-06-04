@@ -61,6 +61,8 @@
   - QuickLook for files
   - smart color preview with Hex/RGB/HSL/OKLCH
   - configurable drawer position: top, bottom, left, right
+  - top position flush with the macOS menu bar, without a visible gap
+  - clipboard-card context menu: pin, lock, copy, convert to note, or delete
 - Persistence/storage:
   - Markdown-first per-note storage
   - JSON sidecar note version history
@@ -110,6 +112,7 @@
 - Navigation: left/right arrows
 - `Enter`: copy, paste into the last active external app, and close the drawer
 - `Cmd+C`: copy the selected card to the system clipboard
+- Right-click a card: pin, lock, copy, convert to note, or delete
 - `Cmd+Enter`: convert to note
 - Filters: text, URL, image, file, color, source, pinned, recent
 - Colors: copying `#2C3861` creates a color card with:

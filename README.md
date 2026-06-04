@@ -77,7 +77,9 @@
   - cartes centrées dans le drawer vertical (left/right)
   - drawer vertical plus compact (largeur minimale réduite)
   - ouverture drawer priorise l'écran actif (multi-écrans)
+  - position haute collée à la barre de menu macOS, sans espace visible
   - fallback icône app au lancement direct (`swift run`) pour `Cmd+Tab`
+  - clic droit sur carte clipboard: épingler, verrouiller, copier, convertir en note ou supprimer
  - Fenêtre standard PKClipboard:
   - taille par défaut: 1200x1000
   - raccourcis visuels limités aux 9 premières tuiles (`⌘1` ... `⌘9`)
@@ -159,6 +161,7 @@
 - Navigation: flèches gauche/droite
 - `Enter`: copie puis colle dans la dernière app externe active + ferme le drawer
 - `Cmd+C`: copie la carte sélectionnée vers le presse-papier système
+- Clic droit sur carte: épingler, verrouiller, copier, convertir en note ou supprimer
 - badges raccourcis visibles sur les 9 premières cartes (`⌘1...⌘9`)
 - Clic hors drawer: ferme le drawer
 - `Cmd+Enter`: convertir en note

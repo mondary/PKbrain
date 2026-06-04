@@ -6,6 +6,7 @@ import SwiftUI
 final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
     private static let drawerFrameDefaultsKey = "PKbrainClipboardDrawerFrame"
     private static let drawerEdgeDefaultsKey = "PKbrainClipboardDrawerEdge"
+    private static let topEdgeOverlap: CGFloat = 1
     private let manager: NoteManager
     private let settings: AppSettings
     private let clipboard: ClipboardManager
@@ -300,19 +301,15 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         updateDrawerMinSize(for: settings.clipboardDrawerEdge)
 
         let activeVisibleFrame = preferredVisibleFrame(fallbackWindow: window)
-        let activeScreenFrame = preferredLayoutBounds(
-            fallbackWindow: window,
-            visibleFrame: activeVisibleFrame,
-            edge: settings.clipboardDrawerEdge
-        )
+        let activeScreenFrame = activeVisibleFrame
 
         let transitionBounds: NSRect
         let target: NSRect
         if let restored = restoredDrawerFrame(for: window),
            restored.intersects(activeScreenFrame)
         {
-            transitionBounds = restored
-            target = restored
+            transitionBounds = activeScreenFrame
+            target = anchorRestoredFrame(restored, in: activeScreenFrame, edge: settings.clipboardDrawerEdge)
         } else {
             // Drawer behavior: anchored on a screen edge, with a short slide-in animation.
             let layoutBounds = activeScreenFrame
@@ -384,16 +381,11 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
             ?? NSRect(x: 0, y: 0, width: 1200, height: 800)
     }
 
-    private func preferredLayoutBounds(fallbackWindow: NSWindow, visibleFrame: NSRect, edge: ClipboardDrawerEdge) -> NSRect {
-        guard edge == .top else { return visibleFrame }
-        if let screenFrame = anchorWindow?.screen?.frame {
-            return screenFrame
-        }
-        let mouseLocation = NSEvent.mouseLocation
-        if let mouseScreen = NSScreen.screens.first(where: { NSMouseInRect(mouseLocation, $0.frame, false) }) {
-            return mouseScreen.frame
-        }
-        return fallbackWindow.screen?.frame ?? visibleFrame
+    private func anchorRestoredFrame(_ frame: NSRect, in visible: NSRect, edge: ClipboardDrawerEdge) -> NSRect {
+        guard edge == .top else { return frame }
+        var anchored = frame
+        anchored.origin.y = visible.maxY - frame.height + Self.topEdgeOverlap
+        return anchored
     }
 
     private func dismissAnimated() {
@@ -552,7 +544,9 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
             let reducedHeight = current.height * 0.86
             let height = min(max(420, reducedHeight), min(visible.height * 0.62, 640))
             let x = visible.minX + inset
-            let y: CGFloat = (edge == .top) ? (visible.maxY - height) : visible.minY
+            let y: CGFloat = (edge == .top)
+                ? (visible.maxY - height + Self.topEdgeOverlap)
+                : visible.minY
             return NSRect(x: x, y: y, width: width, height: height)
         case .left, .right:
             let height = max(320, visible.height - inset * 2)

@@ -30,6 +30,8 @@ Status: in progress.
 - [x] Drawer vertical: cards centered horizontally in viewport
 - [x] Drawer vertical: reduced minimum width for tighter side panel
 - [x] Drawer opens on active screen in multi-display setups
+- [x] Top drawer anchors flush below the macOS menu bar with no visible gap
+- [x] Drawer clipboard cards expose all quick actions in a right-click context menu
 - [x] Cmd+Tab icon fallback when app is launched via `swift run`
 - [x] `Cmd+,` now opens PKClipboard in Settings mode (no separate popup window)
 - [x] PKClipboard: right-click context menu on cards for tags (add/remove/create)

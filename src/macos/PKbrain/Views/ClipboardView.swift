@@ -104,7 +104,7 @@ struct ClipboardView: View {
                     deck2BottomStrip
                 }
             }
-            .padding(.top, isVerticalDrawer ? 12 : 2)
+            .padding(.top, isVerticalDrawer ? 12 : 0)
             .padding(.horizontal, 0)
             .padding(.bottom, 0)
             .background(
@@ -3152,6 +3152,37 @@ private struct DeckCard: View {
         .shadow(color: Color.black.opacity((hovering || isSelected) ? 0.13 : 0.04), radius: (hovering || isSelected) ? 20 : 14, x: 0, y: (hovering || isSelected) ? 12 : 8)
         .offset(y: hovering ? -4 : 0)
         .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .contextMenu {
+            Button {
+                onTogglePin?()
+            } label: {
+                Label(localizedString("pin"), systemImage: item.isPinned ? "pin.slash" : "pin")
+            }
+
+            Button {
+                onToggleLock?()
+            } label: {
+                Label(localizedString("lock"), systemImage: item.isLocked ? "lock.open" : "lock")
+            }
+
+            Divider()
+
+            Button(action: onCopy) {
+                Label(localizedString("copy"), systemImage: "doc.on.doc")
+            }
+
+            Button(action: onMakeNote) {
+                Label(localizedString("convert_to_note"), systemImage: "note.text.badge.plus")
+            }
+
+            Divider()
+
+            Button(role: .destructive) {
+                onDelete?()
+            } label: {
+                Label(localizedString("delete"), systemImage: "trash")
+            }
+        }
         .onHover { value in
             withAnimation(.easeOut(duration: 0.18)) {
                 hovering = value
