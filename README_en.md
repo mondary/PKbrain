@@ -53,7 +53,9 @@
   - source, pinned, and recent filters
   - pins, lock, per-item delete
   - full keyboard navigation
-  - `Enter` pastes into the previous app
+  - `Enter` pastes into the last active external app
+  - direct paste from both the drawer and the standard `PKClipboard` window
+  - reliable target-app restoration before injecting `Cmd+V`
   - `Cmd+Enter` converts the item to a note
   - full image preview without crop + lightbox
   - QuickLook for files
@@ -89,7 +91,7 @@
   - `releases/` for artifacts
 
 ## 🧠 Usage
-- Dev run: `./PKbrain/run-dev.sh`
+- Dev run: `./src/run-dev.sh`
 - Open command palette: `Cmd+K`
 - Open preferences: `Cmd+,`
 - Global shortcuts (defaults, configurable):
@@ -104,8 +106,10 @@
 
 ### Clipboard drawer
 - Toggle: `Cmd+Shift+V`
+- Open `PKClipboard` (standard window): `Cmd+Option+V`
 - Navigation: left/right arrows
-- `Enter`: paste (best-effort) into previous app + close drawer
+- `Enter`: copy, paste into the last active external app, and close the drawer
+- `Cmd+C`: copy the selected card to the system clipboard
 - `Cmd+Enter`: convert to note
 - Filters: text, URL, image, file, color, source, pinned, recent
 - Colors: copying `#2C3861` creates a color card with:
@@ -114,6 +118,8 @@
   - HSL: `226, 38, 28`
   - OKLCH: computed automatically
 
+> Direct paste requires the macOS **Accessibility** permission for PKbrain. macOS prompts on the first paste; permission can also be managed in **System Settings > Privacy & Security > Accessibility**.
+
 ## ⚙️ Settings
 - General preferences (language, storage, import/export).
 - Shortcut preferences (modifier + key).
@@ -121,7 +127,7 @@
 - Clipboard drawer position.
 
 ## 🧾 Commands
-- `./PKbrain/run-dev.sh`: build + package + run
+- `./src/run-dev.sh`: build + package + run
 - `swift build`: SwiftPM build
 
 ## 📦 Build & Package
@@ -129,8 +135,8 @@
 - `scripts/package_macos.sh` rebuilds the local `.app` bundle in `release` mode.
 - The test bundle is generated at `releases/PKbrain.app`.
 - The official copy can be placed at `/Applications/PKbrain.app`.
-- `PKbrain/dist` points to `../releases`.
-- SwiftPM target path: `PKbrain/macos/PKbrain`.
+- `dist` points to `../releases`.
+- SwiftPM target path: `src/macos/PKbrain`.
 
 ## 🧪 Install (Antigravity)
 - Not used for this project at this stage.

@@ -55,7 +55,9 @@
   - filtres par source, favoris et récent
   - pins, lock, suppression item par item
   - navigation clavier complète
-  - `Enter` colle dans l'app précédente
+  - `Enter` colle dans la dernière app externe active
+  - collage direct depuis le drawer et la fenêtre standard `PKClipboard`
+  - restauration fiable de l'app cible avant injection de `Cmd+V`
   - `Cmd+Enter` convertit l'item en note
   - aperçu image complet sans crop + lightbox
   - aperçu URL enrichi (titre, favicon, description, thumbnail)
@@ -80,6 +82,7 @@
   - taille par défaut: 1200x1000
   - raccourcis visuels limités aux 9 premières tuiles (`⌘1` ... `⌘9`)
   - navigation clavier activée (flèches + Entrée)
+  - `Enter` copie puis colle la carte sélectionnée dans la dernière app externe active
   - `Esc` ferme la fenêtre standard
   - pagination fonctionnelle avec pages cliquables
  - nombre d'items par page dynamique selon la taille visible de la grille
@@ -137,7 +140,7 @@
   - `releases/` dédié artefacts
 
 ## 🧠 Utilisation
-- Lancement dev: `./PKbrain/run-dev.sh`
+- Lancement dev: `./src/run-dev.sh`
 - Ouvrir la palette: `Cmd+K`
 - Préférences: `Cmd+,`
 - Raccourcis globaux (par défaut, configurables):
@@ -154,7 +157,7 @@
 - Toggle: `Cmd+Shift+V`
 - Ouvrir `PKClipboard` (fenêtre standard): `Cmd+Option+V`
 - Navigation: flèches gauche/droite
-- `Enter`: colle (best-effort) dans l'app précédente + ferme le drawer
+- `Enter`: copie puis colle dans la dernière app externe active + ferme le drawer
 - `Cmd+C`: copie la carte sélectionnée vers le presse-papier système
 - badges raccourcis visibles sur les 9 premières cartes (`⌘1...⌘9`)
 - Clic hors drawer: ferme le drawer
@@ -166,6 +169,8 @@
   - HSL: `226, 38, 28`
   - OKLCH: aperçu calculé automatiquement
 
+> Le collage direct nécessite l'autorisation macOS **Accessibilité** pour PKbrain. macOS affiche la demande au premier collage; l'autorisation peut aussi être gérée dans **Réglages Système > Confidentialité et sécurité > Accessibilité**.
+
 ## ⚙️ Réglages
 - Préférences générales (langue, stockage, import/export).
 - Préférences raccourcis (modificateurs + touche).
@@ -173,7 +178,7 @@
 - Position du clipboard drawer.
 
 ## 🧾 Commandes
-- `./PKbrain/run-dev.sh` : build + package + run
+- `./src/run-dev.sh` : build + package + run
 - `swift build` : build SwiftPM
 
 ## 📦 Build & Package
@@ -181,8 +186,8 @@
 - Le script `scripts/package_macos.sh` reconstruit le bundle `.app` local en mode `release`.
 - Le bundle de test est généré dans `releases/PKbrain.app`.
 - La copie officielle à lancer peut être placée dans `/Applications/PKbrain.app`.
-- `PKbrain/dist` pointe vers `../releases`.
-- La cible SwiftPM pointe sur `PKbrain/macos/PKbrain`.
+- `dist` pointe vers `../releases`.
+- La cible SwiftPM pointe sur `src/macos/PKbrain`.
 
 ## 🧪 Installation (Antigravity)
 - Non utilisé pour ce projet actuellement.

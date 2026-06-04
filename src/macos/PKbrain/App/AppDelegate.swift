@@ -17,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var globalHotKeyClipboardWindowRef: EventHotKeyRef?
     private var globalHotKeyClipboardWindowFallbackRef: EventHotKeyRef?
     private var globalHotKeyHandlerRef: EventHandlerRef?
+    private var lastExternalApplication: NSRunningApplication?
     private lazy var clipboard = ClipboardManager(
         persistence: ClipboardPersistence(baseDirectory: manager.storageURL.deletingLastPathComponent())
     )
@@ -32,7 +33,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         registerGlobalHotKey()
         donateSpotlightActivities()
         clipboard.start()
+        observeActiveApplications()
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    private func observeActiveApplications() {
+        if let frontmost = NSWorkspace.shared.frontmostApplication {
+            rememberExternalApplication(frontmost)
+        }
+
+        NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didActivateApplicationNotification)
+            .compactMap { notification in
+                notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+            }
+            .sink { [weak self] app in
+                self?.rememberExternalApplication(app)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func rememberExternalApplication(_ app: NSRunningApplication) {
+        guard app.processIdentifier != ProcessInfo.processInfo.processIdentifier else { return }
+        lastExternalApplication = app
+    }
+
+    private func clipboardTargetApp(_ candidate: NSRunningApplication?) -> NSRunningApplication? {
+        if let candidate,
+           candidate.processIdentifier != ProcessInfo.processInfo.processIdentifier
+        {
+            return candidate
+        }
+        return lastExternalApplication
     }
 
     private func ensureApplicationIconForDirectRuns() {
@@ -375,7 +406,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.manager.createNote()
             case 3:
                 self.showClipboard(
-                    targetApp: frontmostAppBeforeHandling,
+                    targetApp: self.clipboardTargetApp(frontmostAppBeforeHandling),
                     targetWindow: keyWindowBeforeHandling,
                     targetResponder: firstResponderBeforeHandling
                 )
@@ -499,7 +530,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func showClipboard(_ sender: Any?) {
         manager.hideAllNotes()
         showClipboard(
-            targetApp: NSWorkspace.shared.frontmostApplication,
+            targetApp: clipboardTargetApp(NSWorkspace.shared.frontmostApplication),
             targetWindow: NSApp.keyWindow,
             targetResponder: NSApp.keyWindow?.firstResponder
         )
@@ -788,7 +819,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             showNotesList(nil)
         case .clipboard:
             showClipboard(
-                targetApp: NSWorkspace.shared.frontmostApplication,
+                targetApp: clipboardTargetApp(NSWorkspace.shared.frontmostApplication),
                 targetWindow: NSApp.keyWindow,
                 targetResponder: NSApp.keyWindow?.firstResponder
             )

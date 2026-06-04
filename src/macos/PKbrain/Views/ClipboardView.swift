@@ -896,7 +896,7 @@ struct ClipboardView: View {
     }
 
     private var defaultSelectionID: UUID? {
-        latestClipboardID ?? filteredEntries.first?.id
+        latestClipboardID
     }
 
     private var isDefaultContextOnLatestClipboard: Bool {
@@ -1119,6 +1119,7 @@ struct ClipboardStandardWindowView: View {
     let onCreateNoteFromItem: (ClipboardManager.Item) -> Void
     let onOpenNote: (UUID) -> Void
     let onCopyItem: (ClipboardManager.Item) -> Void
+    let onPaste: () -> Void
     let onLoadFavicon: (String) -> Data?
     let onLoadURLPreviewImage: (String) -> Data?
     let onShowPreferences: () -> Void
@@ -1151,6 +1152,7 @@ struct ClipboardStandardWindowView: View {
         onCreateNoteFromItem: @escaping (ClipboardManager.Item) -> Void,
         onOpenNote: @escaping (UUID) -> Void,
         onCopyItem: @escaping (ClipboardManager.Item) -> Void,
+        onPaste: @escaping () -> Void,
         onLoadFavicon: @escaping (String) -> Data?,
         onLoadURLPreviewImage: @escaping (String) -> Data?,
         onShowPreferences: @escaping () -> Void,
@@ -1164,6 +1166,7 @@ struct ClipboardStandardWindowView: View {
         self.onCreateNoteFromItem = onCreateNoteFromItem
         self.onOpenNote = onOpenNote
         self.onCopyItem = onCopyItem
+        self.onPaste = onPaste
         self.onLoadFavicon = onLoadFavicon
         self.onLoadURLPreviewImage = onLoadURLPreviewImage
         self.onShowPreferences = onShowPreferences
@@ -1863,6 +1866,7 @@ struct ClipboardStandardWindowView: View {
         switch entry {
         case .clipboard(let item):
             onCopyItem(item)
+            onPaste()
         case .note(let note):
             onOpenNote(note.id)
         }

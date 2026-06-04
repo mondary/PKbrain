@@ -1,4 +1,5 @@
 import AppKit
+import ApplicationServices
 import Carbon.HIToolbox
 import SwiftUI
 
@@ -20,6 +21,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
     private var isClipboardViewAtDefaultContext = true
     private var standardWindowController: NSWindowController?
     private var standardStartsInSettingsMode: Bool = false
+    private var hasRequestedAccessibilityPastePermission = false
     private let onShowPreferences: () -> Void
     private let onOpenFinder: () -> Void
 
@@ -239,6 +241,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
             onCopyItem: { [weak clipboard] item in
                 clipboard?.copyToPasteboard(item)
             },
+            onPaste: { [weak self] in self?.pasteActiveSelection() },
             onLoadFavicon: { [weak clipboard] name in
                 clipboard?.loadFaviconData(named: name)
             },
@@ -422,23 +425,16 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         window?.orderOut(nil)
         window?.alphaValue = 1
 
-        if app.bundleIdentifier == Bundle.main.bundleIdentifier {
-            NSApp.activate(ignoringOtherApps: true)
-            restoreLastPKbrainFocus()
-        } else {
-            app.unhide()
-            app.activate(options: [.activateIgnoringOtherApps])
-        }
+        bringTargetToFront(app: app)
 
-        // Activation is asynchronous. If Cmd+V is posted immediately, it can land
-        // in the drawer search field instead of the app that had focus before.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.30) { [weak self] in
+        // Activation is asynchronous. Give the target a little longer, then
+        // retry once if it is still not frontmost.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
             guard let self else { return }
             if NSWorkspace.shared.frontmostApplication?.processIdentifier != targetPID {
-                app.unhide()
-                app.activate(options: [.activateIgnoringOtherApps])
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { [weak self] in
-                    self?.pasteIntoActivatedTarget(app: app, targetPID: targetPID)
+                self.bringTargetToFront(app: app)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) {
+                    self.pasteIntoActivatedTarget(app: app, targetPID: targetPID)
                 }
                 return
             }
@@ -446,13 +442,22 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
+    private func bringTargetToFront(app: NSRunningApplication) {
+        if app.bundleIdentifier == Bundle.main.bundleIdentifier {
+            NSApp.activate(ignoringOtherApps: true)
+            restoreLastPKbrainFocus()
+        } else {
+            app.unhide()
+            app.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
+        }
+    }
+
     private func pasteIntoActivatedTarget(app: NSRunningApplication, targetPID: pid_t) {
         if NSWorkspace.shared.frontmostApplication?.processIdentifier != targetPID {
-            app.unhide()
-            app.activate(options: [.activateIgnoringOtherApps])
+            bringTargetToFront(app: app)
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { [weak self] in
             guard let self else { return }
             if app.bundleIdentifier == Bundle.main.bundleIdentifier {
                 self.restoreLastPKbrainFocus()
@@ -461,7 +466,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
                 // Cmd+V after the app is frontmost; posting directly to PID can
                 // miss the focused web view.
             }
-            self.postCommandV()
+            self.postCommandV(targetPID: targetPID)
         }
     }
 
@@ -473,18 +478,43 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
-    private func postCommandV() {
+    private func postCommandV(targetPID: pid_t) {
         // Best-effort: simulate Cmd+V. This typically requires Accessibility permission.
-        let src = CGEventSource(stateID: .combinedSessionState)
-        let vKey = CGKeyCode(kVK_ANSI_V)
-        let vDown = CGEvent(keyboardEventSource: src, virtualKey: vKey, keyDown: true)
-        vDown?.flags = CGEventFlags.maskCommand
-        let vUp = CGEvent(keyboardEventSource: src, virtualKey: vKey, keyDown: false)
-        vUp?.flags = CGEventFlags.maskCommand
+        guard ensureAccessibilityPermissionForPaste() else { return }
 
-        vDown?.post(tap: CGEventTapLocation.cghidEventTap)
-        vUp?.post(tap: CGEventTapLocation.cghidEventTap)
+        let src = CGEventSource(stateID: .combinedSessionState)
+        let commandKey = CGKeyCode(kVK_Command)
+        let vKey = CGKeyCode(kVK_ANSI_V)
+        let commandDown = CGEvent(keyboardEventSource: src, virtualKey: commandKey, keyDown: true)
+        commandDown?.flags = .maskCommand
+        let vDown = CGEvent(keyboardEventSource: src, virtualKey: vKey, keyDown: true)
+        vDown?.flags = .maskCommand
+        let vUp = CGEvent(keyboardEventSource: src, virtualKey: vKey, keyDown: false)
+        vUp?.flags = .maskCommand
+        let commandUp = CGEvent(keyboardEventSource: src, virtualKey: commandKey, keyDown: false)
+        commandUp?.flags = []
+
+        guard let commandDown, let vDown, let vUp, let commandUp else { return }
+
+        for event in [commandDown, vDown, vUp, commandUp] {
+            event.postToPid(targetPID)
+        }
         ClipboardSoundPlayer.playPaste()
+    }
+
+    private func ensureAccessibilityPermissionForPaste() -> Bool {
+        if AXIsProcessTrusted() {
+            return true
+        }
+
+        if !hasRequestedAccessibilityPastePermission {
+            hasRequestedAccessibilityPastePermission = true
+            let options = [
+                kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true
+            ] as CFDictionary
+            _ = AXIsProcessTrustedWithOptions(options)
+        }
+        return false
     }
 
     @objc func windowDidResignKey(_ notification: Notification) {
