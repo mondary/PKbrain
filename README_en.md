@@ -72,6 +72,7 @@
 - Data operations:
   - import/export
   - duplicate/backup archiving
+  - automatic backups to a chosen folder, on a configurable interval, with timestamped snapshots
   - open storage folder in Finder
 - Internationalization:
   - localized resources
@@ -128,6 +129,7 @@
 - Shortcut preferences (modifier + key).
 - Inline calculator on/off.
 - Clipboard drawer position.
+- Automatic backups to a chosen folder, with a configurable interval.
 
 ## 🧾 Commands
 - `./src/run-dev.sh`: build + package + run

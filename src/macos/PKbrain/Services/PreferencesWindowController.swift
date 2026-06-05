@@ -3,15 +3,23 @@ import SwiftUI
 
 final class PreferencesWindowController: NSWindowController, NSWindowDelegate {
     private let onLanguageChanged: () -> Void
+    private let onRunBackupNow: () -> Void
 
-    init(settings: AppSettings, storageURL: URL, onLanguageChanged: @escaping () -> Void) {
+    init(
+        settings: AppSettings,
+        storageURL: URL,
+        onLanguageChanged: @escaping () -> Void,
+        onRunBackupNow: @escaping () -> Void
+    ) {
         self.onLanguageChanged = onLanguageChanged
+        self.onRunBackupNow = onRunBackupNow
 
         let rootView = PreferencesView(
             settings: settings,
             storageURL: storageURL,
             onClose: {},
-            onLanguageChanged: onLanguageChanged
+            onLanguageChanged: onLanguageChanged,
+            onRunBackupNow: onRunBackupNow
         )
 
         let hostingController = NSHostingController(rootView: rootView)
@@ -34,7 +42,8 @@ final class PreferencesWindowController: NSWindowController, NSWindowDelegate {
             settings: settings,
             storageURL: storageURL,
             onClose: { [weak window] in window?.orderOut(nil) },
-            onLanguageChanged: onLanguageChanged
+            onLanguageChanged: onLanguageChanged,
+            onRunBackupNow: onRunBackupNow
         )
     }
 

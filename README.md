@@ -119,6 +119,7 @@
 - Opérations données:
   - import/export
   - archivage doublons/backups
+  - backup automatique vers un dossier choisi, avec intervalle réglable et snapshots horodatés
   - ouverture dossier de stockage dans Finder
 - Internationalisation:
   - ressources localisées
@@ -179,6 +180,7 @@
 - Préférences raccourcis (modificateurs + touche).
 - Activation/désactivation du calcul inline.
 - Position du clipboard drawer.
+- Backup automatique vers un dossier choisi, avec intervalle réglable.
 
 ## 🧾 Commandes
 - `./src/run-dev.sh` : build + package + run

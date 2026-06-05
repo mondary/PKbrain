@@ -6,6 +6,7 @@ struct PreferencesView: View {
     let storageURL: URL
     let onClose: () -> Void
     let onLanguageChanged: () -> Void
+    let onRunBackupNow: () -> Void
 
     @State private var selection: PreferencesSection = .general
 
@@ -38,7 +39,12 @@ struct PreferencesView: View {
                 Group {
                     switch selection {
                     case .general:
-                        GeneralPreferencesView(settings: settings, storageURL: storageURL, onRestartRequested: onLanguageChanged)
+                        GeneralPreferencesView(
+                            settings: settings,
+                            storageURL: storageURL,
+                            onRestartRequested: onLanguageChanged,
+                            onRunBackupNow: onRunBackupNow
+                        )
                     case .shortcuts:
                         ShortcutsPreferencesView(settings: settings)
                     case .about:

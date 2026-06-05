@@ -20,6 +20,9 @@ final class AppSettings: ObservableObject {
         static let clipboardSourceList = "clipboard-source-list"
         static let clipboardCopySound = "clipboard-copy-sound"
         static let clipboardPasteSound = "clipboard-paste-sound"
+        static let autoBackupEnabled = "auto-backup-enabled"
+        static let autoBackupDirectoryPath = "auto-backup-directory-path"
+        static let autoBackupIntervalHours = "auto-backup-interval-hours"
     }
 
     private let defaults: UserDefaults
@@ -97,6 +100,18 @@ final class AppSettings: ObservableObject {
         didSet { defaults.set(clipboardPasteSound.rawValue, forKey: Keys.clipboardPasteSound) }
     }
 
+    @Published var autoBackupEnabled: Bool {
+        didSet { defaults.set(autoBackupEnabled, forKey: Keys.autoBackupEnabled) }
+    }
+
+    @Published var autoBackupDirectoryPath: String {
+        didSet { defaults.set(autoBackupDirectoryPath, forKey: Keys.autoBackupDirectoryPath) }
+    }
+
+    @Published var autoBackupIntervalHours: Int {
+        didSet { defaults.set(max(1, autoBackupIntervalHours), forKey: Keys.autoBackupIntervalHours) }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         defaults.register(defaults: [
@@ -115,7 +130,10 @@ final class AppSettings: ObservableObject {
             Keys.clipboardMaxAgeDays: 365,
             Keys.clipboardSourceMode: ClipboardSourceMode.allowAll.rawValue,
             Keys.clipboardCopySound: ClipboardFeedbackSound.pop.rawValue,
-            Keys.clipboardPasteSound: ClipboardFeedbackSound.tink.rawValue
+            Keys.clipboardPasteSound: ClipboardFeedbackSound.tink.rawValue,
+            Keys.autoBackupEnabled: false,
+            Keys.autoBackupDirectoryPath: "",
+            Keys.autoBackupIntervalHours: 24
         ])
 
         scribblyModeActive = defaults.bool(forKey: Keys.scribblyModeActive)
@@ -149,6 +167,9 @@ final class AppSettings: ObservableObject {
         clipboardCopySound = ClipboardFeedbackSound(rawValue: copySoundRaw) ?? .pop
         let pasteSoundRaw = defaults.string(forKey: Keys.clipboardPasteSound) ?? ClipboardFeedbackSound.tink.rawValue
         clipboardPasteSound = ClipboardFeedbackSound(rawValue: pasteSoundRaw) ?? .tink
+        autoBackupEnabled = defaults.bool(forKey: Keys.autoBackupEnabled)
+        autoBackupDirectoryPath = defaults.string(forKey: Keys.autoBackupDirectoryPath) ?? ""
+        autoBackupIntervalHours = max(1, defaults.integer(forKey: Keys.autoBackupIntervalHours))
 
         applyLanguagePreference()
     }
@@ -206,6 +227,12 @@ final class AppSettings: ObservableObject {
 
     var storageDirectoryURL: URL? {
         let trimmed = storageDirectoryPath.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        return URL(fileURLWithPath: trimmed, isDirectory: true)
+    }
+
+    var autoBackupDirectoryURL: URL? {
+        let trimmed = autoBackupDirectoryPath.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
         return URL(fileURLWithPath: trimmed, isDirectory: true)
     }

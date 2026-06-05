@@ -18,6 +18,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var globalHotKeyClipboardWindowFallbackRef: EventHotKeyRef?
     private var globalHotKeyHandlerRef: EventHandlerRef?
     private var lastExternalApplication: NSRunningApplication?
+    private lazy var autoBackupService = AutoBackupService(
+        settings: settings,
+        sourceDirectoryProvider: { [weak self] in self?.manager.storageURL.deletingLastPathComponent() },
+        prepareForBackup: { [weak self] in
+            self?.manager.saveNow()
+            self?.clipboard.saveNow()
+        }
+    )
     private lazy var clipboard = ClipboardManager(
         persistence: ClipboardPersistence(baseDirectory: manager.storageURL.deletingLastPathComponent())
     )
@@ -33,6 +41,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         registerGlobalHotKey()
         donateSpotlightActivities()
         clipboard.start()
+        _ = autoBackupService
         observeActiveApplications()
         NSApp.activate(ignoringOtherApps: true)
     }
@@ -442,7 +451,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 onOpenFinder: { [weak self] in
                     guard let self else { return }
                     NSWorkspace.shared.activateFileViewerSelecting([self.manager.storageURL])
-                }
+                },
+                onRunBackupNow: { [weak self] in self?.autoBackupService.performBackupNow() }
             )
         }
         clipboardWindowController?.showStandardClipboardSettings()
@@ -546,7 +556,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 onOpenFinder: { [weak self] in
                     guard let self else { return }
                     NSWorkspace.shared.activateFileViewerSelecting([self.manager.storageURL])
-                }
+                },
+                onRunBackupNow: { [weak self] in self?.autoBackupService.performBackupNow() }
             )
         }
         clipboardWindowController?.showStandardClipboardWindow()
@@ -562,7 +573,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 onOpenFinder: { [weak self] in
                     guard let self else { return }
                     NSWorkspace.shared.activateFileViewerSelecting([self.manager.storageURL])
-                }
+                },
+                onRunBackupNow: { [weak self] in self?.autoBackupService.performBackupNow() }
             )
         }
         clipboardWindowController?.toggle(

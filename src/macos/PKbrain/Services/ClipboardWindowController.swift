@@ -25,19 +25,22 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
     private var hasRequestedAccessibilityPastePermission = false
     private let onShowPreferences: () -> Void
     private let onOpenFinder: () -> Void
+    private let onRunBackupNow: () -> Void
 
     init(
         manager: NoteManager,
         settings: AppSettings,
         clipboard: ClipboardManager,
         onShowPreferences: @escaping () -> Void,
-        onOpenFinder: @escaping () -> Void
+        onOpenFinder: @escaping () -> Void,
+        onRunBackupNow: @escaping () -> Void
     ) {
         self.manager = manager
         self.settings = settings
         self.clipboard = clipboard
         self.onShowPreferences = onShowPreferences
         self.onOpenFinder = onOpenFinder
+        self.onRunBackupNow = onRunBackupNow
 
         let panel = ClipboardDrawerPanel(
             contentRect: NSRect(x: 0, y: 0, width: 980, height: 380),
@@ -109,7 +112,8 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
                 self?.toggleStandardClipboardWindow()
             },
             onShowPreferences: { [weak self] in self?.onShowPreferences() },
-            onOpenFinder: { [weak self] in self?.onOpenFinder() }
+            onOpenFinder: { [weak self] in self?.onOpenFinder() },
+            onRunBackupNow: { [weak self] in self?.onRunBackupNow() }
         )
     }
 
@@ -250,7 +254,8 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
                 clipboard?.loadURLPreviewImageData(named: name)
             },
             onShowPreferences: { [weak self] in self?.onShowPreferences() },
-            onOpenFinder: { [weak self] in self?.onOpenFinder() }
+            onOpenFinder: { [weak self] in self?.onOpenFinder() },
+            onRunBackupNow: { [weak self] in self?.onRunBackupNow() }
         )
     }
 

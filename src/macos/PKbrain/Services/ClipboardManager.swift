@@ -104,6 +104,11 @@ final class ClipboardManager: ObservableObject {
         scheduleSave()
     }
 
+    func saveNow() {
+        saveWorkItem?.cancel()
+        persistence.save(items)
+    }
+
     func markDrawerPresented() {
         drawerPresentationToken &+= 1
         refreshMissingURLMetadata(limit: 25)

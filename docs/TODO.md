@@ -67,6 +67,7 @@ Status: in progress.
   - dedicated settings sidebar + section-based main panel
   - exit settings via `Esc` and top-left return button
 - [x] Full backup/restore actions available inside PKClipboard settings
+- [x] Automatic full-data backups to a chosen folder with configurable interval
 - [x] Note open/closed state persisted and restored on relaunch
 
 ## Remaining Features

@@ -46,6 +46,7 @@ struct ClipboardView: View {
     let onToggleStandardWindow: () -> Void
     let onShowPreferences: () -> Void
     let onOpenFinder: () -> Void
+    let onRunBackupNow: () -> Void
 
     @State private var query: String = ""
     @State private var selectedSource: SourceFilter = .all
@@ -1151,6 +1152,7 @@ struct ClipboardStandardWindowView: View {
     let onLoadURLPreviewImage: (String) -> Data?
     let onShowPreferences: () -> Void
     let onOpenFinder: () -> Void
+    let onRunBackupNow: () -> Void
 
     @State private var selectedSource: SourceFilter = .all
     @State private var selectedTag: String? = nil
@@ -1183,7 +1185,8 @@ struct ClipboardStandardWindowView: View {
         onLoadFavicon: @escaping (String) -> Data?,
         onLoadURLPreviewImage: @escaping (String) -> Data?,
         onShowPreferences: @escaping () -> Void,
-        onOpenFinder: @escaping () -> Void
+        onOpenFinder: @escaping () -> Void,
+        onRunBackupNow: @escaping () -> Void
     ) {
         self.clipboard = clipboard
         self.settings = settings
@@ -1198,6 +1201,7 @@ struct ClipboardStandardWindowView: View {
         self.onLoadURLPreviewImage = onLoadURLPreviewImage
         self.onShowPreferences = onShowPreferences
         self.onOpenFinder = onOpenFinder
+        self.onRunBackupNow = onRunBackupNow
         self._isSettingsMode = State(initialValue: startsInSettingsMode)
     }
 
@@ -1462,7 +1466,8 @@ struct ClipboardStandardWindowView: View {
                                 alert.messageText = "Restart required"
                                 alert.informativeText = "Please restart PKbrain to apply this change."
                                 alert.runModal()
-                            }
+                            },
+                            onRunBackupNow: { self.onRunBackupNow() }
                         )
                     case .lab:
                         LabSettingsView(storageRootURL: storageRootURL)
@@ -2243,6 +2248,7 @@ private struct GlobalSettingsInClipboardView: View {
     @ObservedObject var settings: AppSettings
     @ObservedObject var clipboard: ClipboardManager
     let storageRootURL: URL
+    let onRunBackupNow: () -> Void
     @State private var section: Section = .general
 
     private enum Section: String, CaseIterable, Identifiable {
@@ -2286,7 +2292,8 @@ private struct GlobalSettingsInClipboardView: View {
                             alert.messageText = "Restart required"
                             alert.informativeText = "Please restart PKbrain to apply this change."
                             alert.runModal()
-                        }
+                        },
+                        onRunBackupNow: { self.onRunBackupNow() }
                     )
                 case .shortcuts:
                     ShortcutsPreferencesView(settings: settings)

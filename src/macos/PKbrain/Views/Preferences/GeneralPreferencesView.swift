@@ -5,6 +5,7 @@ struct GeneralPreferencesView: View {
     @ObservedObject var settings: AppSettings
     let storageURL: URL
     let onRestartRequested: () -> Void
+    let onRunBackupNow: () -> Void
 
     var body: some View {
         ScrollView {
@@ -158,6 +159,45 @@ struct GeneralPreferencesView: View {
                 Text("Backup")
                     .font(.headline)
 
+                VStack(alignment: .leading, spacing: 10) {
+                    Toggle("Enable automatic backups", isOn: $settings.autoBackupEnabled)
+                        .toggleStyle(.switch)
+
+                    HStack(spacing: 10) {
+                        Text("Backup folder")
+                        Spacer()
+                        Text(settings.autoBackupDirectoryURL?.path ?? "No folder selected")
+                            .font(.caption.monospaced())
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                        Button("Choose folder") {
+                            chooseAutoBackupDirectory()
+                        }
+                    }
+
+                    HStack(spacing: 10) {
+                        Text("Backup every")
+                        Stepper(value: $settings.autoBackupIntervalHours, in: 1...168, step: 1) {
+                            Text("\(settings.autoBackupIntervalHours) h")
+                        }
+                    }
+
+                    HStack(spacing: 10) {
+                        Button("Backup now") {
+                            onRunBackupNow()
+                        }
+                        .disabled(!settings.autoBackupEnabled || settings.autoBackupDirectoryURL == nil)
+                        Spacer()
+                    }
+
+                    Text("Automatic backups copy the full PKbrain data folder to the chosen destination on a regular schedule. A timestamped backup folder is created each time, which works well with cloud-synced folders like Google Drive or Dropbox.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Divider()
+
                 HStack(spacing: 10) {
                     Button("Exporter toutes les donnees") { exportFullBackup() }
                     Button("Restaurer une sauvegarde") { importFullBackup() }
@@ -223,6 +263,21 @@ struct GeneralPreferencesView: View {
 
         settings.storageDirectoryPath = url.path
         onRestartRequested()
+    }
+
+    private func chooseAutoBackupDirectory() {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.allowsMultipleSelection = false
+        panel.prompt = "Choose"
+
+        let response = panel.runModal()
+        guard response == .OK, let url = panel.url else {
+            return
+        }
+
+        settings.autoBackupDirectoryPath = url.path
     }
 
     private func exportNotes() {
@@ -340,18 +395,12 @@ struct GeneralPreferencesView: View {
 
         guard panel.runModal() == .OK, let destinationRoot = panel.url else { return }
 
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd-HHmmss"
-        let stamp = formatter.string(from: Date())
-        let backupURL = destinationRoot.appendingPathComponent("PKbrain-backup-\(stamp)", isDirectory: true)
-
         do {
-            let fm = FileManager.default
-            try fm.createDirectory(at: destinationRoot, withIntermediateDirectories: true)
-            if fm.fileExists(atPath: backupURL.path) {
-                try fm.removeItem(at: backupURL)
-            }
-            try fm.copyItem(at: storageDir, to: backupURL)
+            let backupURL = try AutoBackupService.createBackup(
+                sourceDirectory: storageDir,
+                destinationRoot: destinationRoot,
+                prefix: "PKbrain-backup"
+            )
 
             let done = NSAlert()
             done.messageText = "Backup cree"
