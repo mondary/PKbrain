@@ -7,107 +7,159 @@ struct GeneralPreferencesView: View {
     let onRestartRequested: () -> Void
     let onRunBackupNow: () -> Void
 
+    @State private var accessibilityGranted = AccessibilityPermissionHelper.isTrusted()
+    private let statusTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-            // Language Section
-            VStack(alignment: .leading, spacing: 8) {
-                Text(localizedString("language"))
-                    .font(.headline)
-
-                Picker("", selection: $settings.selectedLanguage) {
-                    ForEach(AppLanguage.allCases) { language in
-                        Text(language.displayName).tag(language)
-                    }
-                }
-                .pickerStyle(.segmented)
-            }
-
-            Divider()
-
-            // Storage Section
-            VStack(alignment: .leading, spacing: 8) {
-                Text(localizedString("storage"))
-                    .font(.headline)
-
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(storageURL.deletingLastPathComponent().path)
-                        .font(.caption.monospaced())
-                        .foregroundStyle(.secondary)
-                        .padding(8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(NSColor.controlBackgroundColor))
-                        .cornerRadius(6)
-                        .textSelection(.enabled)
-
-                    HStack {
-                        Button(localizedString("change")) {
-                            chooseStorageDirectory()
+            VStack(alignment: .leading, spacing: 16) {
+                PreferenceSectionCard(
+                    title: localizedString("language"),
+                    subtitle: "Choose the app language.",
+                    systemImage: "globe"
+                ) {
+                    Picker("", selection: $settings.selectedLanguage) {
+                        ForEach(AppLanguage.allCases) { language in
+                            Text(language.displayName).tag(language)
                         }
-
-                        Spacer()
-
-                        Text(localizedString("restart_required"))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
                     }
+                    .pickerStyle(.segmented)
+                }
+
+                accessibilityCard
+                storageCard
+                behaviorCard
+                clipboardCard
+                importExportCard
+                backupCard
+                cleanupCard
+            }
+            .padding(24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onReceive(statusTimer) { _ in
+            accessibilityGranted = AccessibilityPermissionHelper.isTrusted()
+        }
+    }
+
+    private var accessibilityCard: some View {
+        PreferenceSectionCard(
+            title: "Accessibility",
+            subtitle: "Required for clipboard paste automation and global input actions.",
+            systemImage: "accessibility"
+        ) {
+            HStack(spacing: 12) {
+                Image(systemName: accessibilityGranted ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(accessibilityGranted ? Color.green : Color.orange)
+                    .frame(width: 26, height: 26)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(accessibilityGranted ? "Access granted" : "Access not granted")
+                        .font(.subheadline.weight(.medium))
+                    Text("You can ask macOS for the permission again from here.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer(minLength: 0)
+
+                Button("Request again") {
+                    AccessibilityPermissionHelper.requestPermission()
+                }
+                .buttonStyle(.borderedProminent)
+            }
+        }
+    }
+
+    private var storageCard: some View {
+        PreferenceSectionCard(
+            title: localizedString("storage"),
+            subtitle: "Where notes, clips, and assets are stored.",
+            systemImage: "externaldrive"
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(storageURL.deletingLastPathComponent().path)
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.secondary)
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.black.opacity(0.04), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .textSelection(.enabled)
+
+                HStack(spacing: 12) {
+                    Button(localizedString("change")) {
+                        chooseStorageDirectory()
+                    }
+
+                    Spacer()
+
+                    Text(localizedString("restart_required"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
+        }
+    }
 
-            Divider()
-
-            VStack(alignment: .leading, spacing: 10) {
-                Text(localizedString("new_notes"))
-                    .font(.headline)
-
+    private var behaviorCard: some View {
+        PreferenceSectionCard(
+            title: localizedString("new_notes"),
+            subtitle: "Defaults for new sticky notes and typing feedback.",
+            systemImage: "note.text"
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
                 Toggle(localizedString("randomize_new_note_position"), isOn: $settings.randomizeNewNotePosition)
                     .toggleStyle(.switch)
 
                 Text(localizedString("randomize_new_note_position_hint"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-            }
 
-            Divider()
+                Divider()
 
-            VStack(alignment: .leading, spacing: 10) {
-                Text(localizedString("typing_effects"))
-                    .font(.headline)
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(localizedString("typing_effects"))
+                        .font(.subheadline.weight(.medium))
 
-                Picker(localizedString("effect"), selection: $settings.typingEffect) {
-                    ForEach(TypingEffect.allCases) { effect in
-                        Text(effect.displayName).tag(effect)
+                    Picker(localizedString("effect"), selection: $settings.typingEffect) {
+                        ForEach(TypingEffect.allCases) { effect in
+                            Text(effect.displayName).tag(effect)
+                        }
                     }
+                    .pickerStyle(.segmented)
+
+                    Text(localizedString("typing_effects_hint"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .pickerStyle(.segmented)
 
-                Text(localizedString("typing_effects_hint"))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Divider()
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(localizedString("inline_calculations"))
+                        .font(.subheadline.weight(.medium))
+
+                    Toggle(localizedString("show_results_while_typing"), isOn: $settings.inlineCalculations)
+                        .toggleStyle(.switch)
+                    Toggle(localizedString("show_brand_icons_while_typing"), isOn: $settings.inlineBrandIcons)
+                        .toggleStyle(.switch)
+
+                    Text(localizedString("inline_calculations_hint"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
+        }
+    }
 
-            Divider()
-
-            VStack(alignment: .leading, spacing: 10) {
-                Text(localizedString("inline_calculations"))
-                    .font(.headline)
-
-                Toggle(localizedString("show_results_while_typing"), isOn: $settings.inlineCalculations)
-                    .toggleStyle(.switch)
-                Toggle(localizedString("show_brand_icons_while_typing"), isOn: $settings.inlineBrandIcons)
-                    .toggleStyle(.switch)
-
-                Text(localizedString("inline_calculations_hint"))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Divider()
-
-            VStack(alignment: .leading, spacing: 10) {
-                Text(localizedString("clipboard"))
-                    .font(.headline)
-
+    private var clipboardCard: some View {
+        PreferenceSectionCard(
+            title: localizedString("clipboard"),
+            subtitle: "Drawer position and feedback sounds.",
+            systemImage: "clipboard"
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
                 Picker(localizedString("position"), selection: $settings.clipboardDrawerEdge) {
                     Text(localizedString("position_top")).tag(ClipboardDrawerEdge.top)
                     Text(localizedString("position_bottom")).tag(ClipboardDrawerEdge.bottom)
@@ -119,6 +171,8 @@ struct GeneralPreferencesView: View {
                 Text(localizedString("clipboard_position_hint"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                Divider()
 
                 VStack(alignment: .leading, spacing: 8) {
                     soundRow(
@@ -133,14 +187,16 @@ struct GeneralPreferencesView: View {
                     )
                 }
             }
+        }
+    }
 
-            Divider()
-
-            // Import/Export
+    private var importExportCard: some View {
+        PreferenceSectionCard(
+            title: localizedString("import_export"),
+            subtitle: "Move note data in and out of the app.",
+            systemImage: "square.and.arrow.down.on.square"
+        ) {
             VStack(alignment: .leading, spacing: 10) {
-                Text(localizedString("import_export"))
-                    .font(.headline)
-
                 HStack(spacing: 10) {
                     Button(localizedString("export")) { exportNotes() }
                     Button(localizedString("import")) { importNotes() }
@@ -151,50 +207,51 @@ struct GeneralPreferencesView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+        }
+    }
 
-            Divider()
+    private var backupCard: some View {
+        PreferenceSectionCard(
+            title: "Backup",
+            subtitle: "Full-data snapshots, manual restore, and cloud-friendly auto backups.",
+            systemImage: "externaldrive.badge.checkmark"
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
+                Toggle("Enable automatic backups", isOn: $settings.autoBackupEnabled)
+                    .toggleStyle(.switch)
 
-            // Full data backup/restore (notes + clipboard + assets)
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Backup")
-                    .font(.headline)
-
-                VStack(alignment: .leading, spacing: 10) {
-                    Toggle("Enable automatic backups", isOn: $settings.autoBackupEnabled)
-                        .toggleStyle(.switch)
-
-                    HStack(spacing: 10) {
-                        Text("Backup folder")
-                        Spacer()
-                        Text(settings.autoBackupDirectoryURL?.path ?? "No folder selected")
-                            .font(.caption.monospaced())
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                        Button("Choose folder") {
-                            chooseAutoBackupDirectory()
-                        }
-                    }
-
-                    HStack(spacing: 10) {
-                        Text("Backup every")
-                        Stepper(value: $settings.autoBackupIntervalHours, in: 1...168, step: 1) {
-                            Text("\(settings.autoBackupIntervalHours) h")
-                        }
-                    }
-
-                    HStack(spacing: 10) {
-                        Button("Backup now") {
-                            onRunBackupNow()
-                        }
-                        .disabled(!settings.autoBackupEnabled || settings.autoBackupDirectoryURL == nil)
-                        Spacer()
-                    }
-
-                    Text("Automatic backups copy the full PKbrain data folder to the chosen destination on a regular schedule. A timestamped backup folder is created each time, which works well with cloud-synced folders like Google Drive or Dropbox.")
-                        .font(.caption)
+                HStack(spacing: 10) {
+                    Text("Backup folder")
+                    Spacer()
+                    Text(settings.autoBackupDirectoryURL?.path ?? "No folder selected")
+                        .font(.caption.monospaced())
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Button("Choose folder") {
+                        chooseAutoBackupDirectory()
+                    }
                 }
+
+                HStack(spacing: 10) {
+                    Text("Backup every")
+                    Stepper(value: $settings.autoBackupIntervalHours, in: 1...168, step: 1) {
+                        Text("\(settings.autoBackupIntervalHours) h")
+                    }
+                }
+
+                HStack(spacing: 10) {
+                    Button("Backup now") {
+                        onRunBackupNow()
+                    }
+                    .disabled(!settings.autoBackupEnabled || settings.autoBackupDirectoryURL == nil)
+
+                    Spacer()
+                }
+
+                Text("Automatic backups copy the full PKbrain data folder to the chosen destination on a regular schedule. A timestamped backup folder is created each time, which works well with cloud-synced folders like Google Drive or Dropbox.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
                 Divider()
 
@@ -208,13 +265,16 @@ struct GeneralPreferencesView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+        }
+    }
 
-            Divider()
-
+    private var cleanupCard: some View {
+        PreferenceSectionCard(
+            title: localizedString("cleanup"),
+            subtitle: "Archive legacy folders and old backup files.",
+            systemImage: "archivebox"
+        ) {
             VStack(alignment: .leading, spacing: 10) {
-                Text(localizedString("cleanup"))
-                    .font(.headline)
-
                 Button(localizedString("archive_legacy_backups")) {
                     archiveLegacyBackups()
                 }
@@ -223,11 +283,7 @@ struct GeneralPreferencesView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
-
-            }
-            .padding(24)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func soundRow(title: String, selection: Binding<ClipboardFeedbackSound>, testAction: @escaping () -> Void) -> some View {

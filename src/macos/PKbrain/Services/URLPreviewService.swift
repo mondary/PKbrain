@@ -62,8 +62,7 @@ final class URLPreviewService {
             if contentType.contains("image/") {
                 metadata = URLMetadata(title: url.lastPathComponent, description: nil, faviconData: data, imageData: data)
             } else if contentType.contains("text/html") || contentType.contains("application/xhtml+xml") {
-                let encoding = response.textEncodingName.flatMap { String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding($0 as CFString))) } ?? .utf8
-                guard let html = String(data: data, encoding: encoding) else {
+                guard let html = decodeHTML(data: data, response: response) else {
                     return nil
                 }
 
@@ -100,6 +99,32 @@ final class URLPreviewService {
         } catch {
             return nil
         }
+    }
+
+    private func decodeHTML(data: Data, response: URLResponse) -> String? {
+        // Prefer UTF-8 first because many modern sites send UTF-8 bytes even when
+        // the transport headers are absent, stale, or misleading.
+        if let utf8 = String(data: data, encoding: .utf8) {
+            return utf8
+        }
+
+        if let encodingName = response.textEncodingName
+        {
+            let cfEncoding = CFStringConvertIANACharSetNameToEncoding(encodingName as CFString)
+            if cfEncoding != kCFStringEncodingInvalidId {
+                let encoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(cfEncoding))
+                if let decoded = String(data: data, encoding: encoding) {
+                    return decoded
+                }
+            }
+        }
+
+        // Last resort for legacy sites.
+        if let latin1 = String(data: data, encoding: .isoLatin1) {
+            return latin1
+        }
+
+        return String(data: data, encoding: .windowsCP1252)
     }
 
     private func extractTitle(from html: String) -> String? {

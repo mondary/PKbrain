@@ -55,8 +55,8 @@
   - filtres par source, favoris et récent
   - pins, lock, suppression item par item
   - navigation clavier complète
-  - `Enter` colle dans la dernière app externe active
-  - collage direct depuis le drawer et la fenêtre standard `PKClipboard`
+  - `Enter` et `Cmd+V` collent la carte sélectionnée dans la dernière app externe active
+  - collage direct validé depuis le drawer et la fenêtre standard `PKClipboard`
   - restauration fiable de l'app cible avant injection de `Cmd+V`
   - `Cmd+Enter` convertit l'item en note
   - aperçu image complet sans crop + lightbox
@@ -85,6 +85,7 @@
   - raccourcis visuels limités aux 9 premières tuiles (`⌘1` ... `⌘9`)
   - navigation clavier activée (flèches + Entrée)
   - `Enter` copie puis colle la carte sélectionnée dans la dernière app externe active
+  - fermeture/masquage automatique de `PKClipboard` avant collage pour préserver la cible
   - `Esc` ferme la fenêtre standard
   - pagination fonctionnelle avec pages cliquables
  - nombre d'items par page dynamique selon la taille visible de la grille
@@ -160,7 +161,8 @@
 - Toggle: `Cmd+Shift+V`
 - Ouvrir `PKClipboard` (fenêtre standard): `Cmd+Option+V`
 - Navigation: flèches gauche/droite
-- `Enter`: copie puis colle dans la dernière app externe active + ferme le drawer
+- `Enter`: copie puis colle dans la dernière app externe active + ferme le drawer ou masque `PKClipboard`
+- `Cmd+V`: copie puis colle directement la carte sélectionnée vers la dernière app externe active
 - `Cmd+C`: copie la carte sélectionnée vers le presse-papier système
 - Clic droit sur carte: épingler, verrouiller, copier, convertir en note ou supprimer
 - badges raccourcis visibles sur les 9 premières cartes (`⌘1...⌘9`)

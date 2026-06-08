@@ -53,8 +53,8 @@
   - source, pinned, and recent filters
   - pins, lock, per-item delete
   - full keyboard navigation
-  - `Enter` pastes into the last active external app
-  - direct paste from both the drawer and the standard `PKClipboard` window
+  - `Enter` and `Cmd+V` paste the selected card into the last active external app
+  - direct paste verified from both the drawer and the standard `PKClipboard` window
   - reliable target-app restoration before injecting `Cmd+V`
   - `Cmd+Enter` converts the item to a note
   - full image preview without crop + lightbox
@@ -111,7 +111,8 @@
 - Toggle: `Cmd+Shift+V`
 - Open `PKClipboard` (standard window): `Cmd+Option+V`
 - Navigation: left/right arrows
-- `Enter`: copy, paste into the last active external app, and close the drawer
+- `Enter`: copy, paste into the last active external app, and close the drawer or hide `PKClipboard`
+- `Cmd+V`: copy and paste the selected card directly into the last active external app
 - `Cmd+C`: copy the selected card to the system clipboard
 - Right-click a card: pin, lock, copy, convert to note, or delete
 - `Cmd+Enter`: convert to note

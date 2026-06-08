@@ -50,6 +50,7 @@
 "new_sticky_note" = "Nouveau PKsticky";
 "delete_sticky_note" = "Supprimer le PKsticky";
 "close_note_window" = "Fermer la fenêtre de note";
+"bold" = "Gras";
 "toggle_list" = "Activer/désactiver la liste";
 "toggle_monospace" = "Activer/désactiver monospace";
 "zoom_in" = "Zoom avant";

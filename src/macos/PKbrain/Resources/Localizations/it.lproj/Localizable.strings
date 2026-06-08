@@ -50,6 +50,7 @@
 "new_sticky_note" = "Nuova nota adesiva";
 "delete_sticky_note" = "Elimina nota adesiva";
 "close_note_window" = "Chiudi finestra nota";
+"bold" = "Grassetto";
 "toggle_list" = "Attiva/disattiva lista";
 "toggle_monospace" = "Attiva/disattiva monospace";
 "zoom_in" = "Zoom avanti";

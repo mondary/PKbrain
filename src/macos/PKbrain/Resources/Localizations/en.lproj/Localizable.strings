@@ -50,6 +50,7 @@
 "new_sticky_note" = "New PKsticky";
 "delete_sticky_note" = "Delete PKsticky";
 "close_note_window" = "Close note window";
+"bold" = "Bold";
 "toggle_list" = "Toggle list";
 "toggle_monospace" = "Toggle monospace";
 "zoom_in" = "Zoom in";

@@ -50,6 +50,7 @@
 "new_sticky_note" = "Neue Haftnotiz";
 "delete_sticky_note" = "Haftnotiz löschen";
 "close_note_window" = "Notizfenster schließen";
+"bold" = "Fett";
 "toggle_list" = "Liste umschalten";
 "toggle_monospace" = "Monospace umschalten";
 "zoom_in" = "Vergrößern";

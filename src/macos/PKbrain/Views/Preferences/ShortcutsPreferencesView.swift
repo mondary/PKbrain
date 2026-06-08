@@ -20,7 +20,6 @@ struct ShortcutsPreferencesView: View {
         [
             .closeNoteWindow,
             .deleteStickyNote,
-            .toggleList,
             .emojiSymbols,
             .toggleMonospace,
             .zoomIn,
@@ -32,28 +31,35 @@ struct ShortcutsPreferencesView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                shortcutSection(localizedString("shortcut_group_app"), actions: appActions)
-                shortcutSection(localizedString("shortcut_group_note"), actions: noteActions)
+                PreferenceSectionCard(
+                    title: localizedString("shortcut_group_app"),
+                    subtitle: "Global commands that work from anywhere.",
+                    systemImage: "command"
+                ) {
+                    shortcutRows(actions: appActions)
+                }
+
+                PreferenceSectionCard(
+                    title: localizedString("shortcut_group_note"),
+                    subtitle: "Commands that apply to the current sticky note.",
+                    systemImage: "note.text"
+                ) {
+                    shortcutRows(actions: noteActions)
+                }
             }
             .padding(24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func shortcutSection(_ title: String, actions: [ShortcutAction]) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(title)
-                .font(.headline)
-
-            VStack(spacing: 0) {
-                ForEach(actions) { action in
-                    ShortcutRow(settings: settings, action: action)
-                    if action != actions.last {
-                        Divider()
-                    }
+    private func shortcutRows(actions: [ShortcutAction]) -> some View {
+        VStack(spacing: 0) {
+            ForEach(actions) { action in
+                ShortcutRow(settings: settings, action: action)
+                if action != actions.last {
+                    Divider()
                 }
             }
-            .background(Color(NSColor.controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
     }
 }
@@ -66,7 +72,7 @@ private struct ShortcutRow: View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(action.title)
-                    .font(.body)
+                    .font(.body.weight(.medium))
                 Text(settings.shortcut(for: action).displayValue)
                     .font(.caption.monospaced())
                     .foregroundStyle(.secondary)
@@ -94,6 +100,7 @@ private struct ShortcutRow: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
+        .background(Color.black.opacity(0.01))
     }
 
     private var modifierBinding: Binding<ShortcutModifierPreset> {

@@ -170,7 +170,9 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
-    func showStandardClipboardWindow() {
+    func showStandardClipboardWindow(targetApp: NSRunningApplication? = nil) {
+        rememberPasteTarget(targetApp)
+
         if let standardWindow = standardWindowController?.window {
             if standardStartsInSettingsMode {
                 let host = NSHostingController(rootView: makeStandardClipboardWindowView(startInSettings: true))
@@ -280,7 +282,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         } else {
             // Remember the app/window that had the insertion cursor before the
             // drawer opened. This must happen before PKbrain activates the panel.
-            lastFrontmostApp = targetApp ?? NSWorkspace.shared.frontmostApplication
+            rememberPasteTarget(targetApp ?? NSWorkspace.shared.frontmostApplication)
             anchorWindow = targetWindow
             rememberFocus(targetWindow: targetWindow, targetResponder: targetResponder, excluding: window)
             isClipboardViewAtDefaultContext = true
@@ -288,6 +290,14 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
             clipboard.markDrawerPresented()
             presentAnimated()
         }
+    }
+
+    private func rememberPasteTarget(_ app: NSRunningApplication?) {
+        guard let app,
+              app.processIdentifier != ProcessInfo.processInfo.processIdentifier,
+              !app.isTerminated
+        else { return }
+        lastFrontmostApp = app
     }
 
     private func rememberFocus(targetWindow: NSWindow?, targetResponder: NSResponder?, excluding clipboardWindow: NSWindow) {
@@ -421,6 +431,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         let targetPID = app.processIdentifier
         window?.orderOut(nil)
         window?.alphaValue = 1
+        standardWindowController?.window?.orderOut(nil)
 
         bringTargetToFront(app: app)
 
@@ -460,10 +471,9 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
                 self.restoreLastPKbrainFocus()
             } else {
                 // Browser/web apps such as Gmail usually require a normal HID
-                // Cmd+V after the app is frontmost; posting directly to PID can
-                // miss the focused web view.
+                // Cmd+V after the app is frontmost to reach the focused web view.
             }
-            self.postCommandV(targetPID: targetPID)
+            self.postCommandV()
         }
     }
 
@@ -475,11 +485,12 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
-    private func postCommandV(targetPID: pid_t) {
+    private func postCommandV() {
         // Best-effort: simulate Cmd+V. This typically requires Accessibility permission.
         guard ensureAccessibilityPermissionForPaste() else { return }
 
         let src = CGEventSource(stateID: .combinedSessionState)
+        src?.localEventsSuppressionInterval = 0
         let commandKey = CGKeyCode(kVK_Command)
         let vKey = CGKeyCode(kVK_ANSI_V)
         let commandDown = CGEvent(keyboardEventSource: src, virtualKey: commandKey, keyDown: true)
@@ -494,22 +505,19 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         guard let commandDown, let vDown, let vUp, let commandUp else { return }
 
         for event in [commandDown, vDown, vUp, commandUp] {
-            event.postToPid(targetPID)
+            event.post(tap: .cghidEventTap)
         }
         ClipboardSoundPlayer.playPaste()
     }
 
     private func ensureAccessibilityPermissionForPaste() -> Bool {
-        if AXIsProcessTrusted() {
+        if AccessibilityPermissionHelper.isTrusted() {
             return true
         }
 
         if !hasRequestedAccessibilityPastePermission {
             hasRequestedAccessibilityPastePermission = true
-            let options = [
-                kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true
-            ] as CFDictionary
-            _ = AXIsProcessTrustedWithOptions(options)
+            AccessibilityPermissionHelper.requestPermission()
         }
         return false
     }

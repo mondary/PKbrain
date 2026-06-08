@@ -21,6 +21,7 @@ Status: in progress.
 - [x] Clipboard windows: hide note windows on open to prevent overlap/focus conflicts
 - [x] Clipboard drawer panel: key/main focus enabled to prevent split typing
 - [x] Clipboard drawer + PKClipboard: `Cmd+C` copies selected card to system pasteboard
+- [x] Clipboard drawer + PKClipboard: `Enter` and `Cmd+V` paste selected card into the previous external app
 - [x] Shortcut added for PKClipboard standard window (`Cmd+Option+V`)
 - [x] Drawer: shortcut badges restored on first 9 cards (`⌘1...⌘9`)
 - [x] Drawer categories simplified to `All / Images / Text / URL` with icon pills
@@ -181,6 +182,6 @@ These are feature checklists from the 4 sources you cited, mapped into our TODO.
 - [ ] Collections (categorized groups; collection items don't expire) citeturn0search0
 - [ ] Categorical search citeturn0search0
 - [ ] Security: encryption + optional end-to-end encryption citeturn0search0
-- [ ] Smart paste (paste directly into apps) citeturn0search0
+- [x] Smart paste (paste directly into apps) citeturn0search0
 - [ ] Titles/descriptions on clips citeturn0search0
 - [ ] Customization/theming + drag&drop + extensive keyboard shortcuts citeturn0search0

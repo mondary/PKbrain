@@ -50,11 +50,11 @@ struct ClipboardView: View {
 
     @State private var query: String = ""
     @State private var selectedSource: SourceFilter = .all
+    @State private var kind: ClipboardManager.Query.KindFilter = .all
     @State private var selectedTag: String? = nil
     @State private var selectedID: UUID?
     @State private var noteTags: [UUID: [String]] = [:]
     private let deckScale: CGFloat = 0.82
-    @State private var kind: ClipboardManager.Query.KindFilter = .all
     @State private var pinnedOnly: Bool = false
     @State private var recentOnly: Bool = false
     @State private var recentMinutes: Int = 60
@@ -660,16 +660,6 @@ struct ClipboardView: View {
             .background(Color.black.opacity(0.05))
             .clipShape(Capsule())
 
-            Picker("", selection: $kind) {
-                Text(localizedString("filter_all")).tag(ClipboardManager.Query.KindFilter.all)
-                Text(localizedString("filter_text")).tag(ClipboardManager.Query.KindFilter.text)
-                Text(localizedString("filter_url")).tag(ClipboardManager.Query.KindFilter.url)
-                Text(localizedString("filter_image")).tag(ClipboardManager.Query.KindFilter.image)
-                Text(localizedString("filter_files")).tag(ClipboardManager.Query.KindFilter.file)
-                Text(localizedString("filter_color")).tag(ClipboardManager.Query.KindFilter.color)
-            }
-            .frame(width: 160)
-
             Spacer()
 
             Button(action: onShowPreferences) {
@@ -897,6 +887,39 @@ struct ClipboardView: View {
                     metadataImageName: nil
                 )
                 onCopyItem(item)
+            }
+            return true
+        }
+
+        // Cmd+V pastes the selected clipboard card into the app that opened the drawer.
+        if event.modifierFlags.contains(.command),
+           event.charactersIgnoringModifiers?.lowercased() == "v"
+        {
+            guard let id = selectedID, let entry = entries.first(where: { $0.id == id }) else { return true }
+            switch entry {
+            case .clipboard(let item):
+                onCopyItem(item)
+                onPaste()
+            case .note(let note):
+                let item = ClipboardManager.Item(
+                    id: UUID(),
+                    createdAt: Date(),
+                    sourceBundleID: nil,
+                    sourceAppName: nil,
+                    kind: .text,
+                    previewText: note.content,
+                    payload: .text(note.content),
+                    isPinned: false,
+                    isLocked: false,
+                    isTrashed: false,
+                    tags: [],
+                    metadataTitle: note.title.isEmpty ? nil : note.title,
+                    metadataDescription: nil,
+                    metadataFaviconName: nil,
+                    metadataImageName: nil
+                )
+                onCopyItem(item)
+                onPaste()
             }
             return true
         }
@@ -1155,6 +1178,7 @@ struct ClipboardStandardWindowView: View {
     let onRunBackupNow: () -> Void
 
     @State private var selectedSource: SourceFilter = .all
+    @State private var kind: ClipboardManager.Query.KindFilter = .all
     @State private var selectedTag: String? = nil
     @State private var selectedID: UUID?
     @State private var noteTags: [UUID: [String]] = [:]
@@ -1376,6 +1400,58 @@ struct ClipboardStandardWindowView: View {
                     }
 
                     if !isSidebarCollapsed {
+                        sectionTitle("Types")
+                    }
+                    sidebarButton(
+                        title: localizedString("filter_all"),
+                        systemImage: "square.grid.2x2",
+                        isSelected: kind == .all
+                    ) {
+                        kind = .all
+                        currentPage = 1
+                    }
+                    sidebarButton(
+                        title: localizedString("filter_text"),
+                        systemImage: "text.alignleft",
+                        isSelected: kind == .text
+                    ) {
+                        kind = .text
+                        currentPage = 1
+                    }
+                    sidebarButton(
+                        title: localizedString("filter_url"),
+                        systemImage: "link",
+                        isSelected: kind == .url
+                    ) {
+                        kind = .url
+                        currentPage = 1
+                    }
+                    sidebarButton(
+                        title: localizedString("filter_image"),
+                        systemImage: "photo",
+                        isSelected: kind == .image
+                    ) {
+                        kind = .image
+                        currentPage = 1
+                    }
+                    sidebarButton(
+                        title: localizedString("filter_files"),
+                        systemImage: "doc",
+                        isSelected: kind == .file
+                    ) {
+                        kind = .file
+                        currentPage = 1
+                    }
+                    sidebarButton(
+                        title: localizedString("filter_color"),
+                        systemImage: "paintpalette",
+                        isSelected: kind == .color
+                    ) {
+                        kind = .color
+                        currentPage = 1
+                    }
+
+                    if !isSidebarCollapsed {
                         sectionTitle("Tags")
                     }
                     ForEach(allTagItems, id: \.name) { tag in
@@ -1587,8 +1663,6 @@ struct ClipboardStandardWindowView: View {
             .help("Settings")
 
             if !isSettingsMode {
-                Image(systemName: "line.3.horizontal.decrease.circle")
-                    .foregroundStyle(.secondary)
                 HStack(spacing: 6) {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(Color(NSColor.tertiaryLabelColor))
@@ -1749,6 +1823,7 @@ struct ClipboardStandardWindowView: View {
 
             let query = ClipboardManager.Query(
                 text: needle,
+                kind: kind,
                 sourceBundleID: sourceBundleID,
                 includeTrashed: selectedSource == .trash
             )
@@ -1761,7 +1836,7 @@ struct ClipboardStandardWindowView: View {
             output.append(contentsOf: clipboardItems.map { ClipboardStandardWindowView.GridEntry.clipboard($0) })
         }
 
-        if selectedSource == .all || selectedSource == .notes {
+        if (selectedSource == .all || selectedSource == .notes), kind == .all || kind == .text {
             let notes = notesProvider().filter { note in
                 guard !needle.isEmpty else { return true }
                 return "\(note.title)\n\(note.content)".lowercased().contains(needle)
@@ -1853,6 +1928,37 @@ struct ClipboardStandardWindowView: View {
                         metadataImageName: nil
                     )
                     onCopyItem(item)
+                }
+                return true
+            }
+            return false
+        case 9: // v
+            if event.modifierFlags.contains(.command) {
+                guard let id = selectedID, let entry = entries.first(where: { $0.id == id }) else { return true }
+                switch entry {
+                case .clipboard(let item):
+                    onCopyItem(item)
+                    onPaste()
+                case .note(let note):
+                    let item = ClipboardManager.Item(
+                        id: UUID(),
+                        createdAt: Date(),
+                        sourceBundleID: nil,
+                        sourceAppName: nil,
+                        kind: .text,
+                        previewText: note.content,
+                        payload: .text(note.content),
+                        isPinned: false,
+                        isLocked: false,
+                        isTrashed: false,
+                        tags: [],
+                        metadataTitle: note.title.isEmpty ? nil : note.title,
+                        metadataDescription: nil,
+                        metadataFaviconName: nil,
+                        metadataImageName: nil
+                    )
+                    onCopyItem(item)
+                    onPaste()
                 }
                 return true
             }

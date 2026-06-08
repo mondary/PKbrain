@@ -420,9 +420,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     targetResponder: firstResponderBeforeHandling
                 )
             case 4:
-                self.showClipboardWindow(nil)
+                self.showClipboardWindow(targetApp: self.clipboardTargetApp(frontmostAppBeforeHandling))
             case 5:
-                self.showClipboardWindow(nil)
+                self.showClipboardWindow(targetApp: self.clipboardTargetApp(frontmostAppBeforeHandling))
             default:
                 break
             }
@@ -547,6 +547,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func showClipboardWindow(_ sender: Any?) {
+        showClipboardWindow(targetApp: clipboardTargetApp(NSWorkspace.shared.frontmostApplication))
+    }
+
+    private func showClipboardWindow(targetApp: NSRunningApplication?) {
         if clipboardWindowController == nil {
             clipboardWindowController = ClipboardWindowController(
                 manager: manager,
@@ -560,7 +564,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 onRunBackupNow: { [weak self] in self?.autoBackupService.performBackupNow() }
             )
         }
-        clipboardWindowController?.showStandardClipboardWindow()
+        clipboardWindowController?.showStandardClipboardWindow(targetApp: targetApp)
     }
 
     private func showClipboard(targetApp: NSRunningApplication?, targetWindow: NSWindow?, targetResponder: NSResponder?) {
@@ -659,7 +663,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         editMenu.addItem(responderItem(localizedString("paste"), action: #selector(NSText.paste(_:)), key: "v"))
         editMenu.addItem(responderItem(localizedString("select_all"), action: #selector(NSText.selectAll(_:)), key: "a"))
         editMenu.addItem(.separator())
-        editMenu.addItem(menuItem(localizedString("toggle_list"), action: #selector(toggleCurrentList(_:)), shortcut: .toggleList))
+        editMenu.addItem(responderItem(localizedString("bold"), action: Selector(("toggleBoldface:")), key: "b"))
+        editMenu.addItem(.separator())
+        editMenu.addItem(menuItem(localizedString("toggle_list"), action: #selector(toggleCurrentList(_:)), key: ""))
         editMenu.addItem(menuItem(localizedString("emoji_symbols"), action: #selector(showCharacterPalette(_:)), shortcut: .emojiSymbols))
 
         let noteMenuItem = NSMenuItem()

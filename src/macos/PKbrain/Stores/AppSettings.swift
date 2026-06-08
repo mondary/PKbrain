@@ -171,6 +171,8 @@ final class AppSettings: ObservableObject {
         autoBackupDirectoryPath = defaults.string(forKey: Keys.autoBackupDirectoryPath) ?? ""
         autoBackupIntervalHours = max(1, defaults.integer(forKey: Keys.autoBackupIntervalHours))
 
+        migrateReservedShortcutsIfNeeded(shortcuts: &shortcuts)
+
         applyLanguagePreference()
     }
 
@@ -191,6 +193,7 @@ final class AppSettings: ObservableObject {
     }
 
     func setShortcut(_ shortcut: KeyboardShortcutSetting, for action: ShortcutAction) {
+        guard !Self.isReservedShortcut(shortcut) else { return }
         shortcuts[action] = shortcut
         saveShortcuts()
     }
@@ -223,6 +226,24 @@ final class AppSettings: ObservableObject {
         }
 
         return shortcuts
+    }
+
+    private static func isReservedShortcut(_ shortcut: KeyboardShortcutSetting) -> Bool {
+        shortcut.key.lowercased() == "l" && (shortcut.modifier == .shift || shortcut.modifier == .commandShift)
+    }
+
+    private func migrateReservedShortcutsIfNeeded(shortcuts: inout [ShortcutAction: KeyboardShortcutSetting]) {
+        var didMigrate = false
+
+        for action in shortcuts.keys {
+            guard let current = shortcuts[action], Self.isReservedShortcut(current) else { continue }
+            shortcuts[action] = action.defaultShortcut
+            didMigrate = true
+        }
+
+        if didMigrate {
+            saveShortcuts()
+        }
     }
 
     var storageDirectoryURL: URL? {

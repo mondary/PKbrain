@@ -31,7 +31,7 @@ struct NoteTextView: NSViewRepresentable {
         let textView = NSTextView()
         textView.delegate = context.coordinator
         textView.string = text
-        textView.isRichText = false
+        textView.isRichText = true
         textView.importsGraphics = false
         textView.allowsUndo = true
         textView.isEditable = isEditable
@@ -98,6 +98,8 @@ struct NoteTextView: NSViewRepresentable {
     }
 
     private func applyStyle(to textView: NSTextView) {
+        let baseTypingFont = font
+        let typingFont = currentTypingFont(whenRebasedOn: baseTypingFont, in: textView)
         textView.font = font
         textView.textColor = textColor
         textView.insertionPointColor = insertionPointColor
@@ -105,9 +107,22 @@ struct NoteTextView: NSViewRepresentable {
             .backgroundColor: insertionPointColor.withAlphaComponent(0.22)
         ]
         textView.typingAttributes = [
-            .font: font,
+            .font: typingFont,
             .foregroundColor: textColor
         ]
+    }
+
+    private func currentTypingFont(whenRebasedOn baseFont: NSFont, in textView: NSTextView) -> NSFont {
+        guard let currentFont = textView.typingAttributes[.font] as? NSFont else {
+            return baseFont
+        }
+
+        let traits = currentFont.fontDescriptor.symbolicTraits
+        guard traits.contains(.bold) else {
+            return baseFont
+        }
+
+        return NSFontManager.shared.convert(baseFont, toHaveTrait: .boldFontMask)
     }
 
     final class Coordinator: NSObject, NSTextViewDelegate {
@@ -167,6 +182,10 @@ struct NoteTextView: NSViewRepresentable {
         func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
             if commandSelector == #selector(NSResponder.insertBacktab(_:)) {
                 parent.onShiftTabToTitle()
+                return true
+            }
+            if commandSelector == Selector(("toggleBoldface:")) {
+                toggleBoldface(in: textView)
                 return true
             }
             return false
@@ -442,6 +461,59 @@ struct NoteTextView: NSViewRepresentable {
             isApplyingChange = false
             parent.text = textView.string
             textView.didChangeText()
+        }
+
+        private func toggleBoldface(in textView: NSTextView) {
+            let selectedRange = textView.selectedRange()
+            let storage = textView.textStorage
+
+            if selectedRange.length == 0 {
+                let currentFont = (textView.typingAttributes[.font] as? NSFont) ?? parent.font
+                let toggledFont = fontByTogglingBoldTrait(from: currentFont)
+                var typingAttributes = textView.typingAttributes
+                typingAttributes[.font] = toggledFont
+                textView.typingAttributes = typingAttributes
+                return
+            }
+
+            guard let storage else { return }
+
+            var shouldBold = true
+            storage.enumerateAttribute(.font, in: selectedRange, options: []) { value, _, stop in
+                guard let font = value as? NSFont else { return }
+                if font.fontDescriptor.symbolicTraits.contains(.bold) {
+                    shouldBold = false
+                } else {
+                    shouldBold = true
+                    stop.pointee = true
+                }
+            }
+
+            storage.beginEditing()
+            storage.enumerateAttribute(.font, in: selectedRange, options: []) { value, range, _ in
+                let currentFont = (value as? NSFont) ?? parent.font
+                let newFont = shouldBold
+                    ? fontByAddingBoldTrait(to: currentFont)
+                    : fontByRemovingBoldTrait(from: currentFont)
+                storage.addAttribute(.font, value: newFont, range: range)
+            }
+            storage.endEditing()
+            textView.didChangeText()
+        }
+
+        private func fontByTogglingBoldTrait(from font: NSFont) -> NSFont {
+            if font.fontDescriptor.symbolicTraits.contains(.bold) {
+                return fontByRemovingBoldTrait(from: font)
+            }
+            return fontByAddingBoldTrait(to: font)
+        }
+
+        private func fontByAddingBoldTrait(to font: NSFont) -> NSFont {
+            NSFontManager.shared.convert(font, toHaveTrait: .boldFontMask)
+        }
+
+        private func fontByRemovingBoldTrait(from font: NSFont) -> NSFont {
+            NSFontManager.shared.convert(font, toNotHaveTrait: .boldFontMask)
         }
 
         private func selectedLineRanges(in string: NSString, from start: Int, to end: Int) -> [NSRange] {

@@ -240,7 +240,10 @@ final class ClipboardManager: ObservableObject {
             pasteboard.setString(text, forType: .string)
         case .url(let url):
             pasteboard.clearContents()
-            pasteboard.writeObjects([url as NSURL])
+            let pasteboardItem = NSPasteboardItem()
+            pasteboardItem.setString(url.absoluteString, forType: .string)
+            pasteboardItem.setString(url.absoluteString, forType: .URL)
+            pasteboard.writeObjects([pasteboardItem])
         case .imageData(let data):
             guard let image = NSImage(data: data) else { return }
             pasteboard.clearContents()
