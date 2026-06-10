@@ -125,8 +125,9 @@
   - backup automatique vers un dossier choisi, avec intervalle réglable et snapshots horodatés
   - ouverture dossier de stockage dans Finder
 - Internationalisation:
-  - ressources localisées
-  - changement de langue via préférences
+  - 5 langues: anglais, français, espagnol, allemand, italien
+  - toutes les interfaces traduites (vues, settings, alertes, sidebar, menus contextuels)
+  - changement de langue via préférences, appliqué au redémarrage
 - Gestion fenêtres:
   - comportement natif palette flottante
   - restauration focus fenêtre après palette

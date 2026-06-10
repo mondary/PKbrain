@@ -23,7 +23,7 @@
 "links" = "Collegamenti";
 "original_project" = "Progetto originale";
 "original_project_repo" = "elly-code/jorts";
-"macos_fork" = "fork macOS";
+"macos_fork" = "Fork macOS";
 "macos_fork_repo" = "mondary/PKbrain";
 "support" = "Supporto";
 "original_developer" = "Sviluppatore originale";
@@ -101,7 +101,7 @@
 "import_export" = "Importa / Esporta";
 "export" = "Esporta…";
 "import" = "Importa…";
-"import_export_hint" = "L’importazione sostituisce il file note attuale e richiede un riavvio.";
+"import_export_hint" = "L'importazione sostituisce il file note attuale e richiede un riavvio.";
 "cleanup" = "Pulizia";
 "archive_legacy_backups" = "Archivia cartelle vecchie / backup…";
 "archive_legacy_backups_hint" = "Sposta cartelle vecchie e backup in una cartella Archivio.";
@@ -127,7 +127,6 @@
 "typing_effect_pop" = "Pop";
 "typing_effect_glow" = "Bagliore";
 "create_new_note" = "Crea nuova nota";
-"about_pkbrain" = "Informazioni su PKbrain";
 "about_pkbrain" = "Informazioni su PKbrain";
 "restart_pkbrain" = "Riavvia PKbrain";
 "quit_pkbrain" = "Esci da PKbrain";
@@ -164,6 +163,10 @@
 "show_clipboard_drawer" = "Mostra pannello appunti";
 "show_clipboard_window" = "Mostra finestra appunti";
 "clipboard_capture" = "Acquisizione";
+"clipboard_open_window" = "Apri finestra appunti";
+"clipboard_clear_confirm_title" = "Cancellare la cronologia degli appunti?";
+"clipboard_clear_confirm_message" = "Questo rimuove l'intera cronologia degli appunti.";
+"clipboard_clear_confirm_action" = "Cancella tutto";
 "all_sources" = "Tutte le sorgenti";
 "unknown_source" = "Sconosciuto";
 "convert_to_note" = "Converti in nota";
@@ -173,9 +176,22 @@
 "position_left" = "Sinistra";
 "position_right" = "Destra";
 "clipboard_position_hint" = "Scegli dove appare il pannello degli appunti.";
+"characters" = "caratteri";
+"files" = "file";
+"image" = "Immagine";
+"link" = "Link";
+"filter_all" = "Tutto";
+"filter_text" = "Testo";
+"filter_url" = "URL";
+"filter_image" = "Immagine";
+"filter_files" = "File";
+"filter_color" = "Colore";
+"pinned" = "Fissato";
+"recent" = "Recente";
+"pin" = "Fissa";
+"lock" = "Blocca";
 "insert_emoji" = "Inserisci emoji";
 "change_color" = "Cambia colore";
-"filter_color" = "Colore";
 "history_restore" = "Cronologia (ripristina versioni precedenti)";
 "restore" = "Ripristina";
 "delete" = "Elimina";
@@ -189,3 +205,123 @@
 "apply" = "Applica";
 "empty_note" = "(Nota vuota)";
 "system_monospace" = "Monospace di sistema";
+
+/* Clipboard - precedentemente hardcoded */
+"search" = "Cerca";
+"trash" = "Cestino";
+"resume" = "Riprendi";
+"pause" = "Pausa";
+"cancel" = "Annulla";
+"note" = "Nota";
+"notes" = "Note";
+"back" = "Indietro";
+"tags" = "Tag";
+"application" = "Applicazione";
+"types" = "Tipi";
+"empty_trash" = "Svuota cestino";
+"remove_tag" = "Rimuovi tag: %@";
+"add_tag" = "Tagga: %@";
+"new_tag_dots" = "Nuovo tag…";
+"new_tag" = "Nuovo tag";
+"tag_name" = "Nome del tag:";
+"settings_section_clipboard" = "Appunti";
+"settings_section_drawer" = "Pannello";
+"settings_section_stickies" = "Note adesive";
+"settings_section_data" = "Dati";
+"settings_section_lab" = "Lab";
+"restart_required_message" = "Riavvia PKbrain per applicare questa modifica.";
+"page" = "Pagina";
+"clipboard_settings" = "Impostazioni appunti";
+"capture_active" = "Acquisizione attiva";
+"max_items" = "Elementi massimi";
+"max_age_days" = "Età massima (giorni)";
+"drawer_position" = "Posizione pannello";
+"source_privacy_mode" = "Modalità privacy sorgenti";
+"allow_all" = "Consenti tutto";
+"block_list" = "Lista blocco";
+"allow_list" = "Lista consentiti";
+"apply_list" = "Applica lista";
+"use_current_list" = "Usa lista corrente";
+"data_backup_full" = "Backup dati (cartella PKbrain completa)";
+"export_full_backup" = "Esporta backup completo";
+"restore_full_backup" = "Ripristina backup completo";
+"open_data_folder" = "Apri cartella dati";
+"drawer_settings" = "Pannello";
+"stickies_settings" = "Note adesive";
+"lab_settings" = "Lab";
+"community_plugins" = "Plugin della community (sperimentale)";
+"community_plugins_desc" = "Usa questa sezione per installare e testare plugin creati dalla community.";
+"open_plugins_folder" = "Apri cartella plugin";
+"create_plugin_template" = "Crea modello plugin";
+"pinned_badge" = "Fissato";
+"chars_suffix" = " car.";
+
+/* Impostazioni generali - precedentemente hardcoded */
+"language_hint" = "Scegli la lingua dell'app.";
+"accessibility" = "Accessibilità";
+"accessibility_hint" = "Richiesto per l'automazione dell'incollaggio degli appunti e le azioni globali.";
+"access_granted" = "Accesso concesso";
+"access_not_granted" = "Accesso non concesso";
+"access_hint" = "Puoi richiedere nuovamente l'autorizzazione macOS da qui.";
+"request_again" = "Richiedi di nuovo";
+"storage_hint" = "Dove vengono salvate note, clip e risorse.";
+"new_notes_defaults" = "Valori predefiniti per le nuove note e il feedback di digitazione.";
+"clipboard_settings_hint" = "Posizione del pannello e suoni di feedback.";
+"copy_sound" = "Suono di copia";
+"paste_sound" = "Suono di incollaggio";
+"import_export_hint_2" = "Sposta i dati delle note dentro e fuori dall'app.";
+"backup" = "Backup";
+"backup_hint" = "Snapshot completi, ripristino manuale e backup automatici compatibili con il cloud.";
+"enable_auto_backup" = "Attiva backup automatici";
+"backup_folder" = "Cartella di backup";
+"no_folder_selected" = "Nessuna cartella selezionata";
+"choose_folder" = "Scegli cartella";
+"backup_every" = "Backup ogni";
+"backup_now" = "Crea backup ora";
+"backup_auto_desc" = "I backup automatici copiano la cartella PKbrain completa (note, appunti, tag, risorse) in snapshot con data e ora.";
+"cleanup_hint" = "Archivia cartelle vecchie e file di backup.";
+"test" = "Test";
+"nothing_to_archive" = "Niente da archiviare";
+"nothing_to_archive_msg" = "Nessuna cartella vecchia o file di backup trovato.";
+"archive_confirm_title" = "Archiviare cartelle vecchie e backup?";
+"archive_confirm_msg" = "Le cartelle vecchie e i file di backup saranno spostati in una cartella Archivio.";
+"archive" = "Archivia";
+"archive_created" = "Archivio creato";
+"archive_failed" = "Archiviazione fallita";
+"export_backup" = "Esporta tutti i dati";
+"restore_backup" = "Ripristina un backup";
+"backup_restore_desc" = "Backup/ripristino completo della cartella PKbrain (note, appunti, tag, risorse).";
+"backup_created" = "Backup creato";
+"backup_failed" = "Esportazione backup fallita";
+"invalid_backup" = "Backup non valido";
+"invalid_backup_msg" = "La cartella selezionata non contiene saved_state.json.";
+"restore_confirm_title" = "Ripristinare questo backup?";
+"restore_confirm_msg" = "La cartella corrente sarà archiviata e sostituita dal backup selezionato.";
+"restore_complete" = "Ripristino completato";
+"restore_failed" = "Ripristino fallito";
+"backup_previous_archived" = "Backup precedente archiviato: %@";
+
+/* Vista preferenze */
+"preferences_breadcrumb" = "Preferenze";
+"general_subtitle" = "Comportamento principale e archiviazione";
+"shortcuts_subtitle" = "Tastiera e azioni note";
+"about_subtitle" = "Versione e link del progetto";
+
+/* Scorciatoie */
+"app_shortcuts_subtitle" = "Comandi globali attivi da ovunque.";
+"note_shortcuts_subtitle" = "Comandi applicabili alla nota adesiva corrente.";
+
+/* Informazioni */
+"github_original" = "GitHub (Originale)";
+"github_original_desc" = "Codice sorgente e progetto originale";
+"github_fork" = "GitHub (Fork macOS)";
+"github_fork_desc" = "Codice sorgente di questo fork";
+"kofi_original" = "Ko-fi (Originale)";
+"kofi_original_desc" = "Supporta lo sviluppatore originale";
+"kofi_fork" = "Ko-fi (Fork)";
+"kofi_fork_desc" = "Supporta questo port macOS";
+
+/* Lista note */
+"all_my_notes" = "Tutte le mie note";
+"trash_title" = "Cestino";
+"no_content" = "Nessun contenuto";

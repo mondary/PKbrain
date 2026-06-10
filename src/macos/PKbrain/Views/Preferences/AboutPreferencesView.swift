@@ -104,8 +104,8 @@ struct AboutPreferencesView: View {
 
                     if let url = URL(string: "https://github.com/elly-code/jorts") {
                         LinkButton(
-                            title: "GitHub (Original)",
-                            subtitle: "Source code and upstream project",
+                            title: localizedString("github_original"),
+                            subtitle: localizedString("github_original_desc"),
                             systemImage: "chevron.left.slash.chevron.right",
                             url: url
                         )
@@ -113,8 +113,8 @@ struct AboutPreferencesView: View {
 
                     if let url = URL(string: "https://github.com/mondary/PKbrain") {
                         LinkButton(
-                            title: "GitHub (macOS Fork)",
-                            subtitle: "This fork’s source code",
+                            title: localizedString("github_fork"),
+                            subtitle: localizedString("github_fork_desc"),
                             systemImage: "macwindow",
                             url: url
                         )
@@ -122,8 +122,8 @@ struct AboutPreferencesView: View {
 
                     if let url = URL(string: "https://ko-fi.com/teamcons/tip") {
                         LinkButton(
-                            title: "Ko-fi (Original)",
-                            subtitle: "Support the original developer",
+                            title: localizedString("kofi_original"),
+                            subtitle: localizedString("kofi_original_desc"),
                             systemImage: "cup.and.saucer.fill",
                             url: url
                         )
@@ -131,8 +131,8 @@ struct AboutPreferencesView: View {
 
                     if let url = URL(string: "https://ko-fi.com/pouark") {
                         LinkButton(
-                            title: "Ko-fi (Fork)",
-                            subtitle: "Support this macOS port",
+                            title: localizedString("kofi_fork"),
+                            subtitle: localizedString("kofi_fork_desc"),
                             systemImage: "cup.and.saucer",
                             url: url
                         )

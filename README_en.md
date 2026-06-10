@@ -76,8 +76,9 @@
   - `Data` tab shown by default when opening settings (language, accessibility, storage)
   - open storage folder in Finder
 - Internationalization:
-  - localized resources
-  - runtime language selection in preferences
+  - 5 languages: English, French, Spanish, German, Italian
+  - all interfaces fully translated (views, settings, alerts, sidebar, context menus)
+  - runtime language selection in preferences, applied on restart
 - Window management:
   - native floating command palette behavior
   - focus restoration after closing palette

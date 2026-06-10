@@ -32,7 +32,7 @@ struct NotesListView: View {
     private var header: some View {
         VStack(spacing: 0) {
             HStack {
-                Text(selection == .trash ? "Poubelle" : "Toutes mes notes")
+                Text(selection == .trash ? localizedString("trash_title") : localizedString("all_my_notes"))
                     .font(.title2.weight(.semibold))
 
                 Spacer()
@@ -79,7 +79,7 @@ struct NotesListView: View {
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
 
-            Text(NSLocalizedString("no_notes", bundle: .main, comment: ""))
+            Text(localizedString("no_notes"))
                 .font(.title3)
                 .foregroundColor(.secondary)
 
@@ -149,11 +149,11 @@ struct NoteRow: View {
             swatch.frame(width: 4).cornerRadius(2)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(document.title.isEmpty ? "Untitled" : document.title)
+                Text(document.title.isEmpty ? localizedString("untitled") : document.title)
                     .font(.headline)
                     .foregroundColor(document.theme.foregroundColor)
 
-                Text(document.content.isEmpty ? "No content" : String(document.content.prefix(100)))
+                Text(document.content.isEmpty ? localizedString("no_content") : String(document.content.prefix(100)))
                     .font(.body)
                     .foregroundColor(document.theme.foregroundColor.opacity(0.7))
                     .lineLimit(2)
@@ -190,11 +190,11 @@ struct TrashedNoteRow: View {
             item.note.theme.backgroundColor.frame(width: 4).cornerRadius(2)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(item.note.title.isEmpty ? "Untitled" : item.note.title)
+                Text(item.note.title.isEmpty ? localizedString("untitled") : item.note.title)
                     .font(.headline)
                     .foregroundColor(item.note.theme.foregroundColor)
 
-                Text(item.note.content.isEmpty ? "No content" : String(item.note.content.prefix(100)))
+                Text(item.note.content.isEmpty ? localizedString("no_content") : String(item.note.content.prefix(100)))
                     .font(.body)
                     .foregroundColor(item.note.theme.foregroundColor.opacity(0.7))
                     .lineLimit(2)

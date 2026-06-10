@@ -33,7 +33,7 @@ struct ShortcutsPreferencesView: View {
             VStack(alignment: .leading, spacing: 22) {
                 PreferenceSectionCard(
                     title: localizedString("shortcut_group_app"),
-                    subtitle: "Global commands that work from anywhere.",
+                    subtitle: localizedString("app_shortcuts_subtitle"),
                     systemImage: "command"
                 ) {
                     shortcutRows(actions: appActions)
@@ -41,7 +41,7 @@ struct ShortcutsPreferencesView: View {
 
                 PreferenceSectionCard(
                     title: localizedString("shortcut_group_note"),
-                    subtitle: "Commands that apply to the current sticky note.",
+                    subtitle: localizedString("note_shortcuts_subtitle"),
                     systemImage: "note.text"
                 ) {
                     shortcutRows(actions: noteActions)

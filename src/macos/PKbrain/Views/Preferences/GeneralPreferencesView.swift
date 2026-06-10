@@ -15,7 +15,7 @@ struct GeneralPreferencesView: View {
             VStack(alignment: .leading, spacing: 16) {
                 PreferenceSectionCard(
                     title: localizedString("language"),
-                    subtitle: "Choose the app language.",
+                    subtitle: localizedString("language_hint"),
                     systemImage: "globe"
                 ) {
                     Picker("", selection: $settings.selectedLanguage) {
@@ -44,8 +44,8 @@ struct GeneralPreferencesView: View {
 
     private var accessibilityCard: some View {
         PreferenceSectionCard(
-            title: "Accessibility",
-            subtitle: "Required for clipboard paste automation and global input actions.",
+            title: localizedString("accessibility"),
+            subtitle: localizedString("accessibility_hint"),
             systemImage: "accessibility"
         ) {
             HStack(spacing: 12) {
@@ -55,16 +55,16 @@ struct GeneralPreferencesView: View {
                     .frame(width: 26, height: 26)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(accessibilityGranted ? "Access granted" : "Access not granted")
+                    Text(accessibilityGranted ? localizedString("access_granted") : localizedString("access_not_granted"))
                         .font(.subheadline.weight(.medium))
-                    Text("You can ask macOS for the permission again from here.")
+                    Text(localizedString("access_hint"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 Spacer(minLength: 0)
 
-                Button("Request again") {
+                Button(localizedString("request_again")) {
                     AccessibilityPermissionHelper.requestPermission()
                 }
                 .buttonStyle(.borderedProminent)
@@ -75,7 +75,7 @@ struct GeneralPreferencesView: View {
     private var storageCard: some View {
         PreferenceSectionCard(
             title: localizedString("storage"),
-            subtitle: "Where notes, clips, and assets are stored.",
+            subtitle: localizedString("storage_hint"),
             systemImage: "externaldrive"
         ) {
             VStack(alignment: .leading, spacing: 12) {
@@ -105,7 +105,7 @@ struct GeneralPreferencesView: View {
     private var behaviorCard: some View {
         PreferenceSectionCard(
             title: localizedString("new_notes"),
-            subtitle: "Defaults for new sticky notes and typing feedback.",
+            subtitle: localizedString("new_notes_defaults"),
             systemImage: "note.text"
         ) {
             VStack(alignment: .leading, spacing: 12) {
@@ -156,7 +156,7 @@ struct GeneralPreferencesView: View {
     private var clipboardCard: some View {
         PreferenceSectionCard(
             title: localizedString("clipboard"),
-            subtitle: "Drawer position and feedback sounds.",
+            subtitle: localizedString("clipboard_settings_hint"),
             systemImage: "clipboard"
         ) {
             VStack(alignment: .leading, spacing: 12) {
@@ -176,12 +176,12 @@ struct GeneralPreferencesView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     soundRow(
-                        title: "Copy sound",
+                        title: localizedString("copy_sound"),
                         selection: $settings.clipboardCopySound,
                         testAction: { ClipboardSoundPlayer.play(settings.clipboardCopySound) }
                     )
                     soundRow(
-                        title: "Paste sound",
+                        title: localizedString("paste_sound"),
                         selection: $settings.clipboardPasteSound,
                         testAction: { ClipboardSoundPlayer.play(settings.clipboardPasteSound) }
                     )
@@ -193,7 +193,7 @@ struct GeneralPreferencesView: View {
     private var importExportCard: some View {
         PreferenceSectionCard(
             title: localizedString("import_export"),
-            subtitle: "Move note data in and out of the app.",
+            subtitle: localizedString("import_export_hint_2"),
             systemImage: "square.and.arrow.down.on.square"
         ) {
             VStack(alignment: .leading, spacing: 10) {
@@ -212,36 +212,36 @@ struct GeneralPreferencesView: View {
 
     private var backupCard: some View {
         PreferenceSectionCard(
-            title: "Backup",
-            subtitle: "Full-data snapshots, manual restore, and cloud-friendly auto backups.",
+            title: localizedString("backup"),
+            subtitle: localizedString("backup_hint"),
             systemImage: "externaldrive.badge.checkmark"
         ) {
             VStack(alignment: .leading, spacing: 12) {
-                Toggle("Enable automatic backups", isOn: $settings.autoBackupEnabled)
+                Toggle(localizedString("enable_auto_backup"), isOn: $settings.autoBackupEnabled)
                     .toggleStyle(.switch)
 
                 HStack(spacing: 10) {
-                    Text("Backup folder")
+                    Text(localizedString("backup_folder"))
                     Spacer()
-                    Text(settings.autoBackupDirectoryURL?.path ?? "No folder selected")
+                    Text(settings.autoBackupDirectoryURL?.path ?? localizedString("no_folder_selected"))
                         .font(.caption.monospaced())
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                         .truncationMode(.middle)
-                    Button("Choose folder") {
+                    Button(localizedString("choose_folder")) {
                         chooseAutoBackupDirectory()
                     }
                 }
 
                 HStack(spacing: 10) {
-                    Text("Backup every")
+                    Text(localizedString("backup_every"))
                     Stepper(value: $settings.autoBackupIntervalHours, in: 1...168, step: 1) {
                         Text("\(settings.autoBackupIntervalHours) h")
                     }
                 }
 
                 HStack(spacing: 10) {
-                    Button("Backup now") {
+                    Button(localizedString("backup_now")) {
                         onRunBackupNow()
                     }
                     .disabled(!settings.autoBackupEnabled || settings.autoBackupDirectoryURL == nil)
@@ -249,19 +249,19 @@ struct GeneralPreferencesView: View {
                     Spacer()
                 }
 
-                Text("Automatic backups copy the full PKbrain data folder to the chosen destination on a regular schedule. A timestamped backup folder is created each time, which works well with cloud-synced folders like Google Drive or Dropbox.")
+                Text(localizedString("backup_auto_desc"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
                 Divider()
 
                 HStack(spacing: 10) {
-                    Button("Exporter toutes les donnees") { exportFullBackup() }
-                    Button("Restaurer une sauvegarde") { importFullBackup() }
+                    Button(localizedString("export_backup")) { exportFullBackup() }
+                    Button(localizedString("restore_backup")) { importFullBackup() }
                     Spacer()
                 }
 
-                Text("Sauvegarde/restauration du dossier complet PKbrain (notes, clipboard, tags, assets).")
+                Text(localizedString("backup_restore_desc"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -271,7 +271,7 @@ struct GeneralPreferencesView: View {
     private var cleanupCard: some View {
         PreferenceSectionCard(
             title: localizedString("cleanup"),
-            subtitle: "Archive legacy folders and old backup files.",
+            subtitle: localizedString("cleanup_hint"),
             systemImage: "archivebox"
         ) {
             VStack(alignment: .leading, spacing: 10) {
@@ -298,7 +298,7 @@ struct GeneralPreferencesView: View {
             .labelsHidden()
             .frame(width: 180)
 
-            Button("Test") {
+            Button(localizedString("test")) {
                 testAction()
             }
             .buttonStyle(.bordered)
@@ -326,7 +326,7 @@ struct GeneralPreferencesView: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.prompt = "Choose"
+        panel.prompt = localizedString("choose")
 
         let response = panel.runModal()
         guard response == .OK, let url = panel.url else {
@@ -400,17 +400,17 @@ struct GeneralPreferencesView: View {
         let existing = candidates.filter { FileManager.default.fileExists(atPath: $0.path) }
         guard !existing.isEmpty else {
             let alert = NSAlert()
-            alert.messageText = "Nothing to archive"
-            alert.informativeText = "No legacy folders or backup files were found."
+            alert.messageText = localizedString("nothing_to_archive")
+            alert.informativeText = localizedString("nothing_to_archive_msg")
             alert.runModal()
             return
         }
 
         let alert = NSAlert()
-        alert.messageText = "Archive legacy folders and backups?"
-        alert.informativeText = "This will move legacy folders and saved_state backup files into an Archive folder inside your storage directory."
-        alert.addButton(withTitle: "Archive")
-        alert.addButton(withTitle: "Cancel")
+        alert.messageText = localizedString("archive_confirm_title")
+        alert.informativeText = localizedString("archive_confirm_msg")
+        alert.addButton(withTitle: localizedString("archive"))
+        alert.addButton(withTitle: localizedString("cancel"))
         guard alert.runModal() == .alertFirstButtonReturn else { return }
 
         let fm = FileManager.default
@@ -430,12 +430,12 @@ struct GeneralPreferencesView: View {
             }
 
             let done = NSAlert()
-            done.messageText = "Archive created"
+            done.messageText = localizedString("archive_created")
             done.informativeText = archiveDir.path
             done.runModal()
         } catch {
             let failed = NSAlert()
-            failed.messageText = "Archive failed"
+            failed.messageText = localizedString("archive_failed")
             failed.informativeText = error.localizedDescription
             failed.runModal()
         }
@@ -447,7 +447,7 @@ struct GeneralPreferencesView: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.prompt = "Exporter"
+        panel.prompt = localizedString("export")
 
         guard panel.runModal() == .OK, let destinationRoot = panel.url else { return }
 
@@ -459,12 +459,12 @@ struct GeneralPreferencesView: View {
             )
 
             let done = NSAlert()
-            done.messageText = "Backup cree"
+            done.messageText = localizedString("backup_created")
             done.informativeText = backupURL.path
             done.runModal()
         } catch {
             let failed = NSAlert()
-            failed.messageText = "Export backup echoue"
+            failed.messageText = localizedString("backup_failed")
             failed.informativeText = error.localizedDescription
             failed.runModal()
         }
@@ -475,24 +475,24 @@ struct GeneralPreferencesView: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.prompt = "Restaurer"
+        panel.prompt = localizedString("restore")
 
         guard panel.runModal() == .OK, let backupDir = panel.url else { return }
 
         let savedState = backupDir.appendingPathComponent("saved_state.json")
         guard FileManager.default.fileExists(atPath: savedState.path) else {
             let alert = NSAlert()
-            alert.messageText = "Sauvegarde invalide"
-            alert.informativeText = "Le dossier choisi ne contient pas saved_state.json."
+            alert.messageText = localizedString("invalid_backup")
+            alert.informativeText = localizedString("invalid_backup_msg")
             alert.runModal()
             return
         }
 
         let confirm = NSAlert()
-        confirm.messageText = "Restaurer cette sauvegarde ?"
-        confirm.informativeText = "Le dossier actuel sera archive puis remplace par la sauvegarde selectionnee."
-        confirm.addButton(withTitle: "Restaurer")
-        confirm.addButton(withTitle: "Annuler")
+        confirm.messageText = localizedString("restore_confirm_title")
+        confirm.informativeText = localizedString("restore_confirm_msg")
+        confirm.addButton(withTitle: localizedString("restore"))
+        confirm.addButton(withTitle: localizedString("cancel"))
         guard confirm.runModal() == .alertFirstButtonReturn else { return }
 
         let fm = FileManager.default
@@ -515,12 +515,12 @@ struct GeneralPreferencesView: View {
             onRestartRequested()
 
             let done = NSAlert()
-            done.messageText = "Restauration terminee"
-            done.informativeText = "Backup precedent archive: \(archiveDir.path)"
+            done.messageText = localizedString("restore_complete")
+            done.informativeText = localizedString("backup_previous_archived", archiveDir.path)
             done.runModal()
         } catch {
             let failed = NSAlert()
-            failed.messageText = "Restauration echouee"
+            failed.messageText = localizedString("restore_failed")
             failed.informativeText = error.localizedDescription
             failed.runModal()
         }

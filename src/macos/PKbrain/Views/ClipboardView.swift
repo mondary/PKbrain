@@ -709,7 +709,7 @@ struct ClipboardView: View {
             Button(localizedString("clipboard_clear_confirm_action"), role: .destructive) {
                 clipboard.clear()
             }
-            Button("Vider la poubelle", role: .destructive) {
+            Button(localizedString("empty_trash"), role: .destructive) {
                 clipboard.clearTrash()
             }
             Button(localizedString("cancel"), role: .cancel) {}
@@ -1248,12 +1248,12 @@ struct ClipboardStandardWindowView: View {
         var id: String { rawValue }
         var title: String {
             switch self {
-            case .pkclipboard: return "Clipboard"
-            case .drawer: return "Drawer"
-            case .stickies: return "Stickies"
+            case .pkclipboard: return localizedString("settings_section_clipboard")
+            case .drawer: return localizedString("settings_section_drawer")
+            case .stickies: return localizedString("settings_section_stickies")
             case .shortcuts: return localizedString("shortcuts")
-            case .data: return "Data"
-            case .lab: return "Lab"
+            case .data: return localizedString("settings_section_data")
+            case .lab: return localizedString("settings_section_lab")
             case .about: return localizedString("about_section")
             }
         }
@@ -1343,7 +1343,7 @@ struct ClipboardStandardWindowView: View {
                             Image(systemName: "arrow.left")
                                 .frame(width: 16, height: 16)
                             if !isSidebarCollapsed {
-                                Text("Retour")
+                                Text(localizedString("back"))
                                     .font(.system(size: 13, weight: .semibold))
                                 Spacer(minLength: 0)
                             }
@@ -1400,7 +1400,7 @@ struct ClipboardStandardWindowView: View {
                     }
 
                     if !isSidebarCollapsed {
-                        sectionTitle("Types")
+                        sectionTitle(localizedString("types"))
                     }
                     sidebarButton(
                         title: localizedString("filter_all"),
@@ -1452,14 +1452,14 @@ struct ClipboardStandardWindowView: View {
                     }
 
                     if !isSidebarCollapsed {
-                        sectionTitle("Tags")
+                        sectionTitle(localizedString("tags"))
                     }
                     ForEach(allTagItems, id: \.name) { tag in
                         tagRow(tag)
                     }
 
                     if !isSidebarCollapsed {
-                        sectionTitle("Application")
+                        sectionTitle(localizedString("application"))
                     }
                     ForEach(sourceChips, id: \.bundleID) { source in
                         Button {
@@ -1539,8 +1539,8 @@ struct ClipboardStandardWindowView: View {
                             storageURL: storageRootURL.appendingPathComponent("saved_state.json"),
                             onRestartRequested: {
                                 let alert = NSAlert()
-                                alert.messageText = "Restart required"
-                                alert.informativeText = "Please restart PKbrain to apply this change."
+                                alert.messageText = localizedString("restart_required")
+                                alert.informativeText = localizedString("restart_required_message")
                                 alert.runModal()
                             },
                             onRunBackupNow: { self.onRunBackupNow() }
@@ -1617,7 +1617,7 @@ struct ClipboardStandardWindowView: View {
 
     private var footer: some View {
         HStack(spacing: 10) {
-            Text("Page")
+            Text(localizedString("page"))
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.secondary)
             ForEach(1...min(14, max(1, totalPages)), id: \.self) { page in
@@ -1639,7 +1639,7 @@ struct ClipboardStandardWindowView: View {
                 Button {
                     clipboard.clearTrash()
                 } label: {
-                    Label("Vider la poubelle", systemImage: "trash.slash")
+                    Label(localizedString("empty_trash"), systemImage: "trash.slash")
                         .font(.system(size: 12, weight: .medium))
                 }
                 .buttonStyle(.plain)
@@ -2065,7 +2065,7 @@ private struct ClipboardDataSettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                Text("Clipboard Settings")
+                Text(localizedString("clipboard_settings"))
                     .font(.title3.weight(.semibold))
 
                 GroupBox {
@@ -2074,12 +2074,12 @@ private struct ClipboardDataSettingsView: View {
                             get: { !clipboard.isPaused },
                             set: { clipboard.isPaused = !$0 }
                         )) {
-                            Text("Capture active")
+                            Text(localizedString("capture_active"))
                         }
                         .toggleStyle(.switch)
 
                         HStack(spacing: 12) {
-                            Text("Max items")
+                            Text(localizedString("max_items"))
                             Stepper(value: $settings.clipboardMaxItems, in: 5000...50000, step: 500) {
                                 Text("\(settings.clipboardMaxItems)")
                                     .frame(minWidth: 80, alignment: .leading)
@@ -2087,7 +2087,7 @@ private struct ClipboardDataSettingsView: View {
                         }
 
                         HStack(spacing: 12) {
-                            Text("Max age (days)")
+                            Text(localizedString("max_age_days"))
                             Stepper(value: $settings.clipboardMaxAgeDays, in: 365...3650, step: 30) {
                                 Text("\(settings.clipboardMaxAgeDays)")
                                     .frame(minWidth: 80, alignment: .leading)
@@ -2095,12 +2095,12 @@ private struct ClipboardDataSettingsView: View {
                         }
 
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Drawer position")
+                            Text(localizedString("drawer_position"))
                             Picker("", selection: $settings.clipboardDrawerEdge) {
-                                Text("Top").tag(ClipboardDrawerEdge.top)
-                                Text("Bottom").tag(ClipboardDrawerEdge.bottom)
-                                Text("Left").tag(ClipboardDrawerEdge.left)
-                                Text("Right").tag(ClipboardDrawerEdge.right)
+                                Text(localizedString("position_top")).tag(ClipboardDrawerEdge.top)
+                                Text(localizedString("position_bottom")).tag(ClipboardDrawerEdge.bottom)
+                                Text(localizedString("position_left")).tag(ClipboardDrawerEdge.left)
+                                Text(localizedString("position_right")).tag(ClipboardDrawerEdge.right)
                             }
                             .pickerStyle(.segmented)
                         }
@@ -2110,11 +2110,11 @@ private struct ClipboardDataSettingsView: View {
 
                 GroupBox {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Source privacy mode")
+                        Text(localizedString("source_privacy_mode"))
                         Picker("", selection: $settings.clipboardSourceMode) {
-                            Text("Allow all").tag(ClipboardSourceMode.allowAll)
-                            Text("Block list").tag(ClipboardSourceMode.blockList)
-                            Text("Allow list").tag(ClipboardSourceMode.allowList)
+                            Text(localizedString("allow_all")).tag(ClipboardSourceMode.allowAll)
+                            Text(localizedString("block_list")).tag(ClipboardSourceMode.blockList)
+                            Text(localizedString("allow_list")).tag(ClipboardSourceMode.allowList)
                         }
                         .pickerStyle(.segmented)
 
@@ -2122,14 +2122,14 @@ private struct ClipboardDataSettingsView: View {
                             .textFieldStyle(.roundedBorder)
 
                         HStack(spacing: 10) {
-                            Button("Apply list") {
+                            Button(localizedString("apply_list")) {
                                 let values = sourceListText
                                     .split(separator: ",")
                                     .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                                     .filter { !$0.isEmpty }
                                 settings.clipboardSourceList = values
                             }
-                            Button("Use current list") {
+                            Button(localizedString("use_current_list")) {
                                 sourceListText = settings.clipboardSourceList.joined(separator: ", ")
                             }
                         }
@@ -2139,11 +2139,11 @@ private struct ClipboardDataSettingsView: View {
 
                 GroupBox {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Data backup (full PKbrain data)")
+                        Text(localizedString("data_backup_full"))
                         HStack(spacing: 10) {
-                            Button("Export full backup") { exportFullBackup() }
-                            Button("Restore full backup") { importFullBackup() }
-                            Button("Open data folder") {
+                            Button(localizedString("export_full_backup")) { exportFullBackup() }
+                            Button(localizedString("restore_full_backup")) { importFullBackup() }
+                            Button(localizedString("open_data_folder")) {
                                 NSWorkspace.shared.activateFileViewerSelecting([storageRootURL])
                             }
                         }
@@ -2163,7 +2163,7 @@ private struct ClipboardDataSettingsView: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.prompt = "Export"
+        panel.prompt = localizedString("export")
 
         guard panel.runModal() == .OK, let destinationRoot = panel.url else { return }
 
@@ -2180,12 +2180,12 @@ private struct ClipboardDataSettingsView: View {
             try fm.copyItem(at: storageRootURL, to: backupURL)
 
             let done = NSAlert()
-            done.messageText = "Backup created"
+            done.messageText = localizedString("backup_created")
             done.informativeText = backupURL.path
             done.runModal()
         } catch {
             let failed = NSAlert()
-            failed.messageText = "Backup failed"
+            failed.messageText = localizedString("backup_failed")
             failed.informativeText = error.localizedDescription
             failed.runModal()
         }
@@ -2196,23 +2196,23 @@ private struct ClipboardDataSettingsView: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.prompt = "Restore"
+        panel.prompt = localizedString("restore")
 
         guard panel.runModal() == .OK, let backupDir = panel.url else { return }
         let required = backupDir.appendingPathComponent("saved_state.json")
         guard FileManager.default.fileExists(atPath: required.path) else {
             let alert = NSAlert()
-            alert.messageText = "Invalid backup"
-            alert.informativeText = "Missing saved_state.json in selected folder."
+            alert.messageText = localizedString("invalid_backup")
+            alert.informativeText = localizedString("invalid_backup_msg")
             alert.runModal()
             return
         }
 
         let confirm = NSAlert()
-        confirm.messageText = "Restore this backup?"
-        confirm.informativeText = "Current data folder will be archived first."
-        confirm.addButton(withTitle: "Restore")
-        confirm.addButton(withTitle: "Cancel")
+        confirm.messageText = localizedString("restore_confirm_title")
+        confirm.informativeText = localizedString("restore_confirm_msg")
+        confirm.addButton(withTitle: localizedString("restore"))
+        confirm.addButton(withTitle: localizedString("cancel"))
         guard confirm.runModal() == .alertFirstButtonReturn else { return }
 
         let fm = FileManager.default
@@ -2233,12 +2233,12 @@ private struct ClipboardDataSettingsView: View {
             try fm.copyItem(at: backupDir, to: storageRootURL)
 
             let done = NSAlert()
-            done.messageText = "Restore complete"
+            done.messageText = localizedString("restore_complete")
             done.informativeText = "Previous data archived at:\n\(archiveURL.path)"
             done.runModal()
         } catch {
             let failed = NSAlert()
-            failed.messageText = "Restore failed"
+            failed.messageText = localizedString("restore_failed")
             failed.informativeText = error.localizedDescription
             failed.runModal()
         }
@@ -2250,16 +2250,16 @@ private struct DrawerSettingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Drawer")
+            Text(localizedString("drawer_settings"))
                 .font(.title3.weight(.semibold))
             GroupBox {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Drawer position")
+                    Text(localizedString("drawer_position"))
                     Picker("", selection: $settings.clipboardDrawerEdge) {
-                        Text("Top").tag(ClipboardDrawerEdge.top)
-                        Text("Bottom").tag(ClipboardDrawerEdge.bottom)
-                        Text("Left").tag(ClipboardDrawerEdge.left)
-                        Text("Right").tag(ClipboardDrawerEdge.right)
+                        Text(localizedString("position_top")).tag(ClipboardDrawerEdge.top)
+                        Text(localizedString("position_bottom")).tag(ClipboardDrawerEdge.bottom)
+                        Text(localizedString("position_left")).tag(ClipboardDrawerEdge.left)
+                        Text(localizedString("position_right")).tag(ClipboardDrawerEdge.right)
                     }
                     .pickerStyle(.segmented)
                 }
@@ -2276,7 +2276,7 @@ private struct StickiesSettingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Stickies")
+            Text(localizedString("stickies_settings"))
                 .font(.title3.weight(.semibold))
             GroupBox {
                 VStack(alignment: .leading, spacing: 10) {
@@ -2304,22 +2304,22 @@ private struct LabSettingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Lab")
+            Text(localizedString("lab_settings"))
                 .font(.title3.weight(.semibold))
             GroupBox {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Community plugins (experimental)")
+                    Text(localizedString("community_plugins"))
                         .font(.system(size: 13, weight: .semibold))
-                    Text("Use this section to install and test plugins contributed by the community.")
+                    Text(localizedString("community_plugins_desc"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     HStack(spacing: 10) {
-                        Button("Open plugins folder") {
+                        Button(localizedString("open_plugins_folder")) {
                             let fm = FileManager.default
                             try? fm.createDirectory(at: pluginsDirectoryURL, withIntermediateDirectories: true)
                             NSWorkspace.shared.activateFileViewerSelecting([pluginsDirectoryURL])
                         }
-                        Button("Create plugin template") {
+                        Button(localizedString("create_plugin_template")) {
                             createPluginTemplateIfMissing()
                             NSWorkspace.shared.activateFileViewerSelecting([pluginsDirectoryURL])
                         }
@@ -2368,7 +2368,7 @@ private struct GlobalSettingsInClipboardView: View {
             switch self {
             case .general: return localizedString("general")
             case .shortcuts: return localizedString("shortcuts")
-            case .clipboard: return "Clipboard"
+            case .clipboard: return localizedString("settings_section_clipboard")
             case .about: return localizedString("about_section")
             }
         }
@@ -2395,8 +2395,8 @@ private struct GlobalSettingsInClipboardView: View {
                         storageURL: storageStateURL,
                         onRestartRequested: {
                             let alert = NSAlert()
-                            alert.messageText = "Restart required"
-                            alert.informativeText = "Please restart PKbrain to apply this change."
+                            alert.messageText = localizedString("restart_required")
+                            alert.informativeText = localizedString("restart_required_message")
                             alert.runModal()
                         },
                         onRunBackupNow: { self.onRunBackupNow() }
@@ -2648,14 +2648,14 @@ private struct StandardClipboardCard: View {
                     if !availableTags.isEmpty {
                         ForEach(availableTags, id: \.self) { tag in
                             if existing.contains(where: { $0.caseInsensitiveCompare(tag) == .orderedSame }) {
-                                Button("Retirer tag: \(tag)") { onRemoveNoteTag(note.id, tag) }
+                                Button(localizedString("remove_tag", tag)) { onRemoveNoteTag(note.id, tag) }
                             } else {
-                                Button("Taguer: \(tag)") { onAddNoteTag(note.id, tag) }
+                                Button(localizedString("add_tag", tag)) { onAddNoteTag(note.id, tag) }
                             }
                         }
                         Divider()
                     }
-                    Button("Nouveau tag…") {
+                    Button(localizedString("new_tag_dots")) {
                         if let newTag = promptForTagName(), !newTag.isEmpty {
                             onAddNoteTag(note.id, newTag)
                         }
@@ -2865,14 +2865,14 @@ private struct StandardClipboardCard: View {
         if !availableTags.isEmpty {
             ForEach(availableTags, id: \.self) { tag in
                 if existing.contains(where: { $0.caseInsensitiveCompare(tag) == .orderedSame }) {
-                    Button("Retirer tag: \(tag)") { onRemoveTag(item.id, tag) }
+                    Button(localizedString("remove_tag", tag)) { onRemoveTag(item.id, tag) }
                 } else {
-                    Button("Taguer: \(tag)") { onAddTag(item.id, tag) }
+                    Button(localizedString("add_tag", tag)) { onAddTag(item.id, tag) }
                 }
             }
             Divider()
         }
-        Button("Nouveau tag…") {
+        Button(localizedString("new_tag_dots")) {
             if let newTag = promptForTagName(), !newTag.isEmpty {
                 onAddTag(item.id, newTag)
             }
@@ -2953,7 +2953,7 @@ private struct StandardClipboardCard: View {
         switch entry {
         case .note(let note):
             var badges = ["\(note.content.count) chars", relativeTime]
-            if note.isPinned { badges.append("Pinned") }
+            if note.isPinned { badges.append(localizedString("pinned_badge")) }
             return badges
         case .clipboard(let item):
             var badges: [String] = []
@@ -2986,10 +2986,10 @@ private struct StandardClipboardCard: View {
 
     private func promptForTagName() -> String? {
         let alert = NSAlert()
-        alert.messageText = "Nouveau tag"
-        alert.informativeText = "Nom du tag:"
+        alert.messageText = localizedString("new_tag")
+        alert.informativeText = localizedString("tag_name")
         alert.addButton(withTitle: "OK")
-        alert.addButton(withTitle: "Annuler")
+        alert.addButton(withTitle: localizedString("cancel"))
         let input = NSTextField(frame: NSRect(x: 0, y: 0, width: 220, height: 24))
         alert.accessoryView = input
         let response = alert.runModal()

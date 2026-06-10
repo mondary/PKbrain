@@ -10,7 +10,7 @@ struct PreferencePageHeader: View {
             iconBadge
 
             VStack(alignment: .leading, spacing: 5) {
-                Text("Preferences")
+                Text(localizedString("preferences_breadcrumb"))
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .textCase(.uppercase)

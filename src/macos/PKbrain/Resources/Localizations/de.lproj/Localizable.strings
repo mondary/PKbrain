@@ -76,7 +76,7 @@
 "electric_blue" = "Elektrischblau";
 "neon_green" = "Neongrün";
 "crimson" = "Karmesinrot";
-"sunshine" = "Sonnenchein";
+"sunshine" = "Sonnenschein";
 "violet" = "Violett";
 "tangerine" = "Mandarine";
 
@@ -128,13 +128,12 @@
 "typing_effect_glow" = "Leuchten";
 "create_new_note" = "Neue Notiz erstellen";
 "about_pkbrain" = "Über PKbrain";
-"about_pkbrain" = "Über PKbrain";
 "restart_pkbrain" = "PKbrain neu starten";
 "quit_pkbrain" = "PKbrain beenden";
 "search_notes_or_commands" = "Notizen oder Befehle suchen…";
 "untitled_note" = "Unbenannte Notiz";
 "system_command" = "Systembefehl";
-"no_results_for" = "Keine Ergebnisse für „%@“";
+"no_results_for" = "Keine Ergebnisse für „%@\"";
 "try_searching_note" = "Suchen Sie nach Notiztitel oder Inhalt";
 "results_count" = "%d Ergebnisse";
 "navigate" = "Navigieren";
@@ -154,7 +153,7 @@
 "redo" = "Wiederholen";
 "cut" = "Ausschneiden";
 "copy" = "Kopieren";
-"paste" = "Einsetzen";
+"paste" = "Einfügen";
 "select_all" = "Alles auswählen";
 "command_palette" = "Befehlspalette…";
 "minimize" = "Minimieren";
@@ -164,6 +163,10 @@
 "show_clipboard_drawer" = "Zwischenablage-Leiste anzeigen";
 "show_clipboard_window" = "Zwischenablage-Fenster anzeigen";
 "clipboard_capture" = "Aufnahme";
+"clipboard_open_window" = "Zwischenablage-Fenster öffnen";
+"clipboard_clear_confirm_title" = "Zwischenablage-Verlauf löschen?";
+"clipboard_clear_confirm_message" = "Dies entfernt den gesamten Zwischenablage-Verlauf.";
+"clipboard_clear_confirm_action" = "Alles löschen";
 "all_sources" = "Alle Quellen";
 "unknown_source" = "Unbekannt";
 "convert_to_note" = "In Notiz umwandeln";
@@ -172,10 +175,23 @@
 "position_bottom" = "Unten";
 "position_left" = "Links";
 "position_right" = "Rechts";
-"clipboard_position_hint" = "Wahlen Sie, wo die Zwischenablage-Leiste erscheint.";
+"clipboard_position_hint" = "Wählen Sie, wo die Zwischenablage-Leiste erscheint.";
+"characters" = "Zeichen";
+"files" = "Dateien";
+"image" = "Bild";
+"link" = "Link";
+"filter_all" = "Alle";
+"filter_text" = "Text";
+"filter_url" = "URL";
+"filter_image" = "Bild";
+"filter_files" = "Dateien";
+"filter_color" = "Farbe";
+"pinned" = "Angeheftet";
+"recent" = "Kürzlich";
+"pin" = "Anheften";
+"lock" = "Sperren";
 "insert_emoji" = "Emoji einfügen";
 "change_color" = "Farbe ändern";
-"filter_color" = "Farbe";
 "history_restore" = "Verlauf (frühere Versionen wiederherstellen)";
 "restore" = "Wiederherstellen";
 "delete" = "Löschen";
@@ -189,3 +205,123 @@
 "apply" = "Anwenden";
 "empty_note" = "(Leere Notiz)";
 "system_monospace" = "System-Monospace";
+
+/* Clipboard - zuvor hardcoded */
+"search" = "Suchen";
+"trash" = "Papierkorb";
+"resume" = "Fortsetzen";
+"pause" = "Pause";
+"cancel" = "Abbrechen";
+"note" = "Notiz";
+"notes" = "Notizen";
+"back" = "Zurück";
+"tags" = "Tags";
+"application" = "Anwendung";
+"types" = "Typen";
+"empty_trash" = "Papierkorb leeren";
+"remove_tag" = "Tag entfernen: %@";
+"add_tag" = "Taggen: %@";
+"new_tag_dots" = "Neuer Tag…";
+"new_tag" = "Neuer Tag";
+"tag_name" = "Tag-Name:";
+"settings_section_clipboard" = "Zwischenablage";
+"settings_section_drawer" = "Leiste";
+"settings_section_stickies" = "Haftnotizen";
+"settings_section_data" = "Daten";
+"settings_section_lab" = "Lab";
+"restart_required_message" = "Bitte starten Sie PKbrain neu, um diese Änderung zu übernehmen.";
+"page" = "Seite";
+"clipboard_settings" = "Zwischenablage-Einstellungen";
+"capture_active" = "Aufnahme aktiv";
+"max_items" = "Max. Einträge";
+"max_age_days" = "Max. Alter (Tage)";
+"drawer_position" = "Leistenposition";
+"source_privacy_mode" = "Quell-Datenschutzmodus";
+"allow_all" = "Alle erlauben";
+"block_list" = "Sperrliste";
+"allow_list" = "Erlaubnisliste";
+"apply_list" = "Liste anwenden";
+"use_current_list" = "Aktuelle Liste verwenden";
+"data_backup_full" = "Datensicherung (kompletter PKbrain-Ordner)";
+"export_full_backup" = "Vollständiges Backup exportieren";
+"restore_full_backup" = "Vollständiges Backup wiederherstellen";
+"open_data_folder" = "Datenordner öffnen";
+"drawer_settings" = "Leiste";
+"stickies_settings" = "Haftnotizen";
+"lab_settings" = "Lab";
+"community_plugins" = "Community-Plugins (experimentell)";
+"community_plugins_desc" = "Nutzen Sie diesen Bereich, um Plugins der Community zu installieren und zu testen.";
+"open_plugins_folder" = "Plugin-Ordner öffnen";
+"create_plugin_template" = "Plugin-Vorlage erstellen";
+"pinned_badge" = "Angeheftet";
+"chars_suffix" = " Zeichen";
+
+/* Allgemeine Einstellungen - zuvor hardcoded */
+"language_hint" = "Wählen Sie die App-Sprache.";
+"accessibility" = "Bedienungshilfen";
+"accessibility_hint" = "Erforderlich für automatisiertes Einfügen und globale Eingabeaktionen.";
+"access_granted" = "Zugriff gewährt";
+"access_not_granted" = "Zugriff nicht gewährt";
+"access_hint" = "Sie können die Berechtigung hier erneut anfordern.";
+"request_again" = "Erneut anfragen";
+"storage_hint" = "Wo Notizen, Clips und Ressourcen gespeichert werden.";
+"new_notes_defaults" = "Standardeinstellungen für neue Haftnotizen und Tastatur-Feedback.";
+"clipboard_settings_hint" = "Leistenposition und Feedback-Sounds.";
+"copy_sound" = "Kopier-Sound";
+"paste_sound" = "Einfüge-Sound";
+"import_export_hint_2" = "Notizdaten in die App hinein oder heraus verschieben.";
+"backup" = "Backup";
+"backup_hint" = "Vollständige Schnappschüsse, manuelle Wiederherstellung und cloud-fähige automatische Backups.";
+"enable_auto_backup" = "Automatische Backups aktivieren";
+"backup_folder" = "Backup-Ordner";
+"no_folder_selected" = "Kein Ordner ausgewählt";
+"choose_folder" = "Ordner auswählen";
+"backup_every" = "Backup alle";
+"backup_now" = "Jetzt sichern";
+"backup_auto_desc" = "Automatische Backups kopieren den kompletten PKbrain-Ordner (Notizen, Zwischenablage, Tags, Ressourcen) in zeitgestempelte Schnappschüsse.";
+"cleanup_hint" = "Alte Ordner und Backupdateien archivieren.";
+"test" = "Test";
+"nothing_to_archive" = "Nichts zu archivieren";
+"nothing_to_archive_msg" = "Keine alten Ordner oder Backupdateien gefunden.";
+"archive_confirm_title" = "Alte Ordner und Backups archivieren?";
+"archive_confirm_msg" = "Alte Ordner und Backupdateien werden in einen Archivordner verschoben.";
+"archive" = "Archivieren";
+"archive_created" = "Archiv erstellt";
+"archive_failed" = "Archivierung fehlgeschlagen";
+"export_backup" = "Alle Daten exportieren";
+"restore_backup" = "Ein Backup wiederherstellen";
+"backup_restore_desc" = "Vollständiges Backup/Wiederherstellung des PKbrain-Ordners (Notizen, Zwischenablage, Tags, Ressourcen).";
+"backup_created" = "Backup erstellt";
+"backup_failed" = "Backup-Export fehlgeschlagen";
+"invalid_backup" = "Ungültiges Backup";
+"invalid_backup_msg" = "Der ausgewählte Ordner enthält keine saved_state.json.";
+"restore_confirm_title" = "Dieses Backup wiederherstellen?";
+"restore_confirm_msg" = "Der aktuelle Ordner wird archiviert und durch das ausgewählte Backup ersetzt.";
+"restore_complete" = "Wiederherstellung abgeschlossen";
+"restore_failed" = "Wiederherstellung fehlgeschlagen";
+"backup_previous_archived" = "Vorheriges Backup archiviert: %@";
+
+/* Einstellungen-Ansicht */
+"preferences_breadcrumb" = "Einstellungen";
+"general_subtitle" = "Kernverhalten und Speicher";
+"shortcuts_subtitle" = "Tastatur und Notiz-Aktionen";
+"about_subtitle" = "Version und Projektlinks";
+
+/* Tastenkürzel */
+"app_shortcuts_subtitle" = "Globale Befehle, die von überall funktionieren.";
+"note_shortcuts_subtitle" = "Befehle für die aktuelle Haftnotiz.";
+
+/* Über */
+"github_original" = "GitHub (Original)";
+"github_original_desc" = "Quellcode und Upstream-Projekt";
+"github_fork" = "GitHub (macOS-Fork)";
+"github_fork_desc" = "Quellcode dieses Forks";
+"kofi_original" = "Ko-fi (Original)";
+"kofi_original_desc" = "Den ursprünglichen Entwickler unterstützen";
+"kofi_fork" = "Ko-fi (Fork)";
+"kofi_fork_desc" = "Diesen macOS-Port unterstützen";
+
+/* Notizenliste */
+"all_my_notes" = "Alle meine Notizen";
+"trash_title" = "Papierkorb";
+"no_content" = "Kein Inhalt";

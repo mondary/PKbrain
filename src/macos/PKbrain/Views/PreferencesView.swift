@@ -144,9 +144,9 @@ private enum PreferencesSection: Hashable, CaseIterable, Identifiable {
 
     var subtitle: String {
         switch self {
-        case .general: "Core behavior and storage"
-        case .shortcuts: "Keyboard and note actions"
-        case .about: "Version and project links"
+        case .general: localizedString("general_subtitle")
+        case .shortcuts: localizedString("shortcuts_subtitle")
+        case .about: localizedString("about_subtitle")
         }
     }
 

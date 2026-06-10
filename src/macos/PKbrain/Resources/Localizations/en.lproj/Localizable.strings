@@ -129,7 +129,6 @@
 "typing_effect_glow" = "Glow";
 "create_new_note" = "Create New Note";
 "about_pkbrain" = "About PKbrain";
-"about_pkbrain" = "About PKbrain";
 "restart_pkbrain" = "Restart PKbrain";
 "quit_pkbrain" = "Quit PKbrain";
 "search_notes_or_commands" = "Search notes or commands…";
@@ -192,7 +191,6 @@
 "recent" = "Recent";
 "pin" = "Pin";
 "lock" = "Lock";
-"color" = "Color";
 "insert_emoji" = "Insert emoji";
 "change_color" = "Change color";
 "history_restore" = "History (restore previous versions)";
@@ -208,3 +206,123 @@
 "apply" = "Apply";
 "empty_note" = "(Empty note)";
 "system_monospace" = "System Monospace";
+
+/* Clipboard - previously hardcoded */
+"search" = "Search";
+"trash" = "Trash";
+"resume" = "Resume";
+"pause" = "Pause";
+"cancel" = "Cancel";
+"note" = "Note";
+"notes" = "Notes";
+"back" = "Back";
+"tags" = "Tags";
+"application" = "Application";
+"types" = "Types";
+"empty_trash" = "Empty Trash";
+"remove_tag" = "Remove tag: %@";
+"add_tag" = "Tag: %@";
+"new_tag_dots" = "New tag…";
+"new_tag" = "New tag";
+"tag_name" = "Tag name:";
+"settings_section_clipboard" = "Clipboard";
+"settings_section_drawer" = "Drawer";
+"settings_section_stickies" = "Stickies";
+"settings_section_data" = "Data";
+"settings_section_lab" = "Lab";
+"restart_required_message" = "Please restart PKbrain to apply this change.";
+"page" = "Page";
+"clipboard_settings" = "Clipboard Settings";
+"capture_active" = "Capture active";
+"max_items" = "Max items";
+"max_age_days" = "Max age (days)";
+"drawer_position" = "Drawer position";
+"source_privacy_mode" = "Source privacy mode";
+"allow_all" = "Allow all";
+"block_list" = "Block list";
+"allow_list" = "Allow list";
+"apply_list" = "Apply list";
+"use_current_list" = "Use current list";
+"data_backup_full" = "Data backup (full PKbrain data)";
+"export_full_backup" = "Export full backup";
+"restore_full_backup" = "Restore full backup";
+"open_data_folder" = "Open data folder";
+"drawer_settings" = "Drawer";
+"stickies_settings" = "Stickies";
+"lab_settings" = "Lab";
+"community_plugins" = "Community plugins (experimental)";
+"community_plugins_desc" = "Use this section to install and test plugins created by the community.";
+"open_plugins_folder" = "Open plugins folder";
+"create_plugin_template" = "Create plugin template";
+"pinned_badge" = "Pinned";
+"chars_suffix" = " chars";
+
+/* General Preferences - previously hardcoded */
+"language_hint" = "Choose the app language.";
+"accessibility" = "Accessibility";
+"accessibility_hint" = "Required for clipboard paste automation and global input actions.";
+"access_granted" = "Access granted";
+"access_not_granted" = "Access not granted";
+"access_hint" = "You can ask macOS for the permission again from here.";
+"request_again" = "Request again";
+"storage_hint" = "Where notes, clips, and assets are stored.";
+"new_notes_defaults" = "Defaults for new sticky notes and typing feedback.";
+"clipboard_settings_hint" = "Drawer position and feedback sounds.";
+"copy_sound" = "Copy sound";
+"paste_sound" = "Paste sound";
+"import_export_hint_2" = "Move note data in and out of the app.";
+"backup" = "Backup";
+"backup_hint" = "Full-data snapshots, manual restore, and cloud-friendly auto backups.";
+"enable_auto_backup" = "Enable automatic backups";
+"backup_folder" = "Backup folder";
+"no_folder_selected" = "No folder selected";
+"choose_folder" = "Choose folder";
+"backup_every" = "Backup every";
+"backup_now" = "Backup now";
+"backup_auto_desc" = "Automatic backups copy the full PKbrain data folder (notes, clipboard, tags, assets) into timestamped snapshots.";
+"cleanup_hint" = "Archive legacy folders and old backup files.";
+"test" = "Test";
+"nothing_to_archive" = "Nothing to archive";
+"nothing_to_archive_msg" = "No legacy folders or backup files were found.";
+"archive_confirm_title" = "Archive legacy folders and backups?";
+"archive_confirm_msg" = "This will move legacy folders and old backup files into an Archive folder.";
+"archive" = "Archive";
+"archive_created" = "Archive created";
+"archive_failed" = "Archive failed";
+"export_backup" = "Export all data";
+"restore_backup" = "Restore a backup";
+"backup_restore_desc" = "Full backup/restore of the PKbrain folder (notes, clipboard, tags, assets).";
+"backup_created" = "Backup created";
+"backup_failed" = "Export backup failed";
+"invalid_backup" = "Invalid backup";
+"invalid_backup_msg" = "The selected folder does not contain saved_state.json.";
+"restore_confirm_title" = "Restore this backup?";
+"restore_confirm_msg" = "The current folder will be archived and replaced by the selected backup.";
+"restore_complete" = "Restore complete";
+"restore_failed" = "Restore failed";
+"backup_previous_archived" = "Previous backup archived: %@";
+
+/* Preferences View */
+"preferences_breadcrumb" = "Preferences";
+"general_subtitle" = "Core behavior and storage";
+"shortcuts_subtitle" = "Keyboard and note actions";
+"about_subtitle" = "Version and project links";
+
+/* Shortcuts Preferences */
+"app_shortcuts_subtitle" = "Global commands that work from anywhere.";
+"note_shortcuts_subtitle" = "Commands that apply to the current sticky note.";
+
+/* About Preferences */
+"github_original" = "GitHub (Original)";
+"github_original_desc" = "Source code and upstream project";
+"github_fork" = "GitHub (macOS Fork)";
+"github_fork_desc" = "This fork's source code";
+"kofi_original" = "Ko-fi (Original)";
+"kofi_original_desc" = "Support the original developer";
+"kofi_fork" = "Ko-fi (Fork)";
+"kofi_fork_desc" = "Support this macOS port";
+
+/* Notes List */
+"all_my_notes" = "All my notes";
+"trash_title" = "Trash";
+"no_content" = "No content";
