@@ -104,11 +104,13 @@
   - boutons rapides `Paramètres` + `Ouvrir dossier local` ajoutés dans drawer et PKClipboard
   - mode `Settings` intégré:
     - bouton paramètres en footer qui bascule toute la fenêtre en mode paramètres
-    - sidebar dédiée (`General`, `Shortcuts`, `Clipboard`, `About`)
+    - sidebar dédiée (`Data`, `Clipboard`, `Drawer`, `Stickies`, `Shortcuts`, `Lab`, `About`)
+    - `Data` comme onglet par défaut (langue, accessibilité, stockage, import/export)
     - écran principal dynamique selon la section sélectionnée
     - sortie mode paramètres via `Esc` ou bouton `Retour`
   - `Cmd+,` redirigé vers `PKClipboard` en mode paramètres (plus de popup séparé)
-  - section backup complète dans paramètres clipboard (export/restore dossier de données complet)
+   - section backup complète dans paramètres clipboard (export/restore dossier de données complet)
+   - onglet `Data` affiché par défaut à l'ouverture des paramètres (langue, accessibilité, stockage)
   - gestion corbeille notes enrichie: clic droit par ligne `Restaurer` / `Supprimer`
 - Persistance et stockage:
   - stockage Markdown par note
@@ -178,8 +180,8 @@
 > Le collage direct nécessite l'autorisation macOS **Accessibilité** pour PKbrain. macOS affiche la demande au premier collage; l'autorisation peut aussi être gérée dans **Réglages Système > Confidentialité et sécurité > Accessibilité**.
 
 ## ⚙️ Réglages
-- Préférences générales (langue, stockage, import/export).
-- Préférences raccourcis (modificateurs + touche).
+- Onglet `Data` affiché par défaut (langue, accessibilité, stockage, import/export).
+- Préférences clipboard, drawer, stickies, raccourcis, lab.
 - Activation/désactivation du calcul inline.
 - Position du clipboard drawer.
 - Backup automatique vers un dossier choisi, avec intervalle réglable.

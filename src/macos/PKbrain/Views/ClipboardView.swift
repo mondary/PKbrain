@@ -1188,7 +1188,7 @@ struct ClipboardStandardWindowView: View {
     @State private var currentPage: Int = 1
     @State private var itemsPerPage: Int = 50
     @State private var isSettingsMode: Bool = false
-    @State private var selectedSettingsSection: SettingsSection = .pkclipboard
+    @State private var selectedSettingsSection: SettingsSection = .data
     @FocusState private var searchFocused: Bool
     private let gridMinCardWidth: CGFloat = 190
     private let gridMaxCardWidth: CGFloat = 260
@@ -1237,11 +1237,11 @@ struct ClipboardStandardWindowView: View {
     }
 
     private enum SettingsSection: String, CaseIterable, Identifiable {
+        case data
         case pkclipboard
         case drawer
         case stickies
         case shortcuts
-        case data
         case lab
         case about
 
@@ -1654,7 +1654,7 @@ struct ClipboardStandardWindowView: View {
 
             Button {
                 isSettingsMode = true
-                selectedSettingsSection = .pkclipboard
+                selectedSettingsSection = .data
             } label: {
                 Image(systemName: "gearshape")
                     .foregroundStyle(.secondary)

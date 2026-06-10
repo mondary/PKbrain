@@ -73,6 +73,7 @@
   - import/export
   - duplicate/backup archiving
   - automatic backups to a chosen folder, on a configurable interval, with timestamped snapshots
+  - `Data` tab shown by default when opening settings (language, accessibility, storage)
   - open storage folder in Finder
 - Internationalization:
   - localized resources
@@ -126,8 +127,8 @@
 > Direct paste requires the macOS **Accessibility** permission for PKbrain. macOS prompts on the first paste; permission can also be managed in **System Settings > Privacy & Security > Accessibility**.
 
 ## ⚙️ Settings
-- General preferences (language, storage, import/export).
-- Shortcut preferences (modifier + key).
+- `Data` tab shown by default (language, accessibility, storage, import/export).
+- Clipboard, drawer, stickies, shortcuts, and lab preferences.
 - Inline calculator on/off.
 - Clipboard drawer position.
 - Automatic backups to a chosen folder, with a configurable interval.
