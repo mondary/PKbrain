@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKbrain — Le cerveau de votre Mac</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #007AFF;
+            --text: #F5F5F7;
+            --subtext: #86868B;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* --- Animations --- */
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+        }
+
+        .reveal.visible {
+            animation: reveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 8px 24px;
+            background: rgba(13, 13, 13, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            gap: 24px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover { opacity: 1; }
+        
+        .nav-logo {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        /* --- Hero --- */
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+            background: radial-gradient(circle at center, rgba(0, 122, 255, 0.15) 0%, transparent 70%);
+        }
+
+        .hero-tag {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+            color: var(--accent);
+        }
+
+        h1 {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #A5A5A5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            font-size: clamp(18px, 2vw, 24px);
+            color: var(--subtext);
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            padding: 16px 32px;
+            background: var(--text);
+            color: black;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* --- Mockup Sections --- */
+        section {
+            padding: 120px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-header h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--subtext);
+            font-size: 20px;
+        }
+
+        /* --- Bento Grid --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            grid-auto-rows: 300px;
+        }
+
+        .bento-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bento-card h3 { font-size: 24px; margin-bottom: 12px; }
+        .bento-card p { color: var(--subtext); font-size: 16px; }
+
+        .card-calc { grid-column: span 8; grid-row: span 2; }
+        .card-icons { grid-column: span 4; }
+        .card-lang { grid-column: span 4; }
+        .card-k { grid-column: span 12; height: 200px; }
+
+        /* --- Mockup Calculator --- */
+        .mockup-calc {
+            margin-top: 40px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'SF Mono', monospace;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .line { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .line .cursor { width: 2px; height: 1.2em; background: var(--accent); animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .res { color: var(--accent); font-weight: bold; }
+
+        /* --- Mockup Drawer --- */
+        .drawer-showcase {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            height: 600px;
+            margin-top: 40px;
+            display: flex;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .drawer-left {
+            width: 80px;
+            background: rgba(255,255,255,0.03);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 20px;
+        }
+
+        .drawer-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--subtext);
+        }
+
+        .drawer-icon.active { background: var(--accent); color: white; }
+
+        .drawer-content {
+            flex: 1;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .clipboard-card {
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s;
+        }
+
+        .clipboard-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .card-type { font-size: 10px; text-transform: uppercase; color: var(--subtext); }
+        .card-preview { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; text-align: center; }
+        .card-footer { display: flex; justify-content: space-between; font-size: 10px; }
+
+        /* --- Palette Section --- */
+        #palette {
+            background: #000;
+            padding: 160px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cmd-k-window {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(28, 28, 30, 0.8);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 18px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .cmd-k-input {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .cmd-k-input input {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            outline: none;
+            width: 100%;
+        }
+
+        .cmd-k-list {
+            padding: 12px;
+        }
+
+        .cmd-k-item {
+            padding: 12px 16px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .cmd-k-item.active { background: var(--accent); }
+        .cmd-k-shortcut { opacity: 0.5; font-size: 12px; }
+
+        /* --- Footer --- */
+        footer {
+            padding: 80px 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--subtext);
+        }
+
+        .social-links {
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .social-links a { color: var(--text); text-decoration: none; opacity: 0.7; }
+        .social-links a:hover { opacity: 1; }
+
+        /* --- Mobile --- */
+        @media (max-width: 768px) {
+            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
+            .card-calc, .card-icons, .card-lang, .card-k { grid-column: span 1; }
+            h1 { font-size: 48px; }
+            nav { width: 90%; }
+            nav span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <img src="icon.png" alt="Logo" class="nav-logo">
+        <a href="#hero"><span>PK</span>brain</a>
+        <a href="#features">Fonctionnalités</a>
+        <a href="#drawer">Presse-papier</a>
+        <a href="https://github.com/mondary/PKbrain">GitHub</a>
+    </nav>
+
+    <header id="hero">
+        <div class="hero-tag reveal">Maintenant disponible en V3</div>
+        <h1 class="reveal">Le cerveau de votre Mac.</h1>
+        <p class="hero-sub reveal">
+            Application de notes native inspirée de l'élite. 
+            Calcul inline, gestion intelligente du presse-papier et puissance du clavier.
+        </p>
+        <a href="https://github.com/mondary/PKbrain" class="cta-button reveal">Découvrir sur GitHub</a>
+    </header>
+
+    <section id="features">
+        <div class="section-header reveal">
+            <h2>Pensé pour la vitesse.</h2>
+            <p>Plus qu'une simple app de notes, c'est votre centre de commande.</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card card-calc reveal">
+                <h3>Calcul Inline</h3>
+                <p>Évaluez vos expressions en direct. Gérez variables et unités sans quitter votre note.</p>
+                <div class="mockup-calc">
+                    <div class="line"><span>loyer = 1200</span> <span class="res">1200</span></div>
+                    <div class="line"><span>taxes = 15% * loyer</span> <span class="res">180</span></div>
+                    <div class="line"><span>total = loyer + taxes</span> <span class="res">1380</span></div>
+                    <div class="line"><span>80 USD in EUR</span> <span class="res">74.20 €</span></div>
+                    <div class="line"><span>_</span><span class="cursor"></span></div>
+                </div>
+            </div>
+
+            <div class="bento-card card-icons reveal">
+                <h3>300+ Icônes</h3>
+                <p>Insertion automatique d'icônes techniques pour vos docs de dev.</p>
+                <div style="margin-top: 20px; display: flex; gap: 10px; font-size: 24px; opacity: 0.5;">
+                    <span></span> <span></span> <span></span> <span></span> <span></span>
+                </div>
+            </div>
+
+            <div class="bento-card card-lang reveal">
+                <h3>Polyglotte</h3>
+                <p>Interface complète en 5 langues : EN, FR, ES, DE, IT.</p>
+                <div style="margin-top: 20px; display: flex; gap: 15px; font-size: 20px;">
+                    🇫🇷 🇬🇧 🇪🇸 🇩🇪 🇮🇹
+                </div>
+            </div>
+
+            <div class="bento-card card-k reveal">
+                <h3>Command Palette</h3>
+                <p>Naviguez à la vitesse de la pensée avec Cmd+K.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="drawer">
+        <div class="section-header reveal">
+            <h2>Votre historique, partout.</h2>
+            <p>Un tiroir intelligent pour tout capturer : texte, images, fichiers, couleurs.</p>
+        </div>
+
+        <div class="drawer-showcase reveal">
+            <div class="drawer-left">
+                <div class="drawer-icon active">★</div>
+                <div class="drawer-icon">T</div>
+                <div class="drawer-icon">🔗</div>
+                <div class="drawer-icon">🖼️</div>
+            </div>
+            <div class="drawer-content">
+                <div class="clipboard-card">
+                    <div class="card-type">Texte</div>
+                    <div class="card-preview">Fix: improve direct paste reliability</div>
+                    <div class="card-footer"><span>GitHub</span><span>2 min</span></div>
+                </div>
+                <div class="clipboard-card">
+                    <div class="card-type">Couleur</div>
+                    <div class="card-preview" style="color: #007AFF">#007AFF</div>
+                    <div class="card-footer"><span>Design</span><span>10 min</span></div>
+                </div>
+                <div class="clipboard-card">
+                    <div class="card-type">URL</div>
+                    <div class="card-preview">github.com/mondary/PKbrain</div>
+                    <div class="card-footer"><span>Safari</span><span>1h</span></div>
+                </div>
+                <div class="clipboard-card">
+                    <div class="card-type">Image</div>
+                    <div class="card-preview">screenshot.png</div>
+                    <div class="card-footer"><span>Finder</span><span>3h</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="palette">
+        <div class="section-header reveal">
+            <h2 style="color: white">Tout est au bout de vos doigts.</h2>
+            <p>Un workflow 100% clavier.</p>
+        </div>
+        <div class="cmd-k-window reveal">
+            <div class="cmd-k-input">
+                <span>🔍</span>
+                <input type="text" placeholder="Rechercher une note, une action..." value="Prefe">
+            </div>
+            <div class="cmd-k-list">
+                <div class="cmd-k-item active">
+                    <span>Ouvrir les Préférences</span>
+                    <span class="cmd-k-shortcut">⌘ ,</span>
+                </div>
+                <div class="cmd-k-item">
+                    <span>Créer une nouvelle note</span>
+                    <span class="cmd-k-shortcut">⌘ N</span>
+                </div>
+                <div class="cmd-k-item">
+                    <span>Vider le presse-papier</span>
+                    <span class="cmd-k-shortcut">⇧ ⌘ ⌫</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://github.com/mondary/PKbrain">GitHub</a>
+            <a href="https://github.com/mondary/PKbrain/blob/main/README.md">Documentation</a>
+            <a href="https://github.com/mondary/PKbrain/releases">Releases</a>
+        </div>
+        <p>&copy; 2026 PKbrain Project. Ni jeans, ni shorts, juste PKbrain.</p>
+    </footer>
+
+    <script>
+        // Reveal animation on scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
