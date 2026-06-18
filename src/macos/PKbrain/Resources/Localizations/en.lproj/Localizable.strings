@@ -36,6 +36,7 @@
 "no_notes" = "No notes";
 "new_note" = "New Note";
 "show_all_notes" = "Show All Notes";
+"hide_all_notes" = "Hide All Notes";
 "save_all_notes" = "Save All Notes";
 "settings" = "Settings…";
 "about" = "About PKbrain";

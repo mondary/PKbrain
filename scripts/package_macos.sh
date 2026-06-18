@@ -7,6 +7,8 @@ BUNDLE_NAME="PKbrain"
 BUNDLE_ID="io.github.mondary.pkbrain"
 MIN_SYSTEM_VERSION="13.0"
 BUILD_CHANNEL="release"
+APP_VERSION="4.2.0"
+BUILD_VERSION="4.2.0"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_ROOT="$ROOT_DIR"
@@ -92,6 +94,10 @@ cat >"$INFO_PLIST" <<PLIST
   <string>PKbrain</string>
   <key>CFBundleDisplayName</key>
   <string>PKbrain</string>
+  <key>CFBundleShortVersionString</key>
+  <string>$APP_VERSION</string>
+  <key>CFBundleVersion</key>
+  <string>$BUILD_VERSION</string>
   <key>CFBundleURLTypes</key>
   <array>
     <dict>

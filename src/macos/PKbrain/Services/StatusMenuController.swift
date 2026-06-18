@@ -7,6 +7,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
     private let onNewNote: () -> Void
     private let onShowAllNotes: () -> Void
+    private let onHideAllNotes: () -> Void
     private let onSaveAllNotes: () -> Void
     private let onShowSettings: () -> Void
     private let onShowAbout: () -> Void
@@ -21,6 +22,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         manager: NoteManager,
         onNewNote: @escaping () -> Void,
         onShowAllNotes: @escaping () -> Void,
+        onHideAllNotes: @escaping () -> Void,
         onSaveAllNotes: @escaping () -> Void,
         onShowSettings: @escaping () -> Void,
         onShowAbout: @escaping () -> Void,
@@ -35,6 +37,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         self.manager = manager
         self.onNewNote = onNewNote
         self.onShowAllNotes = onShowAllNotes
+        self.onHideAllNotes = onHideAllNotes
         self.onSaveAllNotes = onSaveAllNotes
         self.onShowSettings = onShowSettings
         self.onShowAbout = onShowAbout
@@ -77,6 +80,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
     @objc private func showAllNotes(_ sender: NSMenuItem) {
         onShowAllNotes()
+    }
+
+    @objc private func hideAllNotes(_ sender: NSMenuItem) {
+        onHideAllNotes()
     }
 
     @objc private func saveAllNotes(_ sender: NSMenuItem) {
@@ -136,7 +143,11 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
         menu.addItem(.separator())
         menu.addItem(actionItem(localizedString("new_note"), action: #selector(newNote(_:)), shortcut: .newStickyNote))
-        menu.addItem(actionItem(localizedString("show_all_notes"), action: #selector(showAllNotes(_:)), shortcut: .showAllNotes))
+        if manager?.areAllNotesVisible == true {
+            menu.addItem(actionItem(localizedString("hide_all_notes"), action: #selector(hideAllNotes(_:)), shortcut: .showAllNotes))
+        } else {
+            menu.addItem(actionItem(localizedString("show_all_notes"), action: #selector(showAllNotes(_:)), shortcut: .showAllNotes))
+        }
         menu.addItem(actionItem(localizedString("show_list"), action: #selector(showList(_:)), shortcut: .showNotesList, systemImage: "list.bullet.rectangle"))
         menu.addItem(actionItem(localizedString("show_clipboard_drawer"), action: #selector(showClipboard(_:)), keyEquivalent: "v", modifiers: [.command, .shift], systemImage: "clipboard"))
         menu.addItem(actionItem(localizedString("show_clipboard_window"), action: #selector(showClipboardWindow(_:)), shortcut: .showClipboardWindow, systemImage: "macwindow"))

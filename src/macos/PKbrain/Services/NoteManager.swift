@@ -17,6 +17,15 @@ final class NoteManager {
         storage.storageURL
     }
 
+    var areAllNotesVisible: Bool {
+        !controllers.isEmpty && orderedControllers().allSatisfy { controller in
+            guard let window = controller.window else {
+                return false
+            }
+            return window.isVisible && !window.isMiniaturized
+        }
+    }
+
     init(settings: AppSettings, storage: NoteStorage? = nil) {
         self.settings = settings
         self.storage = storage ?? NoteStorage(storageDirectoryOverride: settings.storageDirectoryURL)

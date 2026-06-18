@@ -706,6 +706,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             manager: manager,
             onNewNote: { [weak self] in self?.manager.createNote() },
             onShowAllNotes: { [weak self] in self?.manager.showAllNotes() },
+            onHideAllNotes: { [weak self] in self?.manager.hideAllNotes() },
             onSaveAllNotes: { [weak self] in self?.manager.saveNow() },
             onShowSettings: { [weak self] in self?.showPreferences(nil) },
             onShowAbout: { [weak self] in self?.showAbout(nil) },
