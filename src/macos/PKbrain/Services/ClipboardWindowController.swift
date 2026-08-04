@@ -320,7 +320,14 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
 
         let transitionBounds: NSRect
         let target: NSRect
-        if let restored = restoredDrawerFrame(for: window),
+        if settings.clipboardDrawerEdge == .top || settings.clipboardDrawerEdge == .bottom {
+            // The panel is borderless and not user-resizable, so a persisted
+            // width is always stale. Top/bottom drawers fill the screen width.
+            let layoutBounds = activeScreenFrame
+            lastKnownVisibleFrame = layoutBounds
+            transitionBounds = layoutBounds
+            target = targetFrame(in: layoutBounds, inset: 0, edge: settings.clipboardDrawerEdge, current: window.frame.size)
+        } else if let restored = restoredDrawerFrame(for: window),
            restored.intersects(activeScreenFrame)
         {
             transitionBounds = activeScreenFrame

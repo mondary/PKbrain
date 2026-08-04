@@ -16,7 +16,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var globalHotKeyClipboardRef: EventHotKeyRef?
     private var globalHotKeyClipboardWindowRef: EventHotKeyRef?
     private var globalHotKeyClipboardWindowFallbackRef: EventHotKeyRef?
+    private var globalHotKeyShowAllNotesRef: EventHotKeyRef?
     private var globalHotKeyHandlerRef: EventHandlerRef?
+    private var globalShowAllNotesMonitor: Any?
+    private var lastShowAllNotesToggleTime: TimeInterval = 0
     private var lastExternalApplication: NSRunningApplication?
     private lazy var autoBackupService = AutoBackupService(
         settings: settings,
@@ -237,6 +240,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let focusLastShortcut = settings.shortcut(for: .focusLastNoteGlobal)
         let newNoteShortcut = settings.shortcut(for: .newNoteGlobal)
         let clipboardWindowShortcut = settings.shortcut(for: .showClipboardWindow)
+        let showAllNotesShortcut = settings.shortcut(for: .showAllNotes)
         // Focus last note (or create if none)
         let newID = EventHotKeyID(signature: signature, id: 1)
         let focusStatus = RegisterEventHotKey(
@@ -298,7 +302,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         if fallbackStatus != noErr { globalHotKeyClipboardWindowFallbackRef = nil }
 
+        // Show / hide all notes (configurable global shortcut).
+        let showAllNotesID = EventHotKeyID(signature: signature, id: 6)
+        let showAllNotesStatus = RegisterEventHotKey(
+            keyCode(for: showAllNotesShortcut.key),
+            showAllNotesShortcut.modifier.carbonFlags,
+            showAllNotesID,
+            GetApplicationEventTarget(),
+            0,
+            &globalHotKeyShowAllNotesRef
+        )
+        if showAllNotesStatus != noErr {
+            NSLog("PKbrain: failed to register global show/hide shortcut (status %d)", showAllNotesStatus)
+            globalHotKeyShowAllNotesRef = nil
+        } else {
+            NSLog("PKbrain: registered global show/hide shortcut")
+        }
+
         installGlobalHotKeyHandlerIfNeeded()
+        installGlobalShowAllNotesMonitor(shortcut: showAllNotesShortcut)
     }
 
     private func unregisterGlobalHotKeys() {
@@ -321,6 +343,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let globalHotKeyClipboardWindowFallbackRef {
             UnregisterEventHotKey(globalHotKeyClipboardWindowFallbackRef)
             self.globalHotKeyClipboardWindowFallbackRef = nil
+        }
+        if let globalHotKeyShowAllNotesRef {
+            UnregisterEventHotKey(globalHotKeyShowAllNotesRef)
+            self.globalHotKeyShowAllNotesRef = nil
+        }
+        if let globalShowAllNotesMonitor {
+            NSEvent.removeMonitor(globalShowAllNotesMonitor)
+            self.globalShowAllNotesMonitor = nil
+        }
+    }
+
+    private func installGlobalShowAllNotesMonitor(shortcut: KeyboardShortcutSetting) {
+        guard globalShowAllNotesMonitor == nil else { return }
+        let expectedKeyCode = UInt16(keyCode(for: shortcut.key))
+        let expectedModifiers = shortcut.modifier.flags.intersection(.deviceIndependentFlagsMask)
+
+        // Carbon hot keys are the primary mechanism. This monitor is a fallback
+        // for recent macOS versions where RegisterEventHotKey may report success
+        // but fail to dispatch while another application is active.
+        globalShowAllNotesMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard event.keyCode == expectedKeyCode,
+                  event.modifierFlags.intersection(.deviceIndependentFlagsMask) == expectedModifiers
+            else { return }
+            NSLog("PKbrain: received monitored show/hide shortcut")
+            DispatchQueue.main.async {
+                self?.toggleAllNotesVisibility()
+            }
         }
     }
 
@@ -423,6 +472,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.showClipboardWindow(targetApp: self.clipboardTargetApp(frontmostAppBeforeHandling))
             case 5:
                 self.showClipboardWindow(targetApp: self.clipboardTargetApp(frontmostAppBeforeHandling))
+            case 6:
+                NSLog("PKbrain: received global show/hide shortcut")
+                self.toggleAllNotesVisibility()
             default:
                 break
             }
@@ -435,6 +487,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func showAllNotes(_ sender: Any?) {
         manager.showAllNotes()
+    }
+
+    private func toggleAllNotesVisibility() {
+        // A single physical key press can be observed by both Carbon and the
+        // global NSEvent fallback. Coalesce those callbacks into one toggle.
+        let now = ProcessInfo.processInfo.systemUptime
+        guard now - lastShowAllNotesToggleTime > 0.25 else { return }
+        lastShowAllNotesToggleTime = now
+        if manager.areAllNotesVisible {
+            manager.hideAllNotes()
+        } else {
+            manager.showAllNotes()
+        }
     }
 
     @objc private func showPreferences(_ sender: Any?) {

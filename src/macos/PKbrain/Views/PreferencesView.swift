@@ -74,8 +74,8 @@ struct PreferencesView: View {
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    .white.opacity(0.45),
-                                    .white.opacity(0.08),
+                                    .white.opacity(0.35),
+                                    .white.opacity(0.06),
                                     .clear
                                 ],
                                 startPoint: .topLeading,
@@ -86,7 +86,7 @@ struct PreferencesView: View {
                 }
                 .overlay {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .stroke(.white.opacity(0.22), lineWidth: 0.5)
+                        .stroke(.white.opacity(0.18), lineWidth: 0.5)
                         .blendMode(.screen)
                 }
                 .overlay(

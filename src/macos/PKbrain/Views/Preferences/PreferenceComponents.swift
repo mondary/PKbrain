@@ -43,7 +43,7 @@ struct PreferencePageHeader: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                .stroke(Color(NSColor.separatorColor), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.06), radius: 16, x: 0, y: 8)
     }
@@ -132,7 +132,7 @@ struct PreferenceSectionCard<Content: View>: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                .stroke(Color(NSColor.separatorColor), lineWidth: 1)
         )
         .overlay(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: 999, style: .continuous)
@@ -169,8 +169,8 @@ struct PreferenceSidebarButton: View {
                             )
                             : LinearGradient(
                                 colors: [
-                                    Color.black.opacity(0.06),
-                                    Color.black.opacity(0.03)
+                                    Color(NSColor.separatorColor).opacity(0.4),
+                                    Color(NSColor.separatorColor).opacity(0.2)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -202,7 +202,7 @@ struct PreferenceSidebarButton: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(isSelected ? Color.accentColor.opacity(0.24) : Color.black.opacity(0.05), lineWidth: 1)
+                    .stroke(isSelected ? Color.accentColor.opacity(0.24) : Color(NSColor.separatorColor).opacity(0.5), lineWidth: 1)
             )
             .overlay(alignment: .leading) {
                 if isSelected {

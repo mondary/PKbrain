@@ -91,7 +91,6 @@ struct ClipboardView: View {
         ZStack {
             VibrancyBackground()
                 .ignoresSafeArea()
-
             VStack(spacing: 0) {
                 if isVerticalDrawer {
                     deck2SidebarHeader
@@ -110,10 +109,10 @@ struct ClipboardView: View {
             .padding(.bottom, 0)
             .background(
                 BottomRoundedRectangle(radius: 28)
-                    .fill(Color(red: 223/255, green: 227/255, blue: 236/255).opacity(0.88))
+                    .fill(Color(NSColor.windowBackgroundColor))
                     .overlay(
                         BottomRoundedRectangle(radius: 28)
-                            .stroke(Color.white.opacity(0.45), lineWidth: 1)
+                            .stroke(Color.primary.opacity(0.08), lineWidth: 1)
                     )
                     .shadow(color: .black.opacity(0.35), radius: 34, x: 0, y: 20)
             )
@@ -138,7 +137,7 @@ struct ClipboardView: View {
             HStack(spacing: 4) {
                 Text("PK")
                     .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(Color(red: 28/255, green: 28/255, blue: 30/255))
+                    .foregroundStyle(Color(NSColor.labelColor))
                 Spacer()
                 HStack(spacing: 2) {
                     Deck2IconButton(systemName: clipboard.isPaused ? "play.fill" : "pause.fill", help: clipboard.isPaused ? localizedString("resume") : localizedString("pause")) {
@@ -152,7 +151,7 @@ struct ClipboardView: View {
             .padding(.top, 6)
             .padding(.bottom, 6)
             Rectangle()
-                .fill(Color.black.opacity(0.06))
+                .fill(Color(NSColor.separatorColor))
                 .frame(height: 1)
                 .padding(.horizontal, 8)
         }
@@ -163,7 +162,7 @@ struct ClipboardView: View {
             HStack(spacing: 6) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Color(red: 120/255, green: 120/255, blue: 128/255))
+                    .foregroundStyle(Color(NSColor.secondaryLabelColor))
                 TextField(localizedString("search"), text: $query)
                     .textFieldStyle(.plain)
                     .font(.system(size: 11))
@@ -171,8 +170,8 @@ struct ClipboardView: View {
             }
             .padding(.horizontal, 8)
             .frame(height: 26)
-            .background(Color.white.opacity(0.7))
-            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.black.opacity(0.08), lineWidth: 1))
+            .background(Color(NSColor.controlBackgroundColor).opacity(0.7))
+            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(NSColor.separatorColor), lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: 6))
 
             HStack(spacing: 3) {
@@ -185,7 +184,7 @@ struct ClipboardView: View {
         }
         .padding(.horizontal, 8)
         .padding(.bottom, 6)
-        .overlay(alignment: .bottom) { Rectangle().fill(Color.black.opacity(0.06)).frame(height: 1).padding(.horizontal, 8) }
+        .overlay(alignment: .bottom) { Rectangle().fill(Color(NSColor.separatorColor)).frame(height: 1).padding(.horizontal, 8) }
     }
 
     @ViewBuilder
@@ -244,13 +243,13 @@ struct ClipboardView: View {
     private var deck2SidebarFooter: some View {
         VStack(spacing: 0) {
             Rectangle()
-                .fill(Color.black.opacity(0.06))
+                .fill(Color(NSColor.separatorColor))
                 .frame(height: 1)
                 .padding(.horizontal, 8)
             HStack(spacing: 4) {
                 Text("PK")
                     .font(.system(size: 9, weight: .semibold))
-                    .foregroundStyle(Color(red: 80/255, green: 80/255, blue: 86/255))
+                    .foregroundStyle(Color(NSColor.secondaryLabelColor))
                 Spacer()
                 Deck2IconButton(systemName: "power", help: localizedString("quit_pkbrain")) { NSApp.terminate(nil) }
             }
@@ -268,7 +267,7 @@ struct ClipboardView: View {
             }
 
             Capsule()
-                .fill(Color(red: 60/255, green: 60/255, blue: 67/255).opacity(0.25))
+                .fill(Color(NSColor.separatorColor).opacity(0.5))
                 .frame(width: 38, height: 5)
                 .offset(y: 2)
         }
@@ -320,7 +319,7 @@ struct ClipboardView: View {
         .padding(.bottom, 12)
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(Color.black.opacity(0.04))
+                .fill(Color(NSColor.separatorColor))
                 .frame(height: 1)
         }
     }
@@ -342,9 +341,9 @@ struct ClipboardView: View {
             } label: {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(Color(red: 58/255, green: 63/255, blue: 71/255))
+                    .foregroundStyle(Color(NSColor.secondaryLabelColor))
                     .frame(width: 24, height: 24)
-                    .background(Color.black.opacity(0.04))
+                    .background(Color(NSColor.separatorColor).opacity(0.3))
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
@@ -355,7 +354,7 @@ struct ClipboardView: View {
                 TextField(localizedString("search"), text: $query)
                     .textFieldStyle(.plain)
                     .font(.system(size: 13, weight: .regular))
-                    .foregroundStyle(Color(red: 28/255, green: 28/255, blue: 30/255))
+                    .foregroundStyle(Color(NSColor.labelColor))
                     .focused($searchFocused)
                     .frame(width: 160, height: 32)
                     .padding(.leading, 6)
@@ -363,8 +362,8 @@ struct ClipboardView: View {
             }
         }
         .frame(width: searchExpanded ? 200 : 28, height: 32, alignment: .leading)
-        .background(Color.black.opacity(0.04))
-        .overlay(Capsule().stroke(Color.black.opacity(0.05), lineWidth: 1))
+        .background(Color(NSColor.separatorColor).opacity(0.3))
+        .overlay(Capsule().stroke(Color(NSColor.separatorColor).opacity(0.4), lineWidth: 1))
         .clipShape(Capsule())
     }
 
@@ -456,7 +455,7 @@ struct ClipboardView: View {
             let pattern = "⠿⠟⠛⠻⠽⠾⠷⠯⠟⠿   "
             let line = String(repeating: pattern, count: 70)
             ZStack {
-                Color.black.opacity(0.015)
+                Color(NSColor.separatorColor).opacity(0.1)
                 HStack(spacing: 0) {
                     Text(line)
                         .lineLimit(1)
@@ -466,7 +465,7 @@ struct ClipboardView: View {
                         .fixedSize(horizontal: true, vertical: false)
                 }
                 .font(.system(size: 12, weight: .medium, design: .monospaced))
-                .foregroundStyle(Color(red: 60/255, green: 64/255, blue: 73/255).opacity(0.25))
+                .foregroundStyle(Color(NSColor.tertiaryLabelColor).opacity(0.5))
                 .tracking(2.2)
                 .frame(width: geo.size.width * 2, alignment: .leading)
                 .offset(x: stripAnimated ? -(geo.size.width) : 0)
@@ -480,7 +479,7 @@ struct ClipboardView: View {
         .frame(maxWidth: .infinity)
         .overlay(alignment: .top) {
             Rectangle()
-                .fill(Color.black.opacity(0.02))
+                .fill(Color(NSColor.separatorColor).opacity(0.4))
                 .frame(height: 1)
         }
         .clipped()
@@ -497,7 +496,7 @@ struct ClipboardView: View {
                 Spacer()
             }
             Capsule()
-                .fill(Color.black.opacity(0.18))
+                .fill(Color(NSColor.separatorColor).opacity(0.6))
                 .frame(width: 40, height: 5)
         }
         .padding(.horizontal, 24)
@@ -657,7 +656,7 @@ struct ClipboardView: View {
                 }
             }
             .frame(width: searchExpanded ? 200 : 28, height: 32, alignment: .leading)
-            .background(Color.black.opacity(0.05))
+            .background(Color(NSColor.separatorColor).opacity(0.3))
             .clipShape(Capsule())
 
             Spacer()
@@ -696,7 +695,7 @@ struct ClipboardView: View {
                 .fill(.clear)
                 .overlay(
                     Rectangle()
-                        .fill(Color.black.opacity(0.07))
+                        .fill(Color(NSColor.separatorColor))
                         .frame(height: 1),
                     alignment: .top
                 )
@@ -1130,7 +1129,7 @@ private struct NoteDeckCard: View {
         .frame(width: cardWidth, height: cardHeight)
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color.black.opacity(0.035))
+                .fill(Color(NSColor.separatorColor).opacity(0.15))
                 .overlay(
                     RoundedRectangle(cornerRadius: 17, style: .continuous)
                         .fill(note.theme.backgroundColor)
@@ -1285,7 +1284,7 @@ struct ClipboardStandardWindowView: View {
 
     var body: some View {
         ZStack {
-            Color.white
+            Color(NSColor.windowBackgroundColor)
             VStack(spacing: 0) {
                 HStack(spacing: 0) {
                     sidebar
@@ -1302,7 +1301,7 @@ struct ClipboardStandardWindowView: View {
         }
         .padding(.top, 8)
         .padding(.bottom, 8)
-        .background(Color.white)
+        .background(Color(NSColor.windowBackgroundColor))
         .frame(minWidth: 1120, minHeight: 720)
         .onAppear {
             selectedID = entries.first?.id
@@ -1352,7 +1351,7 @@ struct ClipboardStandardWindowView: View {
                         .padding(.vertical, 6)
                         .background(
                             RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.black.opacity(0.08))
+                                .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
                         )
                         .padding(.horizontal, isSidebarCollapsed ? 6 : 8)
                     }
@@ -1490,7 +1489,7 @@ struct ClipboardStandardWindowView: View {
                                         .padding(.vertical, 2)
                                         .background(
                                             Capsule()
-                                                .fill(Color.black.opacity(0.06))
+                                                .fill(Color(NSColor.separatorColor).opacity(0.5))
                                         )
                                         .frame(width: 34, alignment: .trailing)
                                 }
@@ -1499,7 +1498,7 @@ struct ClipboardStandardWindowView: View {
                             .padding(.vertical, 5)
                             .background(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .fill(selectedSource == .app(source.bundleID) ? Color.black.opacity(0.10) : Color.clear)
+                                    .fill(selectedSource == .app(source.bundleID) ? Color.accentColor.opacity(0.15) : Color.clear)
                             )
                             .padding(.horizontal, isSidebarCollapsed ? 6 : 8)
                         }
@@ -1555,7 +1554,7 @@ struct ClipboardStandardWindowView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .background(Color.white)
+            .background(Color(NSColor.windowBackgroundColor))
         } else {
             GeometryReader { proxy in
                 ScrollView(.vertical, showsIndicators: true) {
@@ -1604,7 +1603,7 @@ struct ClipboardStandardWindowView: View {
                 }
                     .padding(12)
                 }
-                .background(Color.white)
+                .background(Color(NSColor.windowBackgroundColor))
                 .onAppear {
                     updateItemsPerPage(for: proxy.size)
                 }
@@ -1675,17 +1674,17 @@ struct ClipboardStandardWindowView: View {
                 .frame(width: 170, height: 28)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.black.opacity(0.04))
+                        .fill(Color(NSColor.controlBackgroundColor).opacity(0.5))
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                                .stroke(Color(NSColor.separatorColor), lineWidth: 1)
                         )
                 )
             }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 16)
-        .background(Color.white)
+        .background(Color(NSColor.windowBackgroundColor))
     }
 
     private func sidebarButton(title: String, systemImage: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
@@ -1703,7 +1702,7 @@ struct ClipboardStandardWindowView: View {
             .padding(.vertical, 5)
             .background(
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(isSelected ? Color.black.opacity(0.12) : Color.clear)
+                    .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.clear)
             )
             .padding(.horizontal, isSidebarCollapsed ? 6 : 8)
         }
@@ -1741,7 +1740,7 @@ struct ClipboardStandardWindowView: View {
                     .padding(.vertical, 2)
                     .background(
                         Capsule()
-                            .fill(Color.black.opacity(0.06))
+                            .fill(Color(NSColor.separatorColor).opacity(0.5))
                     )
                     .frame(width: 34, alignment: .trailing)
             }
@@ -1750,7 +1749,7 @@ struct ClipboardStandardWindowView: View {
         .padding(.vertical, 5)
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .fill(isSelected ? Color.black.opacity(0.12) : Color.clear)
+                .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.clear)
         )
         .padding(.horizontal, isSidebarCollapsed ? 6 : 8)
         }
@@ -2640,7 +2639,7 @@ private struct StandardClipboardCard: View {
                         Circle()
                             .fill(tagColor(for: primary))
                             .frame(width: 10, height: 10)
-                            .overlay(Circle().stroke(Color.white.opacity(0.85), lineWidth: 1))
+                            .overlay(Circle().stroke(Color(NSColor.controlBackgroundColor), lineWidth: 1))
                     }
                 }
                 Menu {
@@ -2680,7 +2679,7 @@ private struct StandardClipboardCard: View {
         case .note(let note):
             return note.theme.backgroundColor
         case .clipboard:
-            return Color.white
+            return Color(NSColor.controlBackgroundColor)
         }
     }
 
@@ -2689,7 +2688,7 @@ private struct StandardClipboardCard: View {
         case .note(let note):
             return note.theme.autoTextColorColor.opacity(0.24)
         case .clipboard:
-            return Color.black.opacity(0.06)
+            return Color(NSColor.separatorColor)
         }
     }
 
@@ -2725,7 +2724,7 @@ private struct StandardClipboardCard: View {
         case .note(let note):
             return note.theme.autoTextColorColor.opacity(0.10)
         case .clipboard:
-            return Color.black.opacity(0.035)
+            return Color(NSColor.separatorColor).opacity(0.3)
         }
     }
 
@@ -3036,9 +3035,9 @@ private struct Deck2FilterPill: View {
             .padding(.vertical, 6)
             .background(
                 Capsule()
-                    .fill(isSelected ? Color(red: 85/255, green: 89/255, blue: 100/255) : Color.clear)
+                    .fill(isSelected ? Color.accentColor : Color.clear)
             )
-            .foregroundStyle(isSelected ? Color.white : Color(red: 74/255, green: 78/255, blue: 87/255))
+            .foregroundStyle(isSelected ? Color.white : Color(NSColor.secondaryLabelColor))
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -3057,9 +3056,9 @@ private struct Deck2IconButton: View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(hovering ? Color(red: 28/255, green: 28/255, blue: 30/255) : Color(red: 85/255, green: 89/255, blue: 100/255))
+                .foregroundStyle(hovering ? Color(NSColor.labelColor) : Color(NSColor.secondaryLabelColor))
                 .frame(width: 30, height: 30)
-                .background(hovering ? Color.black.opacity(0.05) : Color.clear)
+                .background(hovering ? Color(NSColor.separatorColor).opacity(0.3) : Color.clear)
                 .clipShape(Circle())
         }
         .buttonStyle(.plain)
@@ -3097,13 +3096,13 @@ private struct SourceChip: View {
             .padding(.vertical, 7)
             .background(
                 Capsule()
-                    .fill(isSelected ? Color(red: 0.33, green: 0.35, blue: 0.39) : Color.black.opacity(0.04))
+                    .fill(isSelected ? Color.accentColor.opacity(0.2) : Color(NSColor.separatorColor).opacity(0.3))
                     .overlay(
                         Capsule()
-                            .stroke(Color.black.opacity(isSelected ? 0.0 : 0.06), lineWidth: 1)
+                            .stroke(Color(NSColor.separatorColor).opacity(isSelected ? 0.0 : 0.5), lineWidth: 1)
                     )
             )
-            .foregroundStyle(isSelected ? Color.white : Color(red: 0.29, green: 0.31, blue: 0.35))
+            .foregroundStyle(isSelected ? Color.accentColor : Color(NSColor.secondaryLabelColor))
         }
         .buttonStyle(.plain)
         .animation(.spring(response: 0.22, dampingFraction: 0.86), value: isSelected)
@@ -3288,10 +3287,10 @@ private struct DeckCard: View {
         .frame(width: cardWidth, height: cardHeight)
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color.black.opacity(0.035))
+                .fill(Color(NSColor.separatorColor).opacity(0.15))
                 .overlay(
                     RoundedRectangle(cornerRadius: 17, style: .continuous)
-                        .fill(Color.white.opacity(0.98))
+                        .fill(Color(NSColor.controlBackgroundColor))
                         .padding(3)
                 )
         )
@@ -3543,7 +3542,7 @@ private struct ColorPreview: View {
                     .fill(info.color)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black.opacity(0.10), lineWidth: 1)
+                            .stroke(Color(NSColor.separatorColor), lineWidth: 1)
                     )
                     .frame(height: 108)
 
@@ -3736,7 +3735,7 @@ private struct VibrancyBackground: NSViewRepresentable {
     func makeNSView(context: Context) -> NSVisualEffectView {
         let v = NSVisualEffectView()
         v.material = .hudWindow
-        v.blendingMode = .behindWindow
+        v.blendingMode = .withinWindow
         v.state = .active
         return v
     }

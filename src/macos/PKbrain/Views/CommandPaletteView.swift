@@ -64,7 +64,7 @@ struct CommandPaletteView: View {
                 .shadow(color: .black.opacity(0.25), radius: 30, x: 0, y: 15)
                 .overlay(
                     RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .strokeBorder(Color.white.opacity(0.12), lineWidth: 1)
+                        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
                 )
 
             VStack(spacing: 0) {
@@ -127,7 +127,7 @@ struct CommandPaletteView: View {
                         .font(.system(size: 10, weight: .bold))
                         .padding(.horizontal, 5)
                         .padding(.vertical, 2)
-                        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
+                        .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
                 }
                 .foregroundStyle(.secondary)
                 .opacity(0.6)
@@ -202,11 +202,11 @@ struct CommandPaletteView: View {
             ZStack {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color.white.opacity(0.12))
+                        .fill(Color.primary.opacity(0.12))
                         .matchedGeometryEffect(id: "selection", in: selectionNamespace)
                 } else if isHovered {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color.white.opacity(0.05))
+                        .fill(Color.primary.opacity(0.05))
                 }
             }
         }
@@ -240,7 +240,7 @@ struct CommandPaletteView: View {
         case .action(let action):
             ZStack {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color.white.opacity(0.08))
+                    .fill(Color.primary.opacity(0.08))
 
                 Image(systemName: action.icon)
                     .font(.system(size: 14))
@@ -311,7 +311,7 @@ struct CommandPaletteView: View {
             Text(key)
                 .font(.system(size: 12, weight: .bold))
                 .padding(.horizontal, 4)
-                .background(Color.white.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
+                .background(Color.primary.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
             Text(label)
                 .font(.system(size: 11))
         }

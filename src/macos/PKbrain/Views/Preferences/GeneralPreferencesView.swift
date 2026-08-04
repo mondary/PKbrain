@@ -84,7 +84,7 @@ struct GeneralPreferencesView: View {
                     .foregroundStyle(.secondary)
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.black.opacity(0.04), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .background(Color(NSColor.separatorColor).opacity(0.3), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .textSelection(.enabled)
 
                 HStack(spacing: 12) {

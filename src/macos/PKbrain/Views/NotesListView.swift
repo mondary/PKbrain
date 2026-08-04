@@ -167,7 +167,7 @@ struct NoteRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(document.theme.backgroundColor.opacity(0.3))
+        .background(document.theme.backgroundColor.opacity(0.6))
         .contentShape(Rectangle())
     }
 
@@ -208,7 +208,7 @@ struct TrashedNoteRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(item.note.theme.backgroundColor.opacity(0.15))
+        .background(item.note.theme.backgroundColor.opacity(0.35))
         .contentShape(Rectangle())
     }
 

@@ -100,7 +100,7 @@ private struct ShortcutRow: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(Color.black.opacity(0.01))
+        .background(Color(NSColor.separatorColor).opacity(0.15))
     }
 
     private var modifierBinding: Binding<ShortcutModifierPreset> {

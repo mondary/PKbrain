@@ -196,14 +196,17 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         let symbol = NSImage(systemSymbolName: "note.text", accessibilityDescription: "PKbrain")?
             .withSymbolConfiguration(configuration)
 
-        if let appIcon = Bundle.main.url(forResource: "PKbrainStatus", withExtension: "png")
+        // Use the same artwork as the application itself in the menu bar.
+        if let appIcon = Bundle.main.url(forResource: "PKbrain", withExtension: "icns")
             .flatMap(NSImage.init(contentsOf:)) {
             let image = resizedStatusIcon(from: appIcon)
-            if isDevBuild {
-                let red = tintedStatusIcon(from: image, tint: NSColor.systemRed.withAlphaComponent(0.45))
-                red.isTemplate = false
-                return red
-            }
+            image.isTemplate = false
+            return image
+        }
+
+        if let statusIcon = Bundle.main.url(forResource: "PKbrainStatus", withExtension: "png")
+            .flatMap(NSImage.init(contentsOf:)) {
+            let image = resizedStatusIcon(from: statusIcon)
             image.isTemplate = false
             return image
         }
