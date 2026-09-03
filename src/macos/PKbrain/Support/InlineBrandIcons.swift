@@ -54,7 +54,7 @@ enum InlineBrandIcons {
     }
 
     private static let generatedBadges: [String: Badge] = {
-        guard let directory = Bundle.module.url(forResource: "BrandIcons", withExtension: nil),
+        guard let directory = PKbrainResources.bundle.url(forResource: "BrandIcons", withExtension: nil),
               let urls = try? FileManager.default.contentsOfDirectory(
                   at: directory,
                   includingPropertiesForKeys: nil

@@ -568,7 +568,7 @@ private enum BrandIconAttachment {
 
     private static func image(named name: String) -> NSImage? {
         if let cached = cache[name] { return cached }
-        guard let url = Bundle.module.url(forResource: name, withExtension: "svg", subdirectory: "BrandIcons"),
+        guard let url = PKbrainResources.bundle.url(forResource: name, withExtension: "svg", subdirectory: "BrandIcons"),
               let image = NSImage(contentsOf: url) else {
             return nil
         }

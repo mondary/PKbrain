@@ -132,6 +132,8 @@ cat >"$INFO_PLIST" <<PLIST
 </plist>
 PLIST
 
+codesign --force --deep --sign - "$APP_BUNDLE"
+
 # Ensure LaunchServices registers the URL scheme for the freshly built bundle.
 LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
 if [[ -x "$LSREGISTER" ]]; then

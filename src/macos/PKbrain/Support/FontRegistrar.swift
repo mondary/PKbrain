@@ -10,7 +10,7 @@ enum FontRegistrar {
     ]
 
     static func registerBundledFonts() {
-        guard let fontURL = Bundle.module.url(
+        guard let fontURL = PKbrainResources.bundle.url(
             forResource: "RedactedScript-Regular",
             withExtension: "ttf"
         ) else {
