@@ -86,6 +86,7 @@ final class NoteDocument: ObservableObject, Identifiable {
     @Published var isFocused = true
     @Published var listToggleRequestToken = 0
     @Published var versions: [NoteVersion]
+    @Published var updatedAt: Date?
 
     var isNewNote: Bool {
         // Consider a note "new" if it has no content and no title
@@ -106,6 +107,7 @@ final class NoteDocument: ObservableObject, Identifiable {
         position = data.x != nil && data.y != nil ? CGPoint(x: data.x!, y: data.y!) : nil
         versions = data.versions
         pinned = data.pinned
+        updatedAt = data.updatedAt
     }
 
     var windowTitle: String {
@@ -138,7 +140,8 @@ final class NoteDocument: ObservableObject, Identifiable {
             y: position.map { Double($0.y) }
             ,
             versions: versions,
-            pinned: pinned
+            pinned: pinned,
+            updatedAt: updatedAt
         )
     }
 
@@ -164,6 +167,7 @@ final class NoteDocument: ObservableObject, Identifiable {
     }
 
     private func markChanged() {
+        updatedAt = Date()
         onChange?()
         suggestVersionIfNeeded()
     }

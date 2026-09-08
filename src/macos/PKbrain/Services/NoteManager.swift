@@ -39,15 +39,21 @@ final class NoteManager {
         if loadedNotes.isEmpty {
             createNote(NoteData(theme: .blueberry), activate: true, scheduleSave: true)
         } else {
+            let lastEditedID = loadedNotes.max(by: {
+                ($0.updatedAt ?? .distantPast) < ($1.updatedAt ?? .distantPast)
+            })?.id
             loadedNotes.forEach { note in
-                createNote(note, activate: false, scheduleSave: false, initiallyVisible: note.isOpen)
+                let visible = note.id == lastEditedID
+                createNote(note, activate: false, scheduleSave: false, initiallyVisible: note.isOpen && visible)
             }
         }
     }
 
     func createNote() {
         let note = RandomContent.newNoteData(skipping: latestTheme)
-        createNote(note, activate: true, scheduleSave: true)
+        var data = note
+        data.updatedAt = Date()
+        createNote(data, activate: true, scheduleSave: true)
     }
 
     func createNote(prefillContent: String, activate: Bool = true) {
@@ -65,7 +71,8 @@ final class NoteManager {
             y: base.y,
             macFrameVersion: base.macFrameVersion,
             versions: base.versions,
-            pinned: base.pinned
+            pinned: base.pinned,
+            updatedAt: Date()
         )
         createNote(note, activate: activate, scheduleSave: true)
     }
