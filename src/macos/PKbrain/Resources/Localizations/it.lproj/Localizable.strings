@@ -326,3 +326,6 @@
 "all_my_notes" = "Tutte le mie note";
 "trash_title" = "Cestino";
 "no_content" = "Nessun contenuto";
+
+"stick_notes_to_edges" = "Incolla le note sui bordi";
+"unstick_notes_from_edges" = "Stacca le note dai bordi";

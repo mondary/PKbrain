@@ -326,3 +326,6 @@
 "all_my_notes" = "Alle meine Notizen";
 "trash_title" = "Papierkorb";
 "no_content" = "Kein Inhalt";
+
+"stick_notes_to_edges" = "Notizen an die Bildschirmränder kleben";
+"unstick_notes_from_edges" = "Notizen von den Rändern lösen";

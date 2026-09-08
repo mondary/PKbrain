@@ -327,3 +327,6 @@
 "all_my_notes" = "Toutes mes notes";
 "trash_title" = "Poubelle";
 "no_content" = "Aucun contenu";
+
+"stick_notes_to_edges" = "Coller les notes sur les bords";
+"unstick_notes_from_edges" = "Décoller les notes des bords";

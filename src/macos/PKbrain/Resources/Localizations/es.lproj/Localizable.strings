@@ -326,3 +326,6 @@
 "all_my_notes" = "Todas mis notas";
 "trash_title" = "Papelera";
 "no_content" = "Sin contenido";
+
+"stick_notes_to_edges" = "Pegar las notas en los bordes";
+"unstick_notes_from_edges" = "Despegar las notas de los bordes";

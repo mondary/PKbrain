@@ -15,6 +15,8 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     private let onShowList: () -> Void
     private let onShowClipboard: () -> Void
     private let onShowClipboardWindow: () -> Void
+    private let onStickNotesToEdges: () -> Void
+    private let isStuckToEdges: () -> Bool
     private let onQuit: () -> Void
     private let settings: AppSettings
 
@@ -30,6 +32,8 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         onShowList: @escaping () -> Void,
         onShowClipboard: @escaping () -> Void,
         onShowClipboardWindow: @escaping () -> Void,
+        onStickNotesToEdges: @escaping () -> Void = {},
+        isStuckToEdges: @escaping () -> Bool = { false },
         onQuit: @escaping () -> Void,
         settings: AppSettings
     ) {
@@ -45,6 +49,8 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         self.onShowList = onShowList
         self.onShowClipboard = onShowClipboard
         self.onShowClipboardWindow = onShowClipboardWindow
+        self.onStickNotesToEdges = onStickNotesToEdges
+        self.isStuckToEdges = isStuckToEdges
         self.onQuit = onQuit
         self.settings = settings
 
@@ -118,6 +124,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         onShowClipboardWindow()
     }
 
+    @objc private func stickNotesToEdges(_ sender: NSMenuItem) {
+        onStickNotesToEdges()
+    }
+
     private func rebuildMenu() {
         menu.removeAllItems()
 
@@ -151,6 +161,12 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.addItem(actionItem(localizedString("show_list"), action: #selector(showList(_:)), shortcut: .showNotesList, systemImage: "list.bullet.rectangle"))
         menu.addItem(actionItem(localizedString("show_clipboard_drawer"), action: #selector(showClipboard(_:)), keyEquivalent: "v", modifiers: [.command, .shift], systemImage: "clipboard"))
         menu.addItem(actionItem(localizedString("show_clipboard_window"), action: #selector(showClipboardWindow(_:)), shortcut: .showClipboardWindow, systemImage: "macwindow"))
+        menu.addItem(actionItem(
+            localizedString(isStuckToEdges() ? "unstick_notes_from_edges" : "stick_notes_to_edges"),
+            action: #selector(stickNotesToEdges(_:)),
+            keyEquivalent: "",
+            systemImage: isStuckToEdges() ? "rectangle.on.rectangle.slash" : "rectangle.on.rectangle"
+        ))
         menu.addItem(.separator())
         menu.addItem(actionItem(localizedString("settings"), action: #selector(showSettings(_:)), shortcut: .preferences, systemImage: "gearshape"))
         menu.addItem(actionItem(localizedString("about_pkbrain"), action: #selector(showAbout(_:)), keyEquivalent: ""))

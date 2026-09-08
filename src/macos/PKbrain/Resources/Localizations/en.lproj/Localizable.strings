@@ -327,3 +327,6 @@
 "all_my_notes" = "All my notes";
 "trash_title" = "Trash";
 "no_content" = "No content";
+
+"stick_notes_to_edges" = "Stick Notes to Screen Edges";
+"unstick_notes_from_edges" = "Unstick Notes from Edges";

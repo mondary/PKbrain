@@ -200,7 +200,8 @@ final class NoteManager {
             NoteMenuEntry(
                 id: controller.noteDocument.id,
                 title: controller.noteDocument.title.isEmpty ? "Untitled" : controller.noteDocument.title,
-                theme: controller.noteDocument.theme
+                theme: controller.noteDocument.theme,
+                preview: controller.noteDocument.content
             )
         }
     }
@@ -345,4 +346,5 @@ struct NoteMenuEntry {
     let id: UUID
     let title: String
     let theme: NoteTheme
+    var preview: String = ""
 }

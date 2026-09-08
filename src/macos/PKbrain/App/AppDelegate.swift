@@ -10,6 +10,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var commandPaletteWindowController: CommandPaletteWindowController?
     private var clipboardWindowController: ClipboardWindowController?
     private var statusMenuController: StatusMenuController?
+    private var edgeNotesDeck: EdgeDeckManager?
+    private var notesStuckToEdges = false
     private var cancellables: Set<AnyCancellable> = []
     private var globalHotKeyNewRef: EventHotKeyRef?
     private var globalHotKeyLastRef: EventHotKeyRef?
@@ -41,6 +43,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         manager.onShowList = { [weak self] in self?.showNotesList(nil) }
         manager.launch()
         buildStatusMenu()
+        edgeNotesDeck = EdgeDeckManager(
+            entriesProvider: { [weak self] in self?.manager.menuEntries() ?? [] },
+            onNoteSelected: { [weak self] noteID in
+                NSApp.activate(ignoringOtherApps: true)
+                self?.manager.focusNote(documentID: noteID)
+            },
+            onNewNote: { [weak self] in
+                NSApp.activate(ignoringOtherApps: true)
+                self?.manager.createNote()
+            }
+        )
+        edgeNotesDeck?.rebuild()
         registerGlobalHotKey()
         donateSpotlightActivities()
         clipboard.start()
@@ -759,6 +773,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.windowsMenu = windowMenu
     }
 
+    private func toggleStuckNotes() {
+        notesStuckToEdges.toggle()
+        edgeNotesDeck?.setScattered(notesStuckToEdges)
+        if notesStuckToEdges {
+            manager.hideAllNotes()
+        } else {
+            manager.showAllNotes()
+        }
+    }
+
     @objc private func showCommandPalette(_ sender: Any?) {
         if commandPaletteWindowController == nil {
             commandPaletteWindowController = CommandPaletteWindowController(manager: manager)
@@ -779,6 +803,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onShowList: { [weak self] in self?.showNotesList(nil) },
             onShowClipboard: { [weak self] in self?.showClipboard(nil) },
             onShowClipboardWindow: { [weak self] in self?.showClipboardWindow(nil) },
+            onStickNotesToEdges: { [weak self] in self?.toggleStuckNotes() },
+            isStuckToEdges: { [weak self] in self?.notesStuckToEdges ?? false },
             onQuit: { NSApp.terminate(nil) },
             settings: settings
         )
