@@ -1,6 +1,22 @@
 import AppKit
 import Foundation
 
+enum OCROutput: String, CaseIterable, Identifiable {
+    case clipboard
+    case clipboardAndWindow
+    case window
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .clipboard: "Clipboard"
+        case .clipboardAndWindow: "Clipboard + window"
+        case .window: "Window"
+        }
+    }
+}
+
 final class AppSettings: ObservableObject {
     private enum Keys {
         static let scribblyModeActive = "scribbly-mode-active"
@@ -20,6 +36,7 @@ final class AppSettings: ObservableObject {
         static let clipboardSourceList = "clipboard-source-list"
         static let clipboardCopySound = "clipboard-copy-sound"
         static let clipboardPasteSound = "clipboard-paste-sound"
+        static let ocrOutput = "ocr-output"
         static let autoBackupEnabled = "auto-backup-enabled"
         static let autoBackupDirectoryPath = "auto-backup-directory-path"
         static let autoBackupIntervalHours = "auto-backup-interval-hours"
@@ -100,6 +117,10 @@ final class AppSettings: ObservableObject {
         didSet { defaults.set(clipboardPasteSound.rawValue, forKey: Keys.clipboardPasteSound) }
     }
 
+    @Published var ocrOutput: OCROutput {
+        didSet { defaults.set(ocrOutput.rawValue, forKey: Keys.ocrOutput) }
+    }
+
     @Published var autoBackupEnabled: Bool {
         didSet { defaults.set(autoBackupEnabled, forKey: Keys.autoBackupEnabled) }
     }
@@ -131,6 +152,7 @@ final class AppSettings: ObservableObject {
             Keys.clipboardSourceMode: ClipboardSourceMode.allowAll.rawValue,
             Keys.clipboardCopySound: ClipboardFeedbackSound.pop.rawValue,
             Keys.clipboardPasteSound: ClipboardFeedbackSound.tink.rawValue,
+            Keys.ocrOutput: OCROutput.clipboardAndWindow.rawValue,
             Keys.autoBackupEnabled: false,
             Keys.autoBackupDirectoryPath: "",
             Keys.autoBackupIntervalHours: 24
@@ -167,6 +189,8 @@ final class AppSettings: ObservableObject {
         clipboardCopySound = ClipboardFeedbackSound(rawValue: copySoundRaw) ?? .pop
         let pasteSoundRaw = defaults.string(forKey: Keys.clipboardPasteSound) ?? ClipboardFeedbackSound.tink.rawValue
         clipboardPasteSound = ClipboardFeedbackSound(rawValue: pasteSoundRaw) ?? .tink
+        let ocrOutputRaw = defaults.string(forKey: Keys.ocrOutput) ?? OCROutput.clipboardAndWindow.rawValue
+        ocrOutput = OCROutput(rawValue: ocrOutputRaw) ?? .clipboardAndWindow
         autoBackupEnabled = defaults.bool(forKey: Keys.autoBackupEnabled)
         autoBackupDirectoryPath = defaults.string(forKey: Keys.autoBackupDirectoryPath) ?? ""
         autoBackupIntervalHours = max(1, defaults.integer(forKey: Keys.autoBackupIntervalHours))

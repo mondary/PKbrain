@@ -3,6 +3,11 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.3] - 2026-09-14
+
+### Added
+- Choix de la destination des résultats OCR : presse-papiers, fenêtre, ou les deux.
+
 ## [2026.09.2] - 2026-09-14
 
 ### Changed

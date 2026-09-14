@@ -4,10 +4,16 @@ import Vision
 /// TRex-style screenshot OCR: interactive screen selection, Vision text recognition,
 /// result copied to the clipboard and shown in a small floating panel.
 final class ScreenshotOCRService: NSObject, NSTextViewDelegate {
+    private let settings: AppSettings
     private var panel: NSPanel?
     private var textView: NSTextView?
     private var dismissTimer: Timer?
     private var panelText = ""
+
+    init(settings: AppSettings) {
+        self.settings = settings
+        super.init()
+    }
 
     func start() {
         // Screen Recording TCC permission (required for the screencapture subprocess).
@@ -60,17 +66,23 @@ final class ScreenshotOCRService: NSObject, NSTextViewDelegate {
     private func finish(text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            showPanel(text: localizedString("ocr_no_text"), emptyResult: true)
+            if settings.ocrOutput != .clipboard {
+                showPanel(text: localizedString("ocr_no_text"), emptyResult: true)
+            }
             return
         }
 
         panelText = trimmed
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(trimmed, forType: .string)
-        ClipboardSoundPlayer.playCopy()
-        // The ClipboardManager picks up the pasteboard change, so the OCR text
-        // also lands in the clipboard history automatically.
-        showPanel(text: trimmed, emptyResult: false)
+        if settings.ocrOutput != .window {
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(trimmed, forType: .string)
+            ClipboardSoundPlayer.playCopy()
+            // The ClipboardManager picks up the pasteboard change, so the OCR text
+            // also lands in the clipboard history automatically.
+        }
+        if settings.ocrOutput != .clipboard {
+            showPanel(text: trimmed, emptyResult: false)
+        }
     }
 
     // MARK: - Result panel
@@ -134,6 +146,10 @@ final class ScreenshotOCRService: NSObject, NSTextViewDelegate {
     func textDidChange(_ notification: Notification) {
         // Keep the clipboard in sync if the user fixes an OCR mistake in the panel.
         panelText = textView?.string ?? panelText
+        guard settings.ocrOutput != .window else {
+            scheduleDismiss()
+            return
+        }
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(panelText, forType: .string)
         scheduleDismiss()

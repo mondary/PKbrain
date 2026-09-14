@@ -35,7 +35,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var clipboard = ClipboardManager(
         persistence: ClipboardPersistence(baseDirectory: manager.storageURL.deletingLastPathComponent())
     )
-    private lazy var screenshotOCRService = ScreenshotOCRService()
+    private lazy var screenshotOCRService = ScreenshotOCRService(settings: settings)
     func applicationDidFinishLaunching(_ notification: Notification) {
         FontRegistrar.registerBundledFonts()
         ensureApplicationIconForDirectRuns()

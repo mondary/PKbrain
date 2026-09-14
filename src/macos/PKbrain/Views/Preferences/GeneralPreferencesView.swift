@@ -30,6 +30,7 @@ struct GeneralPreferencesView: View {
                 storageCard
                 behaviorCard
                 clipboardCard
+                ocrCard
                 importExportCard
                 backupCard
                 cleanupCard
@@ -207,6 +208,21 @@ struct GeneralPreferencesView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+        }
+    }
+
+    private var ocrCard: some View {
+        PreferenceSectionCard(
+            title: "Screenshot OCR",
+            subtitle: "Choose where recognized text should be sent.",
+            systemImage: "text.viewfinder"
+        ) {
+            Picker("Output", selection: $settings.ocrOutput) {
+                ForEach(OCROutput.allCases) { output in
+                    Text(output.displayName).tag(output)
+                }
+            }
+            .pickerStyle(.segmented)
         }
     }
 
