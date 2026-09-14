@@ -15,6 +15,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     private let onShowList: () -> Void
     private let onShowClipboard: () -> Void
     private let onShowClipboardWindow: () -> Void
+    private let onScreenshotOCR: () -> Void
     private let onStickNotesToEdges: () -> Void
     private let isStuckToEdges: () -> Bool
     private let onQuit: () -> Void
@@ -32,6 +33,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         onShowList: @escaping () -> Void,
         onShowClipboard: @escaping () -> Void,
         onShowClipboardWindow: @escaping () -> Void,
+        onScreenshotOCR: @escaping () -> Void = {},
         onStickNotesToEdges: @escaping () -> Void = {},
         isStuckToEdges: @escaping () -> Bool = { false },
         onQuit: @escaping () -> Void,
@@ -49,6 +51,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         self.onShowList = onShowList
         self.onShowClipboard = onShowClipboard
         self.onShowClipboardWindow = onShowClipboardWindow
+        self.onScreenshotOCR = onScreenshotOCR
         self.onStickNotesToEdges = onStickNotesToEdges
         self.isStuckToEdges = isStuckToEdges
         self.onQuit = onQuit
@@ -124,6 +127,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         onShowClipboardWindow()
     }
 
+    @objc private func runScreenshotOCR(_ sender: NSMenuItem) {
+        onScreenshotOCR()
+    }
+
     @objc private func stickNotesToEdges(_ sender: NSMenuItem) {
         onStickNotesToEdges()
     }
@@ -161,6 +168,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.addItem(actionItem(localizedString("show_list"), action: #selector(showList(_:)), shortcut: .showNotesList, systemImage: "list.bullet.rectangle"))
         menu.addItem(actionItem(localizedString("show_clipboard_drawer"), action: #selector(showClipboard(_:)), keyEquivalent: "v", modifiers: [.command, .shift], systemImage: "clipboard"))
         menu.addItem(actionItem(localizedString("show_clipboard_window"), action: #selector(showClipboardWindow(_:)), shortcut: .showClipboardWindow, systemImage: "macwindow"))
+        menu.addItem(actionItem(localizedString("screenshot_ocr"), action: #selector(runScreenshotOCR(_:)), shortcut: .screenshotOCR, systemImage: "text.viewfinder"))
         menu.addItem(actionItem(
             localizedString(isStuckToEdges() ? "unstick_notes_from_edges" : "stick_notes_to_edges"),
             action: #selector(stickNotesToEdges(_:)),

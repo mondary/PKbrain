@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var globalHotKeyClipboardWindowRef: EventHotKeyRef?
     private var globalHotKeyClipboardWindowFallbackRef: EventHotKeyRef?
     private var globalHotKeyShowAllNotesRef: EventHotKeyRef?
+    private var globalHotKeyScreenshotOCRRef: EventHotKeyRef?
     private var globalHotKeyHandlerRef: EventHandlerRef?
     private var globalShowAllNotesMonitor: Any?
     private var lastShowAllNotesToggleTime: TimeInterval = 0
@@ -34,6 +35,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var clipboard = ClipboardManager(
         persistence: ClipboardPersistence(baseDirectory: manager.storageURL.deletingLastPathComponent())
     )
+    private lazy var screenshotOCRService = ScreenshotOCRService()
     func applicationDidFinishLaunching(_ notification: Notification) {
         FontRegistrar.registerBundledFonts()
         ensureApplicationIconForDirectRuns()
@@ -333,6 +335,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSLog("PKbrain: registered global show/hide shortcut")
         }
 
+        // Screenshot OCR (configurable global shortcut).
+        let screenshotOCRShortcut = settings.shortcut(for: .screenshotOCR)
+        let screenshotOCRID = EventHotKeyID(signature: signature, id: 7)
+        let screenshotOCRStatus = RegisterEventHotKey(
+            keyCode(for: screenshotOCRShortcut.key),
+            screenshotOCRShortcut.modifier.carbonFlags,
+            screenshotOCRID,
+            GetApplicationEventTarget(),
+            0,
+            &globalHotKeyScreenshotOCRRef
+        )
+        if screenshotOCRStatus != noErr { globalHotKeyScreenshotOCRRef = nil }
+
         installGlobalHotKeyHandlerIfNeeded()
         installGlobalShowAllNotesMonitor(shortcut: showAllNotesShortcut)
     }
@@ -361,6 +376,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let globalHotKeyShowAllNotesRef {
             UnregisterEventHotKey(globalHotKeyShowAllNotesRef)
             self.globalHotKeyShowAllNotesRef = nil
+        }
+        if let globalHotKeyScreenshotOCRRef {
+            UnregisterEventHotKey(globalHotKeyScreenshotOCRRef)
+            self.globalHotKeyScreenshotOCRRef = nil
         }
         if let globalShowAllNotesMonitor {
             NSEvent.removeMonitor(globalShowAllNotesMonitor)
@@ -489,6 +508,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             case 6:
                 NSLog("PKbrain: received global show/hide shortcut")
                 self.toggleAllNotesVisibility()
+            case 7:
+                self.screenshotOCRService.start()
             default:
                 break
             }
@@ -765,6 +786,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         windowMenu.addItem(menuItem(localizedString("show_notes_list"), action: #selector(showNotesList(_:)), shortcut: .showNotesList))
         windowMenu.addItem(menuItem(localizedString("clipboard"), action: #selector(showClipboard(_:)), key: "v", modifiers: [.command, .shift]))
         windowMenu.addItem(menuItem(localizedString("show_clipboard_window"), action: #selector(showClipboardWindow(_:)), shortcut: .showClipboardWindow))
+        windowMenu.addItem(menuItem(localizedString("screenshot_ocr"), action: #selector(runScreenshotOCR(_:)), shortcut: .screenshotOCR))
         windowMenu.addItem(.separator())
         windowMenu.addItem(menuItem(localizedString("command_palette"), action: #selector(showCommandPalette(_:)), key: "k", modifiers: [.command]))
         windowMenu.addItem(.separator())
@@ -781,6 +803,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             manager.showAllNotes()
         }
+    }
+
+    @objc private func runScreenshotOCR(_ sender: Any?) {
+        screenshotOCRService.start()
     }
 
     @objc private func showCommandPalette(_ sender: Any?) {
@@ -803,6 +829,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onShowList: { [weak self] in self?.showNotesList(nil) },
             onShowClipboard: { [weak self] in self?.showClipboard(nil) },
             onShowClipboardWindow: { [weak self] in self?.showClipboardWindow(nil) },
+            onScreenshotOCR: { [weak self] in self?.screenshotOCRService.start() },
             onStickNotesToEdges: { [weak self] in self?.toggleStuckNotes() },
             isStuckToEdges: { [weak self] in self?.notesStuckToEdges ?? false },
             onQuit: { NSApp.terminate(nil) },

@@ -122,6 +122,7 @@ enum ShortcutAction: String, CaseIterable, Identifiable {
     case showAllNotes
     case showNotesList
     case showClipboardWindow
+    case screenshotOCR
     case saveAllNotes
     case preferences
     case closeNoteWindow
@@ -143,6 +144,7 @@ enum ShortcutAction: String, CaseIterable, Identifiable {
         case .showAllNotes: localizedString("show_all_notes")
         case .showNotesList: localizedString("show_notes_list")
         case .showClipboardWindow: localizedString("show_clipboard_window")
+        case .screenshotOCR: localizedString("screenshot_ocr")
         case .saveAllNotes: localizedString("save_all_notes")
         case .preferences: localizedString("preferences")
         case .closeNoteWindow: localizedString("close_note_window")
@@ -158,7 +160,7 @@ enum ShortcutAction: String, CaseIterable, Identifiable {
 
     var group: String {
         switch self {
-        case .focusLastNoteGlobal, .newNoteGlobal, .newStickyNote, .showAllNotes, .showNotesList, .showClipboardWindow, .saveAllNotes, .preferences:
+        case .focusLastNoteGlobal, .newNoteGlobal, .newStickyNote, .showAllNotes, .showNotesList, .showClipboardWindow, .screenshotOCR, .saveAllNotes, .preferences:
             localizedString("shortcut_group_app")
         case .closeNoteWindow, .deleteStickyNote, .toggleList, .emojiSymbols, .toggleMonospace, .zoomIn, .zoomOut, .actualSize:
             localizedString("shortcut_group_note")
@@ -177,6 +179,7 @@ enum ShortcutAction: String, CaseIterable, Identifiable {
         case .showAllNotes: KeyboardShortcutSetting(key: "a", modifier: .commandOption)
         case .showNotesList: KeyboardShortcutSetting(key: "l", modifier: .commandOption)
         case .showClipboardWindow: KeyboardShortcutSetting(key: "v", modifier: .commandOption)
+        case .screenshotOCR: KeyboardShortcutSetting(key: "o", modifier: .commandOption)
         case .saveAllNotes: KeyboardShortcutSetting(key: "s", modifier: .command)
         case .preferences: KeyboardShortcutSetting(key: ",", modifier: .command)
         case .closeNoteWindow: KeyboardShortcutSetting(key: "w", modifier: .command)

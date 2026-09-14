@@ -330,3 +330,10 @@
 
 "stick_notes_to_edges" = "Coller les notes sur les bords";
 "unstick_notes_from_edges" = "Décoller les notes des bords";
+"screenshot_ocr" = "OCR de capture d'écran (copier le texte)";
+"ocr_result_title" = "OCR — copié dans le presse-papiers";
+"ocr_result_title_empty" = "Résultat OCR";
+"ocr_no_text" = "Aucun texte détecté dans la sélection.";
+"ocr_permission_title" = "Autorisation d'enregistrement d'écran requise";
+"ocr_permission_body" = "PKbrain a besoin de l'autorisation d'enregistrement d'écran pour capturer la zone sélectionnée. Activez-la dans Réglages Système > Confidentialité et sécurité > Enregistrement de l'écran, puis réessayez.";
+"ocr_permission_open_settings" = "Ouvrir les Réglages Système";

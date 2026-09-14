@@ -330,3 +330,10 @@
 
 "stick_notes_to_edges" = "Stick Notes to Screen Edges";
 "unstick_notes_from_edges" = "Unstick Notes from Edges";
+"screenshot_ocr" = "Screenshot OCR (copy text)";
+"ocr_result_title" = "OCR — copied to clipboard";
+"ocr_result_title_empty" = "OCR result";
+"ocr_no_text" = "No text detected in selection.";
+"ocr_permission_title" = "Screen Recording permission needed";
+"ocr_permission_body" = "PKbrain needs Screen Recording permission to capture the selected screen area. Enable it in System Settings > Privacy & Security > Screen Recording, then try again.";
+"ocr_permission_open_settings" = "Open System Settings";

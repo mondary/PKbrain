@@ -329,3 +329,10 @@
 
 "stick_notes_to_edges" = "Notizen an die Bildschirmränder kleben";
 "unstick_notes_from_edges" = "Notizen von den Rändern lösen";
+"screenshot_ocr" = "Screenshot-OCR (Text kopieren)";
+"ocr_result_title" = "OCR — in die Zwischenablage kopiert";
+"ocr_result_title_empty" = "OCR-Ergebnis";
+"ocr_no_text" = "Kein Text in der Auswahl erkannt.";
+"ocr_permission_title" = "Bildschirmaufnahme-Berechtigung erforderlich";
+"ocr_permission_body" = "PKbrain benötigt die Berechtigung zur Bildschirmaufnahme, um den ausgewählten Bereich zu erfassen. Aktiviere sie unter Systemeinstellungen > Datenschutz & Sicherheit > Bildschirmaufnahme und versuche es erneut.";
+"ocr_permission_open_settings" = "Systemeinstellungen öffnen";

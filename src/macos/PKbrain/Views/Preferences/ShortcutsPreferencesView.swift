@@ -11,6 +11,7 @@ struct ShortcutsPreferencesView: View {
             .showAllNotes,
             .showNotesList,
             .showClipboardWindow,
+            .screenshotOCR,
             .saveAllNotes,
             .preferences
         ]

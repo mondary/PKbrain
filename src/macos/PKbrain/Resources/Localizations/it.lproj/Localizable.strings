@@ -329,3 +329,10 @@
 
 "stick_notes_to_edges" = "Incolla le note sui bordi";
 "unstick_notes_from_edges" = "Stacca le note dai bordi";
+"screenshot_ocr" = "OCR screenshot (copia testo)";
+"ocr_result_title" = "OCR — copiato negli appunti";
+"ocr_result_title_empty" = "Risultato OCR";
+"ocr_no_text" = "Nessun testo rilevato nella selezione.";
+"ocr_permission_title" = "Serve il permesso di registrazione schermo";
+"ocr_permission_body" = "PKbrain ha bisogno del permesso di registrazione dello schermo per acquisire l'area selezionata. Attivalo in Impostazioni di Sistema > Privacy e sicurezza > Registrazione schermo e riprova.";
+"ocr_permission_open_settings" = "Apri Impostazioni di Sistema";

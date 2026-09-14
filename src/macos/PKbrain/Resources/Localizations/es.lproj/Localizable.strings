@@ -329,3 +329,10 @@
 
 "stick_notes_to_edges" = "Pegar las notas en los bordes";
 "unstick_notes_from_edges" = "Despegar las notas de los bordes";
+"screenshot_ocr" = "OCR de captura (copiar texto)";
+"ocr_result_title" = "OCR — copiado al portapapeles";
+"ocr_result_title_empty" = "Resultado OCR";
+"ocr_no_text" = "No se detectó texto en la selección.";
+"ocr_permission_title" = "Se necesita permiso de grabación de pantalla";
+"ocr_permission_body" = "PKbrain necesita el permiso de grabación de pantalla para capturar la zona seleccionada. Actívalo en Ajustes del Sistema > Privacidad y seguridad > Grabación de pantalla e inténtalo de nuevo.";
+"ocr_permission_open_settings" = "Abrir Ajustes del Sistema";
