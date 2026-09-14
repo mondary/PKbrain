@@ -3,6 +3,11 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.1] - 2026-09-14
+
+### Changed
+- Bump de version : cumule les modifications du jour (decks de bords, OCR, CalVer).
+
 ## [2026.09.0] - 2026-09-14
 
 ### Added
