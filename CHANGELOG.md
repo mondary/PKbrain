@@ -3,6 +3,11 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.5] - 2026-09-14
+
+### Changed
+- Les post-it de bord sont désormais masqués et décollés par défaut ; l’affichage collé aux bords reste une option.
+
 ## [2026.09.4] - 2026-09-14
 
 ### Added

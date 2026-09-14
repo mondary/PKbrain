@@ -142,7 +142,7 @@ final class AppSettings: ObservableObject {
         self.defaults = defaults
         defaults.register(defaults: [
             Keys.scribblyModeActive: false,
-            Keys.edgeDeckVisible: true,
+            Keys.edgeDeckVisible: false,
             Keys.hideActionBar: false,
             Keys.listItemPrefix: " • ",
             Keys.selectedLanguage: AppLanguage.english.rawValue,
