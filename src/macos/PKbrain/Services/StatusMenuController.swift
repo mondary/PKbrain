@@ -180,6 +180,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.addItem(actionItem(localizedString("about_pkbrain"), action: #selector(showAbout(_:)), keyEquivalent: ""))
         menu.addItem(actionItem(localizedString("restart_pkbrain"), action: #selector(restart(_:)), keyEquivalent: ""))
         menu.addItem(actionItem(localizedString("quit_pkbrain"), action: #selector(quit(_:)), keyEquivalent: "q"))
+        menu.addItem(.separator())
+        let versionItem = NSMenuItem(title: "PKbrain \(AppVersion.current)", action: nil, keyEquivalent: "")
+        versionItem.isEnabled = false
+        menu.addItem(versionItem)
     }
 
     private func actionItem(

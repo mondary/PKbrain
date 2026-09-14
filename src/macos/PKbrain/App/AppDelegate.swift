@@ -239,7 +239,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         NSApp.orderFrontStandardAboutPanel(options: [
             .applicationName: "PKbrain",
-            .applicationVersion: "4.2.0 macOS port",
+            .applicationVersion: "\(AppVersion.current) macOS port",
             .credits: credits
         ])
         NSApp.activate(ignoringOtherApps: true)

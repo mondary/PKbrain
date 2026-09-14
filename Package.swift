@@ -18,6 +18,7 @@ let package = Package(
             resources: [
                 .copy("Resources/RedactedScript-Regular.ttf"),
                 .copy("Resources/BrandIcons"),
+                .copy("Resources/VERSION"),
                 .process("Resources/Localizations")
             ]
         )

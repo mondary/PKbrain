@@ -3,6 +3,8 @@
 
 ![Project icon](icon.png)
 
+version **2026.09.0** — [Changelog](CHANGELOG.md)
+
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
 ✨ Application de notes native macOS inspirée de la lignée PKbrain, avec calcul inline, palette de commandes et gestion avancée des raccourcis.
