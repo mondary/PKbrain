@@ -13,6 +13,11 @@ enum DeckSide: CaseIterable {
     var isVertical: Bool { self == .left || self == .right }
 }
 
+extension Notification.Name {
+    static let pkbrainNoteDeckDetach = Notification.Name("PKbrain.noteDeckDetach")
+    static let pkbrainNoteDeckRestore = Notification.Name("PKbrain.noteDeckRestore")
+}
+
 final class EdgeDeckManager {
     private var controllers: [EdgeNotesDeckController] = []
     private let entriesProvider: () -> [NoteMenuEntry]
@@ -32,6 +37,13 @@ final class EdgeDeckManager {
         ) { [weak self] _ in
             self?.rebuild()
         }
+        NotificationCenter.default.addObserver(
+            forName: .pkbrainNoteDeckRestore,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.controllers.forEach { $0.restoreFromDetachedState() }
+        }
     }
 
     /// Scrapbooking mode: note windows hide and every note stays stuck on an
@@ -39,6 +51,10 @@ final class EdgeDeckManager {
     func setScattered(_ on: Bool) {
         scattered = on
         controllers.forEach { $0.setScattered(on) }
+    }
+
+    func detach() {
+        controllers.forEach { $0.detach() }
     }
 
     func rebuild() {
@@ -72,7 +88,10 @@ final class EdgeNotesDeckController {
         side: side,
         model: model,
         entriesProvider: entriesProvider,
-        onNoteSelected: onNoteSelected,
+        onNoteSelected: { [weak self] id in
+            self?.model.detached = true
+            self?.onNoteSelected(id)
+        },
         onNewNote: onNewNote
     )
 
@@ -118,7 +137,10 @@ final class EdgeNotesDeckController {
         switch side {
         case .right: frame = NSRect(x: visible.maxX - thick, y: visible.minY, width: thick, height: visible.height)
         case .left: frame = NSRect(x: visible.minX, y: visible.minY, width: thick, height: visible.height)
-        case .bottom: frame = NSRect(x: visible.minX, y: visible.minY, width: visible.width, height: thick)
+        case .bottom:
+            // Let the display edge crop the lower part of the rotated tabs.
+            // This is intentional: the tabs should look tucked under the screen.
+            frame = NSRect(x: visible.minX, y: visible.minY - DeckGeom.bottomBleed, width: visible.width, height: thick + DeckGeom.bottomBleed)
         }
         panel.setFrame(frame, display: true)
         panel.orderFrontRegardless()
@@ -186,6 +208,7 @@ private final class EdgeDeckModel: ObservableObject {
     /// Scrapbooking: the tabs stay out permanently and this deck only shows
     /// the notes scattered onto its side.
     @Published var alwaysShown = false
+    @Published var detached = false
 }
 
 // MARK: - Geometry (ported from Noty's DeckGeom)
@@ -205,6 +228,8 @@ private enum DeckGeom {
     static let labelPad: CGFloat = 20
     static let labelInset: CGFloat = 12
     static let bleed: CGFloat = 14
+    // A small crop keeps the rotation intentional without hiding the title.
+    static let bottomBleed: CGFloat = 8
     static let fanWidth: CGFloat = 50
     static let plusSize: CGFloat = 28
     static let plusGap: CGFloat = 12
@@ -269,11 +294,6 @@ private struct EdgeDeckRootView: View {
                 count: entries.count,
                 longestLabel: entries.map { DeckGeom.labelWidth($0.title.isEmpty ? "Untitled" : $0.title) }.max() ?? 0
             )
-            let stackLen = CGFloat(max(1, entries.count) - 1) * lay.pitch + lay.itemLength
-                + DeckGeom.plusGap + DeckGeom.plusSize
-            let center = (max(1, length) - stackLen) / 2
-            let offset = min(max(12, center), max(12, length - stackLen - 12))
-
             ZStack(alignment: zAlignment) {
                 EdgeFanColumn(
                     side: side,
@@ -284,8 +304,7 @@ private struct EdgeDeckRootView: View {
                     onNoteSelected: onNoteSelected,
                     onNewNote: onNewNote
                 )
-                .padding(fanPaddingEdge, offset)
-                .opacity(model.fanned ? 1 : 0)
+                .opacity(model.fanned && !model.detached ? 1 : 0)
 
                 EdgePillView(side: side, entries: entries)
                     .padding(pillPaddingEdge, 1)
@@ -293,20 +312,15 @@ private struct EdgeDeckRootView: View {
                     .animation(.easeInOut(duration: 0.20).delay(model.fanned ? 0 : 0.12), value: model.fanned)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: zAlignment)
+            .opacity(model.detached ? 0 : 1)
         }
     }
 
     private var zAlignment: Alignment {
         switch side {
-        case .right: .topTrailing
-        case .left: .topLeading
-        case .bottom: .bottomLeading
+        case .right, .left: .center
+        case .bottom: .bottom
         }
-    }
-
-    /// Which padding axis carries the along-edge offset.
-    private var fanPaddingEdge: Edge.Set {
-        side.isVertical ? .top : .leading
     }
 
     /// The pill sits centred on the edge at rest, pinned by the ZStack alignment.
@@ -474,7 +488,7 @@ private struct EdgeTab: View {
                 .tracking(DeckGeom.labelTracking)
                 .lineLimit(1)
                 .truncationMode(.tail)
-                .foregroundStyle(Color.primary.opacity(0.85))
+                .foregroundStyle(theme?.autoTextColorColor ?? Color.primary.opacity(0.85))
                 .frame(width: max(20, strip - DeckGeom.labelInset), height: DeckGeom.tabThick)
                 .rotationEffect(.degrees(side == .right ? 90 : -90))
                 .frame(width: DeckGeom.tabThick, height: strip)
@@ -504,8 +518,7 @@ private struct EdgeTab: View {
         }
         .frame(width: itemLength, height: DeckGeom.tabThick + DeckGeom.bleed, alignment: .leading)
         .rotationEffect(.degrees(3.0), anchor: .bottomLeading)
-        .offset(y: -DeckGeom.bleed)
-        .frame(height: DeckGeom.tabThick)
+                .frame(height: DeckGeom.tabThick)
         .contentShape(Rectangle())
     }
 
@@ -523,6 +536,17 @@ private struct EdgeTab: View {
         case .bottom:
             return UnevenRoundedRectangle(topLeadingRadius: r, bottomLeadingRadius: 0, bottomTrailingRadius: 0, topTrailingRadius: r, style: .continuous)
         }
+    }
+}
+
+private extension EdgeNotesDeckController {
+    func detach() {
+        model.detached = true
+    }
+
+    func restoreFromDetachedState() {
+        model.detached = false
+        model.fanned = true
     }
 }
 

@@ -3,6 +3,11 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.2] - 2026-09-14
+
+### Changed
+- Ajustement du masquage des stickers inférieurs et incrément de version.
+
 ## [2026.09.1] - 2026-09-14
 
 ### Changed

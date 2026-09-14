@@ -133,12 +133,17 @@ final class NoteWindowController: NSWindowController, NSWindowDelegate {
         noteDocument.isFocused = false
     }
 
+    func windowDidMiniaturize(_ notification: Notification) {
+        NotificationCenter.default.post(name: .pkbrainNoteDeckRestore, object: noteDocument.id)
+    }
+
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         guard !isDeleting else {
             return true
         }
 
         sender.orderOut(nil)
+        NotificationCenter.default.post(name: .pkbrainNoteDeckRestore, object: noteDocument.id)
         onDocumentChanged()
         return false
     }
