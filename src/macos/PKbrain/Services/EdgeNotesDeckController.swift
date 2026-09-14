@@ -256,12 +256,11 @@ private struct EdgeDeckRootView: View {
     var body: some View {
         GeometryReader { geo in
             let all = entriesProvider()
-            // When scattered, notes are dealt round-robin across the four sides.
-            let entries = model.alwaysShown
-                ? all.enumerated()
-                    .filter { DeckSide.allCases[$0.offset % DeckSide.allCases.count] == side }
-                    .map(\.element)
-                : all
+            // Notes are dealt round-robin across the sides, hover or scrapbooking:
+            // each edge only ever fans out its own share.
+            let entries = all.enumerated()
+                .filter { DeckSide.allCases[$0.offset % DeckSide.allCases.count] == side }
+                .map(\.element)
             let size = geo.size
             // The edge runs along this length; the panel is `thick` across it.
             let length = side.isVertical ? size.height : size.width

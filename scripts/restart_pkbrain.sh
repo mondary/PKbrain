@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 set -euo pipefail
 
-ROOT="/Users/clm/Documents/GitHub/PROJECTS/PKbrain/PKbrain_macos"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BIN="$ROOT/.build/arm64-apple-macosx/debug/PKbrain"
 PIDFILE="/tmp/pkbrain.pid"
 LOGFILE="/tmp/pkbrain_run.log"
