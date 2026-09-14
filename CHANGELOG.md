@@ -3,6 +3,11 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.4] - 2026-09-14
+
+### Added
+- Option pour afficher ou masquer les petits post-it collés aux bords de l’écran.
+
 ## [2026.09.3] - 2026-09-14
 
 ### Added

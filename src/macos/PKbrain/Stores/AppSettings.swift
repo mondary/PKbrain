@@ -20,6 +20,7 @@ enum OCROutput: String, CaseIterable, Identifiable {
 final class AppSettings: ObservableObject {
     private enum Keys {
         static let scribblyModeActive = "scribbly-mode-active"
+        static let edgeDeckVisible = "edge-deck-visible"
         static let hideActionBar = "hide-bar"
         static let listItemPrefix = "list-item-start"
         static let selectedLanguage = "selected-language"
@@ -46,6 +47,10 @@ final class AppSettings: ObservableObject {
 
     @Published var scribblyModeActive: Bool {
         didSet { defaults.set(scribblyModeActive, forKey: Keys.scribblyModeActive) }
+    }
+
+    @Published var edgeDeckVisible: Bool {
+        didSet { defaults.set(edgeDeckVisible, forKey: Keys.edgeDeckVisible) }
     }
 
     @Published var hideActionBar: Bool {
@@ -137,6 +142,7 @@ final class AppSettings: ObservableObject {
         self.defaults = defaults
         defaults.register(defaults: [
             Keys.scribblyModeActive: false,
+            Keys.edgeDeckVisible: true,
             Keys.hideActionBar: false,
             Keys.listItemPrefix: " • ",
             Keys.selectedLanguage: AppLanguage.english.rawValue,
@@ -159,6 +165,7 @@ final class AppSettings: ObservableObject {
         ])
 
         scribblyModeActive = defaults.bool(forKey: Keys.scribblyModeActive)
+        edgeDeckVisible = defaults.bool(forKey: Keys.edgeDeckVisible)
         hideActionBar = defaults.bool(forKey: Keys.hideActionBar)
         listItemPrefix = defaults.string(forKey: Keys.listItemPrefix) ?? " • "
 

@@ -56,6 +56,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.manager.createNote()
             }
         )
+        edgeNotesDeck?.setVisible(settings.edgeDeckVisible)
         edgeNotesDeck?.rebuild()
         registerGlobalHotKey()
         donateSpotlightActivities()
@@ -705,6 +706,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .receive(on: RunLoop.main)
             .sink { [weak self] maxItems, maxDays, mode, list in
                 self?.clipboard.setConfig(maxItems: maxItems, maxAgeDays: maxDays, sourceMode: mode, sourceList: list)
+            }
+            .store(in: &cancellables)
+
+        settings.$edgeDeckVisible
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] visible in
+                self?.edgeNotesDeck?.setVisible(visible)
             }
             .store(in: &cancellables)
     }

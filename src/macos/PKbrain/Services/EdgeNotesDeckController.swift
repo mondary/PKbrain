@@ -20,6 +20,7 @@ extension Notification.Name {
 
 final class EdgeDeckManager {
     private var controllers: [EdgeNotesDeckController] = []
+    private var visible = true
     private let entriesProvider: () -> [NoteMenuEntry]
     private let onNoteSelected: (UUID) -> Void
     private let onNewNote: () -> Void
@@ -53,6 +54,15 @@ final class EdgeDeckManager {
         controllers.forEach { $0.setScattered(on) }
     }
 
+    func setVisible(_ on: Bool) {
+        visible = on
+        if on {
+            controllers.forEach { $0.show() }
+        } else {
+            controllers.forEach { $0.hide() }
+        }
+    }
+
     func detach() {
         controllers.forEach { $0.detach() }
     }
@@ -71,7 +81,9 @@ final class EdgeDeckManager {
                 )
             }
         }
-        controllers.forEach { $0.show() }
+        if visible {
+            controllers.forEach { $0.show() }
+        }
     }
 }
 

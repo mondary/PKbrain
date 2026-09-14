@@ -119,6 +119,15 @@ struct GeneralPreferencesView: View {
 
                 Divider()
 
+                Toggle("Afficher les post-it sur les bords de l’écran", isOn: $settings.edgeDeckVisible)
+                    .toggleStyle(.switch)
+
+                Text("Les masquer ne ferme pas les notes : cela cache uniquement leurs petits onglets.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Divider()
+
                 VStack(alignment: .leading, spacing: 10) {
                     Text(localizedString("typing_effects"))
                         .font(.subheadline.weight(.medium))
