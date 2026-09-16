@@ -3,6 +3,11 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.6] - 2026-09-16
+
+### Added
+- Choix des bords utilisés par les post-it (gauche, droite, bas) dans les réglages.
+
 ## [2026.09.5] - 2026-09-14
 
 ### Changed

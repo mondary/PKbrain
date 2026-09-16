@@ -21,6 +21,7 @@ extension Notification.Name {
 final class EdgeDeckManager {
     private var controllers: [EdgeNotesDeckController] = []
     private var visible = true
+    private var activeSides: [DeckSide] = DeckSide.allCases
     private let entriesProvider: () -> [NoteMenuEntry]
     private let onNoteSelected: (UUID) -> Void
     private let onNewNote: () -> Void
@@ -67,13 +68,22 @@ final class EdgeDeckManager {
         controllers.forEach { $0.detach() }
     }
 
+    /// Restrict which screen edges carry tabs; empty falls back to all sides.
+    func setActiveSides(_ sides: [DeckSide]) {
+        let sides = sides.isEmpty ? DeckSide.allCases : sides
+        guard sides != activeSides else { return }
+        activeSides = sides
+        rebuild()
+    }
+
     func rebuild() {
         controllers.forEach { $0.hide() }
         controllers = NSScreen.screens.flatMap { screen in
-            DeckSide.allCases.map { side in
+            activeSides.map { side in
                 EdgeNotesDeckController(
                     side: side,
                     screen: screen,
+                    sides: activeSides,
                     scattered: scattered,
                     entriesProvider: entriesProvider,
                     onNoteSelected: onNoteSelected,
@@ -96,20 +106,11 @@ final class EdgeNotesDeckController {
 
     private let panel = EdgeDeckPanel()
     private let model = EdgeDeckModel()
-    private lazy var root = EdgeDeckRootView(
-        side: side,
-        model: model,
-        entriesProvider: entriesProvider,
-        onNoteSelected: { [weak self] id in
-            self?.model.detached = true
-            self?.onNoteSelected(id)
-        },
-        onNewNote: onNewNote
-    )
 
     init(
         side: DeckSide,
         screen: NSScreen,
+        sides: [DeckSide] = DeckSide.allCases,
         scattered: Bool = false,
         entriesProvider: @escaping () -> [NoteMenuEntry],
         onNoteSelected: @escaping (UUID) -> Void,
@@ -129,7 +130,17 @@ final class EdgeNotesDeckController {
         }
         container.autoresizingMask = [.width, .height]
 
-        let hosting = NSHostingView(rootView: root)
+        let hosting = NSHostingView(rootView: EdgeDeckRootView(
+            side: side,
+            sides: sides,
+            model: model,
+            entriesProvider: entriesProvider,
+            onNoteSelected: { [weak self] id in
+                self?.model.detached = true
+                self?.onNoteSelected(id)
+            },
+            onNewNote: onNewNote
+        ))
         hosting.autoresizingMask = [.width, .height]
         container.addSubview(hosting)
         panel.contentView = container
@@ -285,6 +296,7 @@ private enum DeckGeom {
 
 private struct EdgeDeckRootView: View {
     let side: DeckSide
+    let sides: [DeckSide]
     @ObservedObject var model: EdgeDeckModel
     let entriesProvider: () -> [NoteMenuEntry]
     let onNoteSelected: (UUID) -> Void
@@ -293,10 +305,11 @@ private struct EdgeDeckRootView: View {
     var body: some View {
         GeometryReader { geo in
             let all = entriesProvider()
-            // Notes are dealt round-robin across the sides, hover or scrapbooking:
-            // each edge only ever fans out its own share.
+            // Notes are dealt round-robin across the active sides, hover or
+            // scrapbooking: each edge only ever fans out its own share.
+            let dealSides = sides.isEmpty ? DeckSide.allCases : sides
             let entries = all.enumerated()
-                .filter { DeckSide.allCases[$0.offset % DeckSide.allCases.count] == side }
+                .filter { dealSides[$0.offset % dealSides.count] == side }
                 .map(\.element)
             let size = geo.size
             // The edge runs along this length; the panel is `thick` across it.

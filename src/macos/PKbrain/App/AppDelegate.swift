@@ -56,6 +56,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.manager.createNote()
             }
         )
+        edgeNotesDeck?.setActiveSides(settings.activeDeckSides)
         edgeNotesDeck?.setVisible(settings.edgeDeckVisible)
         edgeNotesDeck?.rebuild()
         registerGlobalHotKey()
@@ -714,6 +715,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .receive(on: RunLoop.main)
             .sink { [weak self] visible in
                 self?.edgeNotesDeck?.setVisible(visible)
+            }
+            .store(in: &cancellables)
+
+        settings.$edgeDeckLeft
+            .combineLatest(settings.$edgeDeckRight, settings.$edgeDeckBottom)
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _, _, _ in
+                self?.edgeNotesDeck?.setActiveSides(self?.settings.activeDeckSides ?? DeckSide.allCases)
             }
             .store(in: &cancellables)
     }

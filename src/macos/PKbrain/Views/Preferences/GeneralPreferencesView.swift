@@ -126,6 +126,17 @@ struct GeneralPreferencesView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
+                if settings.edgeDeckVisible {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Bords utilisés :")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Toggle("Gauche", isOn: $settings.edgeDeckLeft).toggleStyle(.checkbox)
+                        Toggle("Droite", isOn: $settings.edgeDeckRight).toggleStyle(.checkbox)
+                        Toggle("Bas", isOn: $settings.edgeDeckBottom).toggleStyle(.checkbox)
+                    }
+                }
+
                 Divider()
 
                 VStack(alignment: .leading, spacing: 10) {

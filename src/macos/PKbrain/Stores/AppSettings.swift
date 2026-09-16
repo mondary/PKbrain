@@ -21,6 +21,9 @@ final class AppSettings: ObservableObject {
     private enum Keys {
         static let scribblyModeActive = "scribbly-mode-active"
         static let edgeDeckVisible = "edge-deck-visible"
+        static let edgeDeckLeft = "edge-deck-left"
+        static let edgeDeckRight = "edge-deck-right"
+        static let edgeDeckBottom = "edge-deck-bottom"
         static let hideActionBar = "hide-bar"
         static let listItemPrefix = "list-item-start"
         static let selectedLanguage = "selected-language"
@@ -51,6 +54,27 @@ final class AppSettings: ObservableObject {
 
     @Published var edgeDeckVisible: Bool {
         didSet { defaults.set(edgeDeckVisible, forKey: Keys.edgeDeckVisible) }
+    }
+
+    @Published var edgeDeckLeft: Bool {
+        didSet { defaults.set(edgeDeckLeft, forKey: Keys.edgeDeckLeft) }
+    }
+
+    @Published var edgeDeckRight: Bool {
+        didSet { defaults.set(edgeDeckRight, forKey: Keys.edgeDeckRight) }
+    }
+
+    @Published var edgeDeckBottom: Bool {
+        didSet { defaults.set(edgeDeckBottom, forKey: Keys.edgeDeckBottom) }
+    }
+
+    /// Active sides for the edge deck; falls back to all sides when none is ticked.
+    var activeDeckSides: [DeckSide] {
+        var sides: [DeckSide] = []
+        if edgeDeckLeft { sides.append(.left) }
+        if edgeDeckRight { sides.append(.right) }
+        if edgeDeckBottom { sides.append(.bottom) }
+        return sides.isEmpty ? DeckSide.allCases : sides
     }
 
     @Published var hideActionBar: Bool {
@@ -143,6 +167,9 @@ final class AppSettings: ObservableObject {
         defaults.register(defaults: [
             Keys.scribblyModeActive: false,
             Keys.edgeDeckVisible: false,
+            Keys.edgeDeckLeft: true,
+            Keys.edgeDeckRight: true,
+            Keys.edgeDeckBottom: true,
             Keys.hideActionBar: false,
             Keys.listItemPrefix: " • ",
             Keys.selectedLanguage: AppLanguage.english.rawValue,
@@ -166,6 +193,9 @@ final class AppSettings: ObservableObject {
 
         scribblyModeActive = defaults.bool(forKey: Keys.scribblyModeActive)
         edgeDeckVisible = defaults.bool(forKey: Keys.edgeDeckVisible)
+        edgeDeckLeft = defaults.bool(forKey: Keys.edgeDeckLeft)
+        edgeDeckRight = defaults.bool(forKey: Keys.edgeDeckRight)
+        edgeDeckBottom = defaults.bool(forKey: Keys.edgeDeckBottom)
         hideActionBar = defaults.bool(forKey: Keys.hideActionBar)
         listItemPrefix = defaults.string(forKey: Keys.listItemPrefix) ?? " • "
 
