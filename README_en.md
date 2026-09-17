@@ -140,6 +140,20 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
 - `./src/run-dev.sh`: build + package + run
 - `swift build`: SwiftPM build
 
+## 📥 Install
+
+```sh
+brew install --cask mondary/tap/pkbrain
+```
+
+Or download straight from the terminal:
+
+```sh
+curl -LO https://github.com/mondary/PKbrain/releases/latest/download/PKbrain-2026.09.7.dmg
+```
+
+(The `releases/latest/download` URL always points to the latest version.)
+
 ## 📦 Build & Package
 - `scripts/build_macos.sh` rebuilds the local `.app` bundle in `dev` mode.
 - `scripts/package_macos.sh` rebuilds the local `.app` bundle in `release` mode.
