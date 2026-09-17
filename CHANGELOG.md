@@ -3,6 +3,12 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.7] - 2026-09-17
+
+### Changed
+- Refacto racine du dépôt : product.html déplacé dans store/ (+ product2.html avec vraies captures), icônes archivées dans design/icons/, dossier experiments et outillage pnpm supprimés.
+
+
 ## [2026.09.6] - 2026-09-16
 
 ### Added
