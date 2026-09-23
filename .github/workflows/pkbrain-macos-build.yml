@@ -1,0 +1,43 @@
+name: PKbrain macOS build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - Package.swift
+      - scripts/package_macos.sh
+      - src/macos/PKbrain/**
+      - submodules/jorts/**
+      - .github/workflows/pkbrain-macos-build.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pkbrain-macos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out PKbrain and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build app bundle
+        run: ./scripts/package_macos.sh --build-only
+
+      - name: Archive app bundle
+        run: ditto -c -k --sequesterRsrc --keepParent releases/PKbrain.app PKbrain-macos.zip
+
+      - name: Upload app bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: PKbrain-macos-${{ github.sha }}
+          path: PKbrain-macos.zip
+          if-no-files-found: error
+          retention-days: 7
