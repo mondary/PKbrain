@@ -130,6 +130,7 @@
 "typing_effect_glow" = "Glow";
 "create_new_note" = "Create New Note";
 "about_pkbrain" = "About PKbrain";
+"support_pkbrain" = "Support PKbrain on Ko-fi";
 "restart_pkbrain" = "Restart PKbrain";
 "quit_pkbrain" = "Quit PKbrain";
 "search_notes_or_commands" = "Search notes or commands…";

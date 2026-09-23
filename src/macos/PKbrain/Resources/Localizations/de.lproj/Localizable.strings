@@ -129,6 +129,7 @@
 "typing_effect_glow" = "Leuchten";
 "create_new_note" = "Neue Notiz erstellen";
 "about_pkbrain" = "Über PKbrain";
+"support_pkbrain" = "PKbrain auf Ko-fi unterstützen";
 "restart_pkbrain" = "PKbrain neu starten";
 "quit_pkbrain" = "PKbrain beenden";
 "search_notes_or_commands" = "Notizen oder Befehle suchen…";

@@ -129,6 +129,7 @@
 "typing_effect_glow" = "Brillo";
 "create_new_note" = "Crear nueva nota";
 "about_pkbrain" = "Acerca de PKbrain";
+"support_pkbrain" = "Apoyar PKbrain en Ko-fi";
 "restart_pkbrain" = "Reiniciar PKbrain";
 "quit_pkbrain" = "Salir de PKbrain";
 "search_notes_or_commands" = "Buscar notas o comandos…";

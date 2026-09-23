@@ -107,6 +107,11 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         onShowAbout()
     }
 
+    @objc private func supportDeveloper(_ sender: NSMenuItem) {
+        guard let url = URL(string: "https://ko-fi.com/pouark") else { return }
+        NSWorkspace.shared.open(url)
+    }
+
     @objc private func quit(_ sender: NSMenuItem) {
         onQuit()
     }
@@ -178,6 +183,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.addItem(.separator())
         menu.addItem(actionItem(localizedString("settings"), action: #selector(showSettings(_:)), shortcut: .preferences, systemImage: "gearshape"))
         menu.addItem(actionItem(localizedString("about_pkbrain"), action: #selector(showAbout(_:)), keyEquivalent: ""))
+        menu.addItem(actionItem(localizedString("support_pkbrain"), action: #selector(supportDeveloper(_:)), keyEquivalent: "", systemImage: "heart"))
         menu.addItem(actionItem(localizedString("restart_pkbrain"), action: #selector(restart(_:)), keyEquivalent: ""))
         menu.addItem(actionItem(localizedString("quit_pkbrain"), action: #selector(quit(_:)), keyEquivalent: "q"))
         menu.addItem(.separator())
