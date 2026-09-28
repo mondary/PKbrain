@@ -1,7 +1,7 @@
 # PKbrain — Dossier du store
 
 Matériel de présentation de l'application.
-Site/landing interactive : `index.html` (aperçu : `python3 -m http.server 8000 --directory store`).
+Site/landing interactive : `website/` — dossier 100 % autonome, c'est tout son contenu que l'on héberge (aperçu : `python3 -m http.server 8000 --directory store/website`).
 Captures : `screenshots/` (dérivées des captures natives, régénérables — voir `README.md`).
 
 ---

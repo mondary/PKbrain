@@ -1,23 +1,20 @@
 # store — Dossier de présentation PKbrain
 
-Un seul dossier pour tout le matériel de présentation :
-
-- `index.html` + `style.css` + `app.js` + `model.js` — la landing page et son
-  bureau Mac interactif (tiroir presse-papiers, collection par application,
-  sticky notes converties depuis l'historique).
+- `website/` — **la landing page à héberger** : ce dossier est 100 % autonome
+  (HTML + CSS + JS + assets, chemins relatifs, aucun serveur requis). C'est
+  tout son contenu que l'on uploade (Netlify/Vercel Drop, GitHub Pages, FTP).
 - `description-store.md` — le laïus du listing (FR/EN).
-- `assets/` — assets web (captures natives, fonds d'écran, icônes) + assets de
-  listing (`banner-1544x500.png`, `card-1200x675.png`).
+- `assets/` — assets de listing : `banner-1544x500.png`, `card-1200x675.png`.
 - `screenshots/` — captures du listing, dérivées des captures natives.
 - `tools/` — harness de régénération (voir la skill `premium-promo-media`).
 
 ## Aperçu local
 
 ```sh
-python3 -m http.server 8000 --directory store   # puis http://localhost:8000/
+python3 -m http.server 8000 --directory store/website   # puis http://localhost:8000/
 ```
 
-## Régénérer les captures natives (`assets/*.png`)
+## Régénérer les captures natives (`website/assets/*.png`)
 
 Les captures sont rendues depuis les vues SwiftUI/AppKit actuelles du dépôt,
 avec un jeu de données de démonstration (aucune donnée utilisateur lue) :
@@ -33,17 +30,17 @@ swiftc -swift-version 5 -target arm64-apple-macos13.0 \
   store/tools/capture-native.swift -o /tmp/pkbrain-capture/PKbrainCapture
 ln -sfn "$PWD/releases/PKbrain.app/Contents/Resources/PKbrain_PKbrain.bundle" \
   /tmp/pkbrain-capture/PKbrain_PKbrain.bundle
-/tmp/pkbrain-capture/PKbrainCapture "$PWD/store/assets"
+/tmp/pkbrain-capture/PKbrainCapture "$PWD/store/website/assets"
 ```
 
 Puis dériver les captures de listing et la bannière :
 
 ```sh
-magick store/assets/drawer.png  -resize 1440x store/screenshots/01-presse-papiers-tiroir.png
-magick store/assets/library.png -resize 1440x store/screenshots/02-pkclipboard-par-application.png
+magick store/website/assets/drawer.png  -resize 1440x store/screenshots/01-presse-papiers-tiroir.png
+magick store/website/assets/library.png -resize 1440x store/screenshots/02-pkclipboard-par-application.png
 # 03-notes-autocollantes.png : les trois notes côte à côte (montage)
-# banner-1544x500.png : wallpaper + drawer centré avec ombre portée
+# assets/banner-1544x500.png : wallpaper + drawer centré avec ombre portée
 ```
 
-Le fond d'écran (`assets/wallpaper-*.webp`) provient d'une maquette de
+Le fond d'écran (`website/assets/wallpaper-*.webp`) provient d'une maquette de
 référence : `python3 store/tools/prepare-assets.py <référence.html> <sortie.jpg>`.
