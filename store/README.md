@@ -1,12 +1,13 @@
 # store — Dossier de présentation PKbrain
 
-- `website/` — **la landing page à héberger** : ce dossier est 100 % autonome
-  (HTML + CSS + JS + assets, chemins relatifs, aucun serveur requis). C'est
-  tout son contenu que l'on uploade (Netlify/Vercel Drop, GitHub Pages, FTP).
-- `description-store.md` — le laïus du listing (FR/EN).
-- `assets/` — assets de listing : `banner-1544x500.png`, `card-1200x675.png`.
-- `screenshots/` — captures du listing, dérivées des captures natives.
-- `tools/` — harness de régénération (voir la skill `premium-promo-media`).
+- `website/` — **la landing page à héberger** : dossier 100 % autonome (HTML +
+  CSS + JS + assets, chemins relatifs, aucun serveur requis). C'est tout son
+  contenu que l'on uploade (Netlify/Vercel Drop, GitHub Pages, FTP).
+- `app-store/` — **matériel de listing** pour la publication de l'app :
+  laïus (`description-store.md`), bannière `banner-1544x500.png`, card
+  `card-1200x675.png` et `screenshots/` (captures natives).
+- `tools/` — harness de régénération des captures (voir la skill
+  `premium-promo-media`).
 
 ## Aperçu local
 
@@ -36,10 +37,10 @@ ln -sfn "$PWD/releases/PKbrain.app/Contents/Resources/PKbrain_PKbrain.bundle" \
 Puis dériver les captures de listing et la bannière :
 
 ```sh
-magick store/website/assets/drawer.png  -resize 1440x store/screenshots/01-presse-papiers-tiroir.png
-magick store/website/assets/library.png -resize 1440x store/screenshots/02-pkclipboard-par-application.png
+magick store/website/assets/drawer.png  -resize 1440x store/app-store/screenshots/01-presse-papiers-tiroir.png
+magick store/website/assets/library.png -resize 1440x store/app-store/screenshots/02-pkclipboard-par-application.png
 # 03-notes-autocollantes.png : les trois notes côte à côte (montage)
-# assets/banner-1544x500.png : wallpaper + drawer centré avec ombre portée
+# app-store/banner-1544x500.png : wallpaper + drawer centré avec ombre portée
 ```
 
 Le fond d'écran (`website/assets/wallpaper-*.webp`) provient d'une maquette de

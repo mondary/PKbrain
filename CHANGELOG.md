@@ -10,7 +10,7 @@ Le fichier `VERSION` à la racine est la source de vérité.
 - Playground de présentation dans `store/` : bureau Mac interactif (tiroir presse-papiers, collection par application, sticky notes converties depuis l'historique) et captures natives régénérables via `store/tools/capture-native.swift`.
 
 ### Changed
-- Un seul dossier `store/` : la landing vit dans `store/website/` (dossier 100 % autonome, tout son contenu est à héberger tel quel) ; vidéo de démo supprimée, captures du listing régénérées depuis les captures natives, bannière recomposée.
+- Un seul dossier `store/` organisé en deux sous-dossiers : `store/website/` (landing 100 % autonome, contenu à héberger tel quel) et `store/app-store/` (laius, bannières, captures de listing) ; vidéo de démo supprimée, captures régénérées depuis le natif, bannière recomposée.
 
 ## [2026.09.7] - 2026-09-17
 
