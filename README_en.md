@@ -142,7 +142,7 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
 
 ## 📥 Install
 
-The [store3 playground](store3/) presents the app: an interactive Mac desktop (clipboard drawer, per-app collection, sticky notes) with regenerable native captures — see `store3/README.md`. Local preview: `python3 -m http.server 8000 --directory store3`, then open `http://localhost:8000/`. The `store/` folder only keeps listing material (copy, banners, screenshots, video).
+The [presentation site](store/) presents the app: an interactive Mac desktop (clipboard drawer, per-app collection, sticky notes) with regenerable native captures — see `store/README.md`. Local preview: `python3 -m http.server 8000 --directory store`, then open `http://localhost:8000/`. The `store/` folder also holds the listing material (copy, banners, screenshots).
 
 ```sh
 brew install --cask mondary/tap/pkbrain

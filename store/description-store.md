@@ -1,7 +1,8 @@
 # PKbrain — Dossier du store
 
 Matériel de présentation de l'application.
-Captures : `store/screenshots/`.
+Site/landing interactive : `index.html` (aperçu : `python3 -m http.server 8000 --directory store`).
+Captures : `screenshots/` (dérivées des captures natives, régénérables — voir `README.md`).
 
 ---
 
@@ -60,8 +61,9 @@ EN :
 
 | Fichier | Sujet |
 |---|---|
-| `01-maquette-tiroir-presse-papiers.png` | Exploration de design du tiroir presse-papiers (dossier `design/`, référence PastePal/CleanRoom) |
-| `02-maquette-presse-papiers-alternative.png` | Exploration de design alternative du presse-papiers (dossier `design/`) |
+| `01-presse-papiers-tiroir.png` | Le tiroir presse-papiers natif : cartes par application, filtres, recherche |
+| `02-pkclipboard-par-application.png` | La fenêtre PKClipboard : collection classée par application, notes incluses |
+| `03-notes-autocollantes.png` | Les sticky notes natives (calcul inline, listes, couleurs) |
 
 ## Offre
 

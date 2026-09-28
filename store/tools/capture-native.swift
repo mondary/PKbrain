@@ -7,7 +7,7 @@ import SwiftUI
 struct CaptureNative {
     @MainActor static func main() throws {
         let output = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true)
-        let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("pkbrain-store3-\(UUID())")
+        let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("pkbrain-store-capture-\(UUID())")
         try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: scratch) }
         _ = NSApplication.shared

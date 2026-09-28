@@ -1,4 +1,4 @@
-/* store3 playground controller — vanilla JS, no dependencies. */
+/* store playground controller — vanilla JS, no dependencies. */
 (() => {
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
