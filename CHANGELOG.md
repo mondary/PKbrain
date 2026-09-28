@@ -3,6 +3,12 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [Unreleased]
+
+### Added
+- Landing page animée et responsive dans `store2/`, avec démonstrations des notes, du presse-papiers et de la palette de commandes.
+- Playground `store3/` : bureau Mac interactif (tiroir presse-papiers, collection par application, sticky notes converties depuis l'historique) et captures natives régénérables via `store3/tools/capture-native.swift`.
+
 ## [2026.09.7] - 2026-09-17
 
 ### Changed

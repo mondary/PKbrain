@@ -142,6 +142,10 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
 
 ## 📥 Install
 
+The [product landing page](store2/) presents PKbrain's features. To preview it locally, run `python3 -m http.server 8000 --directory store2` and open `http://localhost:8000/`. Quick check: `node --check store2/script.js`.
+
+The [store3 playground](store3/) goes further: an interactive Mac desktop (drawer, per-app collection, sticky notes) with regenerable native captures — see `store3/README.md`.
+
 ```sh
 brew install --cask mondary/tap/pkbrain
 ```
