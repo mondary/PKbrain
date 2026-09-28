@@ -463,7 +463,11 @@
   });
 
   /* ---------- variantes de fond d’écran (?bg=a|b|c) ---------- */
-  const wallpapers = { a: 'assets/wallpaper.webp', b: 'assets/wallpaper-b.webp', c: 'assets/wallpaper-c.webp' };
+  const wallpapers = {
+    b: 'assets/wallpaper-b.webp', c: 'assets/wallpaper-c.webp',
+    d: 'assets/wallpaper-d.webp', e: 'assets/wallpaper-e.webp',
+    f: 'assets/wallpaper-f.webp', g: 'assets/wallpaper-g.webp'
+  };
   const applyWallpaper = (key) => {
     const variant = wallpapers[key] ? key : 'b';
     desktop.dataset.bg = variant;

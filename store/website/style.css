@@ -77,7 +77,9 @@ h1 { font-size: clamp(39px, 4.2vw, 62px); font-weight: 550; line-height: 1.03; l
 /* Variantes de fond : le voile s’adapte à la luminosité de chaque image. */
 .desktop[data-bg=b] .desktop-shade { background: linear-gradient(180deg, #23201959 0%, #1a171006 30%, #33260d2b 47%, #241a08c4 80%, #241a08b8); }
 .desktop[data-bg=c] .desktop-shade { background: linear-gradient(180deg, #0d12203f 0%, #0d122006 30%, #1a0f1621 47%, #140b10a3 80%, #140b1099); }
-.desktop[data-bg=c] .menubar { background: #0d12205c; }
+.desktop[data-bg=d] .desktop-shade { background: linear-gradient(180deg, #101c1e63 0%, #101c1e08 30%, #12242630 47%, #0e1c1ecd 80%, #0e1c1ec2); }
+.desktop[data-bg=e] .desktop-shade { background: linear-gradient(180deg, #0e1a2e6b 0%, #0e1a2e12 30%, #12243b40 47%, #0d1a2bd6 80%, #0d1a2bcc); }
+.desktop[data-bg=c] .menubar, .desktop[data-bg=g] .menubar { background: #0d12205c; }
 .reset-demo { color: #fff; font-size: 11px; padding: 9px 12px; border-radius: 20px; }
 .reset-demo:hover { background: #ffffff20; }
 .dock { position: absolute; z-index: 25; bottom: 19px; left: 50%; transform: translateX(-50%); display: flex; align-items: end; gap: 7px; padding: 8px 9px 10px; border: 1px solid #ffffff5e; border-radius: 21px; background: #ffffff2a; box-shadow: inset 0 1px 1px #ffffff59, 0 12px 40px #0c1b1c55; backdrop-filter: blur(30px) saturate(1.4); }
