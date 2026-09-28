@@ -69,6 +69,15 @@ h1 { font-size: clamp(39px, 4.2vw, 62px); font-weight: 550; line-height: 1.03; l
 .desktop[data-view=library] .hero-copy, .desktop.focus-notes .hero-copy { opacity: 0; transform: translateY(20px); pointer-events: none; }
 .desktop[data-view=library] .hero-copy *, .desktop.focus-notes .hero-copy * { pointer-events: none; }
 .desktop-bottom { position: absolute; bottom: 20px; left: 30px; right: 30px; display: flex; justify-content: space-between; align-items: center; z-index: 5; color: #f0f3e9b3; font-size: 10px; }
+.bg-picker { display: flex; align-items: center; gap: 7px; }
+.bg-picker>span { font-size: 9px; color: #f0f3e97d; letter-spacing: .08em; }
+.bg-picker button { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #fff8; background-size: cover; background-position: center; box-shadow: 0 2px 6px #0004; transition: transform .2s, outline-color .2s; outline: 2px solid #fff0; outline-offset: 2px; }
+.bg-picker button:hover { transform: scale(1.12); }
+.bg-picker button[aria-pressed=true] { outline-color: #fff; }
+/* Variantes de fond : le voile s’adapte à la luminosité de chaque image. */
+.desktop[data-bg=b] .desktop-shade { background: linear-gradient(180deg, #23201959 0%, #1a171006 30%, #33260d2b 47%, #241a08c4 80%, #241a08b8); }
+.desktop[data-bg=c] .desktop-shade { background: linear-gradient(180deg, #0d12203f 0%, #0d122006 30%, #1a0f1621 47%, #140b10a3 80%, #140b1099); }
+.desktop[data-bg=c] .menubar { background: #0d12205c; }
 .reset-demo { color: #fff; font-size: 11px; padding: 9px 12px; border-radius: 20px; }
 .reset-demo:hover { background: #ffffff20; }
 .dock { position: absolute; z-index: 25; bottom: 19px; left: 50%; transform: translateX(-50%); display: flex; align-items: end; gap: 7px; padding: 8px 9px 10px; border: 1px solid #ffffff5e; border-radius: 21px; background: #ffffff2a; box-shadow: inset 0 1px 1px #ffffff59, 0 12px 40px #0c1b1c55; backdrop-filter: blur(30px) saturate(1.4); }
@@ -217,7 +226,7 @@ mark { background: #cfe0f8; color: #3c536c; box-decoration-break: clone; -webkit
 .capture-tabs { display: flex; justify-content: center; gap: 6px; margin: 35px auto 33px; padding: 5px; border: 1px solid #e0e3da; background: #eef0e9; border-radius: 999px; width: fit-content; }
 .capture-tabs button { font-size: 12px; padding: 9px 17px; border-radius: 999px; color: #8a8f81; }
 .capture-tabs button[aria-selected=true] { color: #353d2b; background: white; box-shadow: 0 2px 5px #35452013; }
-.capture-desktop { position: relative; min-height: 450px; aspect-ratio: 1.92; border-radius: 13px; overflow: hidden; background: linear-gradient(#25382414, #1223194d), url("assets/wallpaper.webp") center 65%/cover; box-shadow: 0 15px 45px #263a1820, 0 0 0 1px #2c3e1e1a; }
+.capture-desktop { position: relative; min-height: 450px; aspect-ratio: 1.92; border-radius: 13px; overflow: hidden; background: linear-gradient(#25382414, #1223194d), var(--capture-wallpaper, url("assets/wallpaper-b.webp")) center 65%/cover; box-shadow: 0 15px 45px #263a1820, 0 0 0 1px #2c3e1e1a; }
 .capture-menubar { position: absolute; inset: 0 0 auto; display: flex; justify-content: space-between; color: #fff; background: #17251f63; padding: 4px 15px; font-size: 10px; backdrop-filter: blur(10px); }
 .native-view { position: absolute; left: 0; right: 0; top: 26px; animation: native-enter .6s var(--spring); }
 #native-drawer { filter: drop-shadow(0 18px 18px #1b281c66); }

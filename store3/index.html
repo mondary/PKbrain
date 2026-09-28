@@ -11,7 +11,7 @@
   <meta property="og:image" content="assets/library.png">
   <title>PKbrain — Ce que vous copiez n’est qu’un début.</title>
   <link rel="icon" href="assets/icon.png">
-  <link rel="preload" as="image" href="assets/wallpaper.webp">
+  <link rel="preload" as="image" href="assets/wallpaper-b.webp">
   <link rel="stylesheet" href="style.css">
   <script src="model.js" defer></script>
   <script src="app.js" defer></script>
@@ -19,8 +19,8 @@
 <body>
   <a class="skip" href="#concept">Aller à la présentation</a>
   <main>
-    <section class="desktop" id="desktop" aria-label="Bureau Mac interactif de démonstration">
-      <img class="wallpaper" src="assets/wallpaper.webp" width="1920" height="1076" alt="" fetchpriority="high">
+    <section class="desktop" id="desktop" data-bg="b" aria-label="Bureau Mac interactif de démonstration">
+      <img class="wallpaper" src="assets/wallpaper-b.webp" width="1672" height="941" alt="" fetchpriority="high">
       <div class="desktop-shade" aria-hidden="true"></div>
       <header class="menubar">
         <div class="menu-left"><span class="apple" aria-hidden="true"></span><a class="menu-brand" href="#desktop">PKbrain</a><a href="#concept">Le concept</a><a href="#native">L’app en vrai</a><a href="#details">Les détails</a></div>
@@ -54,7 +54,7 @@
 
       <aside class="tour-caption" id="tour-caption" hidden><span id="tour-number">01 / 04</span><div><strong id="tour-title">Copiez une idée.</strong><p id="tour-text">Elle entre dans votre historique.</p></div><button type="button" id="stop-tour" aria-label="Arrêter le parcours">×</button></aside>
       <p id="demo-status" class="demo-status" role="status" aria-live="polite"></p>
-      <div class="desktop-bottom"><span class="demo-disclaimer">Démo interactive · données d’exemple</span><button type="button" class="reset-demo" id="reset-demo">↺ Recommencer</button></div>
+      <div class="desktop-bottom"><div class="bg-picker" role="group" aria-label="Choisir le fond d’écran"><span>Fond</span><button type="button" data-bg="a" aria-pressed="false" style="background-image:url(assets/wallpaper.webp)" title="Référence"></button><button type="button" data-bg="b" aria-pressed="true" style="background-image:url(assets/wallpaper-b.webp)" title="Dunes claires"></button><button type="button" data-bg="c" aria-pressed="false" style="background-image:url(assets/wallpaper-c.webp)" title="Crépuscule sombre"></button></div><span class="demo-disclaimer">Démo interactive · données d’exemple</span><button type="button" class="reset-demo" id="reset-demo">↺ Recommencer</button></div>
       <nav class="dock" aria-label="Explorer PKbrain"><button type="button" data-view="drawer" aria-label="Ouvrir le tiroir presse-papiers"><span class="dock-tooltip">Le tiroir <kbd>⌘ ⇧ V</kbd></span><img src="assets/icon.png" alt="" width="47" height="47"><span class="dock-dot"></span></button><span class="dock-separator"></span><button type="button" data-view="library" aria-label="Ouvrir la collection par application"><span class="dock-tooltip">La collection</span><span class="dock-library" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button><button type="button" data-view="notes" aria-label="Afficher les sticky notes"><span class="dock-tooltip">Les sticky notes</span><span class="dock-notes" aria-hidden="true"><i></i><i></i></span></button><button type="button" data-view="new" aria-label="Créer une sticky note"><span class="dock-tooltip">Nouvelle note</span><span class="dock-new" aria-hidden="true">＋</span></button></nav>
     </section>
 

@@ -462,6 +462,21 @@
     setTimeout(() => { $('span', event.currentTarget).textContent = 'Copier'; }, 2200);
   });
 
+  /* ---------- variantes de fond d’écran (?bg=a|b|c) ---------- */
+  const wallpapers = { a: 'assets/wallpaper.webp', b: 'assets/wallpaper-b.webp', c: 'assets/wallpaper-c.webp' };
+  const applyWallpaper = (key) => {
+    const variant = wallpapers[key] ? key : 'b';
+    desktop.dataset.bg = variant;
+    $('.wallpaper').src = wallpapers[variant];
+    document.documentElement.style.setProperty('--capture-wallpaper', `url("${wallpapers[variant]}")`);
+    $$('.bg-picker button').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.bg === variant)));
+    const url = new URL(location);
+    url.searchParams.set('bg', variant);
+    history.replaceState(null, '', url);
+  };
+  $$('.bg-picker button').forEach((button) => button.addEventListener('click', () => applyWallpaper(button.dataset.bg)));
+  applyWallpaper(new URLSearchParams(location.search).get('bg'));
+
   const renderAll = () => { renderNotes(); renderDrawer(); renderLibrary(); };
   renderAll();
   setView('desktop');
