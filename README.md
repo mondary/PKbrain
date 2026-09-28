@@ -195,9 +195,7 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
 
 ## 📥 Installation
 
-La [landing page de présentation](store2/) présente les fonctionnalités de PKbrain. Pour la voir en local : `python3 -m http.server 8000 --directory store2`, puis ouvrir `http://localhost:8000/`. Vérification rapide : `node --check store2/script.js`.
-
-Le [playground store3](store3/) va plus loin : un bureau Mac interactif (tiroir, collection par application, sticky notes) avec des captures natives régénérables — voir `store3/README.md`.
+Le [playground store3](store3/) présente l'app : un bureau Mac interactif (tiroir presse-papiers, collection par application, sticky notes) avec des captures natives régénérables — voir `store3/README.md`. Aperçu local : `python3 -m http.server 8000 --directory store3`, puis ouvrir `http://localhost:8000/`. Le dossier `store/` ne conserve que le matériel de listing (laius, bannières, captures, vidéo).
 
 ```sh
 brew install --cask mondary/tap/pkbrain

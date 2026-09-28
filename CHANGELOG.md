@@ -9,6 +9,9 @@ Le fichier `VERSION` à la racine est la source de vérité.
 - Landing page animée et responsive dans `store2/`, avec démonstrations des notes, du presse-papiers et de la palette de commandes.
 - Playground `store3/` : bureau Mac interactif (tiroir presse-papiers, collection par application, sticky notes converties depuis l'historique) et captures natives régénérables via `store3/tools/capture-native.swift`.
 
+### Changed
+- Ménage des pages de présentation : `store/` ne garde que le matériel de listing (laius, bannières, captures, vidéo), la landing vit dans `store3/`, `store2/` et les anciennes `store/product*.html` sont supprimés (récupérables dans l'historique git).
+
 ## [2026.09.7] - 2026-09-17
 
 ### Changed
