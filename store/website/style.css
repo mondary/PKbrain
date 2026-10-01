@@ -55,7 +55,7 @@ input:focus-visible, textarea:focus-visible { outline: 2px solid #3478f6; outlin
 .hero-brand img { filter: drop-shadow(0 5px 8px #0005); }
 h1 { font-size: clamp(39px, 4.2vw, 62px); font-weight: 550; line-height: 1.03; letter-spacing: -.055em; text-shadow: 0 4px 28px #10221670; }
 .hero-copy p { color: #f0f1e9d9; font-size: 15px; line-height: 1.55; margin-top: 20px; text-shadow: 0 2px 15px #102216b3; }
-.hero-actions { display: flex; align-items: center; gap: 10px; margin-top: 25px; }
+.hero-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 25px; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; border-radius: 999px; padding: 0 25px; white-space: nowrap; font-size: 13px; font-weight: 600; transition: transform .22s var(--spring), background .22s, box-shadow .22s; }
 .button:hover { transform: translateY(-3px); }
 .button:active { transform: scale(.97); }

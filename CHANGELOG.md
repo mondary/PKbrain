@@ -3,6 +3,14 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.10] - 2026-10-01
+
+### Added
+- Bouton « Soutenir sur Ko-fi » également dans le hero du store (haut de page), en plus de la section téléchargement et du pied de page.
+
+### Changed
+- Les actions du hero passent à la ligne proprement sur petit écran (flex-wrap).
+
 ## [2026.09.9] - 2026-10-01
 
 ### Changed
