@@ -264,8 +264,12 @@ mark { background: #cfe0f8; color: #3c536c; box-decoration-break: clone; -webkit
 .download { text-align: center; display: flex; flex-direction: column; align-items: center; border-top: 1px solid var(--line); padding-block: 95px 90px; }
 .download>img { filter: drop-shadow(0 9px 11px #112b251c); margin-bottom: 28px; }
 .download>p { margin: 24px 0; color: #8a9082; font-size: 13px; }
+.download-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; }
+.button.kofi { background: #ff5e5b; color: #fff; }
+.button.kofi:hover { background: #eb4a47; }
 .download-meta { font-size: 10px; color: #9a9f94; margin-top: 12px; }
 .brew { display: flex; align-items: center; gap: 30px; background: #f5f6f2; padding: 12px 14px; border: 1px solid #e7e9df; border-radius: 8px; margin-top: 30px; color: #818a76; }
+.brew + .brew { margin-top: 12px; }
 .brew code { font-size: 10px; }.brew span { font-size: 10px; font-weight: 600; color: #4c5b3e; }
 #brew-status { min-height: 20px; font-size: 11px; color: #687f57; margin-top: 10px; }
 footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 28px max(32px, calc((100% - 1120px)/2)); border-top: 1px solid var(--line); font-size: 10px; color: #949b8c; }

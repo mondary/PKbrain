@@ -3,6 +3,16 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.8] - 2026-10-01
+
+### Added
+- Bouton « Soutenir sur Ko-fi » dédié sur la landing store, en plus du lien du pied de page ; badge et section Ko-fi dans les README FR/EN.
+- Commande `curl` de téléchargement direct du DMG à côté du `brew install`, avec bouton copier.
+- Asset `PKbrain.dmg` à nom stable publié sur la release GitHub : le lien `releases/latest/download/PKbrain.dmg` reste valable d'une version à l'autre.
+
+### Changed
+- Les boutons « Télécharger pour Mac » du store (haut et bas de page) pointent désormais vers le DMG de la dernière release en téléchargement direct, au lieu de la page des releases.
+
 ## [Unreleased]
 
 ### Added

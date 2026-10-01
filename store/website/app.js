@@ -450,16 +450,18 @@
     document.getElementById('desktop').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
     setTimeout(() => convertClip('clip-1'), reduceMotion ? 0 : 450);
   });
-  $('#copy-brew').addEventListener('click', async (event) => {
-    const command = 'brew install --cask mondary/tap/pkbrain';
-    try {
-      await navigator.clipboard.writeText(command);
-      $('span', event.currentTarget).textContent = 'Copié ✓';
-      $('#brew-status').textContent = 'Collez-la dans votre terminal.';
-    } catch {
-      $('#brew-status').textContent = command;
-    }
-    setTimeout(() => { $('span', event.currentTarget).textContent = 'Copier'; }, 2200);
+  $$('.copy-command').forEach((button) => {
+    button.addEventListener('click', async (event) => {
+      const command = button.getAttribute('data-command');
+      try {
+        await navigator.clipboard.writeText(command);
+        $('span', event.currentTarget).textContent = 'Copié ✓';
+        $('#brew-status').textContent = 'Collez-la dans votre terminal.';
+      } catch {
+        $('#brew-status').textContent = command;
+      }
+      setTimeout(() => { $('span', event.currentTarget).textContent = 'Copier'; }, 2200);
+    });
   });
 
   /* ---------- variantes de fond d’écran (?bg=a|b|c) ---------- */

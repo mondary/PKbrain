@@ -6,6 +6,8 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
 
 [🇬🇧 EN](README_en.md) · [🇫🇷 FR](README.md)
 
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20PK-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/pouark)
+
 ✨ Native macOS notes app inspired by PKbrain lineage, with inline calculation, command palette, and advanced shortcut management.
 
 ![Jorts Overview](https://github.com/elly-code/jorts/blob/main/data/screenshots/spread.png)
@@ -174,6 +176,9 @@ curl -LO https://github.com/mondary/PKbrain/releases/latest/download/PKbrain-202
 - `45a7297`: new shortcuts + translation updates.
 - `8e97ab3`: command palette added.
 - `0aedc51`: inline calculation features added.
+
+## ☕ Support
+PKbrain is free and open source. If you find the app useful, [buy me a coffee on Ko-fi](https://ko-fi.com/pouark) — it helps a lot. ☕
 
 ## 🔗 Links
 - Upstream inspiration (Jorts): https://github.com/elly-code/jorts
