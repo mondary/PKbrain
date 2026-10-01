@@ -3,6 +3,11 @@
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 Le fichier `VERSION` à la racine est la source de vérité.
 
+## [2026.09.9] - 2026-10-01
+
+### Changed
+- README FR/EN : les captures du projet amont Jorts sont remplacées par deux vues natives de PKbrain (tiroir presse-papiers, collection PKClipboard), déjà présentes dans le dépôt.
+
 ## [2026.09.8] - 2026-10-01
 
 ### Added

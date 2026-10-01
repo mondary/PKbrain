@@ -11,10 +11,9 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
 
 ✨ Application de notes native macOS inspirée de la lignée PKbrain, avec calcul inline, palette de commandes et gestion avancée des raccourcis.
 
-![Aperçu Jorts](https://github.com/elly-code/jorts/blob/main/data/screenshots/spread.png)
-![Preferences Light](https://github.com/elly-code/jorts/blob/main/data/screenshots/preferences-light.png)
-![Preferences Dark](https://github.com/elly-code/jorts/blob/main/data/screenshots/preferences-dark.png)
-![Default Theme](https://github.com/elly-code/jorts/blob/main/data/screenshots/default.png)
+![Le tiroir presse-papiers de PKbrain](store/website/assets/drawer.png)
+
+![PKClipboard — historique par application, historique et notes réunis](store/website/assets/library.png)
 
 ## ✅ Fonctionnalités
 - Port natif macOS (SwiftUI/AppKit) inspiré de Jorts.
