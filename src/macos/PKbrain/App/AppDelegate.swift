@@ -810,9 +810,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onStickNotesToEdges: { [weak self] in self?.toggleStuckNotes() },
             isStuckToEdges: { [weak self] in self?.notesStuckToEdges ?? false },
             onQuit: { NSApp.terminate(nil) },
-            onCheckForUpdates: { [weak self] in
-                UpdaterManager.shared.refreshAvailableVersions()
-                UpdaterManager.shared.checkForUpdates()
+            onCheckForUpdates: {
+                Task { @MainActor in
+                    UpdaterManager.shared.refreshAvailableVersions()
+                    UpdaterManager.shared.checkForUpdates()
+                }
             },
             settings: settings
         )

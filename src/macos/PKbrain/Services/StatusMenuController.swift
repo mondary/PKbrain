@@ -184,12 +184,9 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
                 )
                 item.target = self
                 item.representedObject = note.id.uuidString
-                if let swatch = note.theme.menuSwatchImage {
-                    swatch.size = NSSize(width: 16, height: 16)
-                    Self.setInlineMenuIcon(swatch, on: item)
-                } else {
-                    Self.setInlineMenuIcon(Self.menuSymbol("note.text"), on: item)
-                }
+                let swatch = note.theme.menuSwatchImage
+                swatch.size = NSSize(width: 16, height: 16)
+                Self.setInlineMenuIcon(swatch, on: item)
                 menu.addItem(item)
             }
         }

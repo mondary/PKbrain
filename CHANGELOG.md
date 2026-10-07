@@ -5,7 +5,12 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
-## [2026.10.1] - 2026-10-07
+## [2026.10.2] - 2026-10-07
+
+### Added
+- Publication automatique des builds Sparkle Dev et des appcasts Stable/Dev.
+
+## [2026.10.2] - 2026-10-07
 
 ### Added
 - Shell de réglages PKmonitor (skill pk-settings-shell) : sidebar 220 pt sur material, recherche profonde des réglages avec surlignage accent, groupes APP / NOTES / PROJETS PK, drapeaux de langue (FR/EN/IT/DE/ES, bascule immédiate) et version en pied — les réglages remplacent le contenu de la fenêtre PKclipboard avec bouton retour vers le studio.
