@@ -19,7 +19,7 @@ import Sparkle
 /// à chaque vérification : basculer de canal prend effet immédiatement.
 /// Objet séparé : il est passé au controller à son init, sans capture de self.
 private final class ChannelFeedProvider: NSObject, SPUUpdaterDelegate {
-    nonisolated func feedURLString(for updater: SPUUpdater) -> String {
+    nonisolated func feedURLString(for updater: SPUUpdater) -> String? {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
         // Une build suffixée -dev suit toujours le feed Dev : sinon Sparkle
         // compare une build Dev plus récente à Stable et annonce un état trompeur.
@@ -100,7 +100,8 @@ final class UpdaterManager: NSObject, ObservableObject {
     /// Canal dev : installation silencieuse (SUAutomaticallyUpdate).
     /// Le choix du feed lui-même est fait par ChannelFeedProvider (delegate).
     private func applyChannelPreference() {
-        let isDev = UserDefaults.standard.string(forKey: "updateChannel") == "dev"
+        let isDevBuild = (Bundle.main.object(forInfoDictionaryKey: "PKbrainBuildChannel") as? String) == "dev"
+        let isDev = isDevBuild || UserDefaults.standard.string(forKey: "updateChannel") == "dev"
         controller.updater.automaticallyDownloadsUpdates = isDev
     }
 

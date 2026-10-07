@@ -5,10 +5,13 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
-## [2026.10.2] - 2026-10-07
+## [2026.10.4] - 2026-10-07
 
 ### Added
-- Publication automatique des builds Sparkle Dev et des appcasts Stable/Dev.
+- Publication automatique des builds Sparkle Dev et des appcasts Stable/Dev, avec DMG pour la première installation du canal Dev.
+
+### Fixed
+- Embarquement de Sparkle.framework dans le bundle pour que l'app packagée démarre ; signature EdDSA dédiée à PKbrain pour les appcasts Dev et Stable.
 
 ## [2026.10.2] - 2026-10-07
 

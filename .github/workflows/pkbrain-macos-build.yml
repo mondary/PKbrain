@@ -1,43 +1,76 @@
-name: PKbrain macOS build
+name: PKbrain Dev build
 
 on:
   push:
     branches: [main]
     paths:
       - Package.swift
-      - scripts/package_macos.sh
+      - scripts/**
       - src/macos/PKbrain/**
       - submodules/jorts/**
+      - appcast-dev.xml
       - .github/workflows/pkbrain-macos-build.yml
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
-  group: pkbrain-macos-${{ github.ref }}
+  group: pkbrain-dev-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  dev:
+    if: ${{ !contains(github.event.head_commit.message, 'appcast') }}
     runs-on: macos-latest
     timeout-minutes: 45
     steps:
-      - name: Check out PKbrain and submodules
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Build app bundle
+      - name: Build Dev app
+        env:
+          PK_DEV_BUILD: "1"
         run: ./scripts/package_macos.sh --build-only
 
-      - name: Archive app bundle
-        run: ditto -c -k --sequesterRsrc --keepParent releases/PKbrain.app PKbrain-macos.zip
+      - name: Package Dev app
+        run: ditto -c -k --sequesterRsrc --keepParent releases/PKbrain.app PKbrain-dev.zip
 
-      - name: Upload app bundle
-        uses: actions/upload-artifact@v4
-        with:
-          name: PKbrain-macos-${{ github.sha }}
-          path: PKbrain-macos.zip
-          if-no-files-found: error
-          retention-days: 7
+      - name: Create first-install Dev DMG
+        run: hdiutil create -volname "PKbrain Dev" -srcfolder releases/PKbrain.app -format UDZO -ov PKbrain-dev.dmg
+
+      - name: Read versions
+        id: ver
+        run: |
+          echo "bundle=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' releases/PKbrain.app/Contents/Info.plist)" >> "$GITHUB_OUTPUT"
+          echo "short=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' releases/PKbrain.app/Contents/Info.plist)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload permanent Dev release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create dev --prerelease --title "PKbrain Dev" --notes "Latest automatic Dev build from main." || true
+          gh release upload dev PKbrain-dev.zip PKbrain-dev.dmg --clobber
+
+      - name: Sign Dev appcast
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+          BUNDLE_VERSION: ${{ steps.ver.outputs.bundle }}
+          SHORT_VERSION: ${{ steps.ver.outputs.short }}
+        run: |
+          python3 -m venv /tmp/sv
+          /tmp/sv/bin/pip -q install cryptography
+          /tmp/sv/bin/python scripts/sparkle_dev_release.py PKbrain-dev.zip "$BUNDLE_VERSION" "$SHORT_VERSION" mondary/PKbrain PKbrain 13.0
+
+      - name: Publish Dev appcast
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add appcast-dev.xml
+          git commit -m "MAJ: appcast dev PKbrain" || exit 0
+          git fetch origin main
+          git rebase origin/main
+          git push "https://x-access-token:${GH_TOKEN}@github.com/mondary/PKbrain.git" HEAD:main

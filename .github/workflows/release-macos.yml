@@ -1,0 +1,65 @@
+name: PKbrain Stable release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Build stable app
+        run: ./scripts/package_macos.sh --build-only
+
+      - name: Read version
+        id: ver
+        run: |
+          version="$(sed -nE 's/^##? \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/p' CHANGELOG.md | head -1)"
+          test "$GITHUB_REF_NAME" = "v$version" || test "$GITHUB_EVENT_NAME" = "workflow_dispatch"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "bundle=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' releases/PKbrain.app/Contents/Info.plist)" >> "$GITHUB_OUTPUT"
+
+      - name: Create DMG
+        run: |
+          mkdir -p dist
+          hdiutil create -volname "PKbrain ${{ steps.ver.outputs.version }}" -srcfolder releases/PKbrain.app -format UDZO -ov "dist/PKbrain-${{ steps.ver.outputs.version }}.dmg"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.ver.outputs.version }}" "dist/PKbrain-${{ steps.ver.outputs.version }}.dmg" \
+            --target "$GITHUB_SHA" --title "PKbrain ${{ steps.ver.outputs.version }}" --generate-notes || \
+          gh release upload "v${{ steps.ver.outputs.version }}" "dist/PKbrain-${{ steps.ver.outputs.version }}.dmg" --clobber
+
+      - name: Sign Stable appcast
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+          VERSION: ${{ steps.ver.outputs.version }}
+          BUNDLE_VERSION: ${{ steps.ver.outputs.bundle }}
+        run: |
+          awk 'BEGIN{p=0} /^## \[/{if(p)exit; p=1; next} p&&/^## /{exit} p' CHANGELOG.md > /tmp/notes.md
+          python3 -m venv /tmp/sv
+          /tmp/sv/bin/pip -q install cryptography
+          /tmp/sv/bin/python scripts/sparkle_release.py "dist/PKbrain-$VERSION.dmg" "v$VERSION" "$VERSION" "$BUNDLE_VERSION" mondary/PKbrain PKbrain 13.0 /tmp/notes.md
+
+      - name: Publish Stable appcast
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add appcast.xml
+          git commit -m "MAJ: appcast PKbrain ${{ steps.ver.outputs.version }}" || exit 0
+          git fetch origin main
+          git rebase origin/main
+          git push "https://x-access-token:${GH_TOKEN}@github.com/mondary/PKbrain.git" HEAD:main

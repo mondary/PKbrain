@@ -1,6 +1,10 @@
 
 .*
 !.gitignore
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml
+!.github/workflows/*.yaml
 !.codex/
 !.codex/environments/
 !.codex/environments/environment.toml

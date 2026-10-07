@@ -50,8 +50,8 @@ if pgrep -x "$APP_NAME" >/dev/null 2>&1; then
 fi
 
 cd "$ROOT_DIR"
-swift build
-BUILD_DIR="$(swift build --show-bin-path)"
+swift build -c release
+BUILD_DIR="$(swift build -c release --show-bin-path)"
 BUILD_BINARY="$BUILD_DIR/$APP_NAME"
 
 # Keep legacy path for older docs/scripts: src/dist -> ../releases
@@ -69,6 +69,14 @@ cp "$BUILD_BINARY" "$APP_BINARY"
 chmod +x "$APP_BINARY"
 
 find "$BUILD_DIR" -maxdepth 1 -name '*.bundle' -exec cp -R {} "$APP_RESOURCES/" \;
+mkdir -p "$APP_CONTENTS/Frameworks"
+for framework in "$BUILD_DIR"/*.framework; do
+  [[ -d "$framework" ]] || continue
+  cp -R "$framework" "$APP_CONTENTS/Frameworks/"
+done
+if [[ -n "$(find "$APP_CONTENTS/Frameworks" -maxdepth 1 -name '*.framework' -print -quit)" ]]; then
+  install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP_BINARY" 2>/dev/null || true
+fi
 
 ICON_SOURCE="$REPO_ROOT/submodules/jorts/data/icons/default/hicolor/512.png"
 STATUS_ICON_SOURCE="$REPO_ROOT/submodules/jorts/data/icons/default/hicolor/24.png"
@@ -116,7 +124,7 @@ cat >"$INFO_PLIST" <<PLIST
   <key>SUFeedURL</key>
   <string>https://raw.githubusercontent.com/mondary/PKbrain/main/appcast.xml</string>
   <key>SUPublicEDKey</key>
-  <string>OoygS0py6kkvRJBB8QAXiAli30SXSYvV7V54Z0Gtcj0=</string>
+  <string>icuMuO3hYVv4DNnXQlzW+jnI+6LJhdoaTnQV2ztDDjM=</string>
   <key>SUEnableInstallerLauncherService</key>
   <true/>
   <key>CFBundleURLTypes</key>
@@ -153,7 +161,8 @@ cat >"$INFO_PLIST" <<PLIST
 </plist>
 PLIST
 
-codesign --force --deep --sign - "$APP_BUNDLE"
+codesign --force --deep --sign - --timestamp=none "$APP_BUNDLE"
+codesign --verify --deep --strict "$APP_BUNDLE"
 
 # Ensure LaunchServices registers the URL scheme for the freshly built bundle.
 LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"

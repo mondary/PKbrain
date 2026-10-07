@@ -109,7 +109,7 @@ cat >"$INFO_PLIST" <<PLIST
   <key>SUFeedURL</key>
   <string>https://raw.githubusercontent.com/mondary/PKbrain/main/appcast.xml</string>
   <key>SUPublicEDKey</key>
-  <string>OoygS0py6kkvRJBB8QAXiAli30SXSYvV7V54Z0Gtcj0=</string>
+  <string>icuMuO3hYVv4DNnXQlzW+jnI+6LJhdoaTnQV2ztDDjM=</string>
   <key>SUEnableInstallerLauncherService</key>
   <true/>
   <key>CFBundleURLTypes</key>
