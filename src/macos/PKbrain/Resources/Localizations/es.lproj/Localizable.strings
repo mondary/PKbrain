@@ -373,6 +373,12 @@
 "about.notPublished" = "No publicada";
 "about.installedVersion" = "Versión instalada";
 "about.checkForUpdates" = "Buscar actualizaciones…";
+"about.installVersion" = "Instalar %@";
+"about.statusUpdateAvailable" = "Actualización disponible";
+"about.statusUpToDate" = "Actualizado";
+"about.statusInstalledAhead" = "La versión instalada es más reciente";
+"about.statusOtherChannel" = "Otro canal";
+"about.statusUnavailable" = "Versión no disponible";
 "about.credits" = "Créditos";
 "credits.jorts" = "La app de notas adhesivas original de la que PKbrain es un port nativo de macOS.";
 "credits.numara" = "Inspiración de la calculadora integrada (submodule).";

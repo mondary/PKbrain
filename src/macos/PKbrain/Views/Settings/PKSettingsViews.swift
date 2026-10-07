@@ -379,7 +379,7 @@ struct AboutSettingsView: View {
                         .padding(.bottom, 16)
 
                     Text("PKbrain").font(.system(size: 24, weight: .bold))
-                    Text("Version \(version) (\(build))")
+                    Text("\(localizedString("about.installedVersion")) \(version) (\(build))")
                         .font(.system(size: 13))
                         .foregroundStyle(.secondary)
                         .padding(.top, 4)
@@ -397,12 +397,16 @@ struct AboutSettingsView: View {
                         .frame(maxWidth: 480)
                         .padding(.bottom, 32)
 
-                    updateSection
-                        .frame(maxWidth: 480)
-                        .padding(.bottom, 32)
                 }
                 .frame(maxWidth: .infinity)
             }
+
+            Divider()
+
+            updateSection
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
 
             Divider()
 
@@ -459,9 +463,20 @@ struct AboutSettingsView: View {
                 .font(.headline)
                 .modifier(SettingHighlight(title: localizedString("about.updates")))
 
+            HStack(spacing: 10) {
+                versionColumn(
+                    title: localizedString("about.stableVersion"),
+                    value: updater.latestStableVersion ?? localizedString("about.notPublished"),
+                    status: updater.versionStatus(for: "stable")
+                )
+                versionColumn(
+                    title: localizedString("about.devVersion"),
+                    value: updater.latestDevVersion ?? localizedString("about.notPublished"),
+                    status: updater.versionStatus(for: "dev")
+                )
+            }
+
             HStack(spacing: 12) {
-                Text(localizedString("about.updateChannel"))
-                    .font(.subheadline.weight(.medium))
                 Picker(localizedString("about.updateChannel"), selection: updateChannelSelection) {
                     Text("Stable").tag("stable")
                     Text("Dev").tag("dev")
@@ -472,6 +487,12 @@ struct AboutSettingsView: View {
                 .frame(width: 190)
                 .disabled(isDevBuild)
                 Spacer(minLength: 0)
+                Button { updater.checkForUpdates() } label: {
+                    Label(updateButtonTitle, systemImage: updater.availableUpdateVersion == nil
+                        ? "arrow.triangle.2.circlepath"
+                        : "arrow.down.circle.fill")
+                }
+                .buttonStyle(.borderedProminent)
             }
 
             Text(effectiveUpdateChannel == "dev"
@@ -480,57 +501,34 @@ struct AboutSettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            HStack(alignment: .top, spacing: 0) {
-                versionColumn(
-                    title: localizedString("about.stableVersion"),
-                    value: updater.latestStableVersion ?? localizedString("about.notPublished"),
-                    symbol: "checkmark.seal",
-                    isInstalled: !isDevBuild
-                )
-                Divider().frame(height: 42)
-                versionColumn(
-                    title: localizedString("about.devVersion"),
-                    value: updater.latestDevVersion ?? localizedString("about.notPublished"),
-                    symbol: "hammer",
-                    isInstalled: isDevBuild
-                )
-            }
-            .padding(.vertical, 12)
-            .background(RoundedRectangle(cornerRadius: 10).fill(Color.primary.opacity(0.045)))
-
-            Button {
-                updater.refreshAvailableVersions()
-                updater.checkForUpdates()
-            } label: {
-                Label(localizedString("about.checkForUpdates"), systemImage: "arrow.triangle.2.circlepath")
-            }
-            .buttonStyle(.bordered)
         }
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 14).fill(Color.primary.opacity(0.025)))
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.primary.opacity(0.08), lineWidth: 1))
     }
 
-    private func versionColumn(title: String, value: String, symbol: String, isInstalled: Bool) -> some View {
+    private var updateButtonTitle: String {
+        guard let available = updater.availableUpdateVersion else { return localizedString("about.checkForUpdates") }
+        return String(format: localizedString("about.installVersion"), available)
+    }
+
+    private func versionColumn(title: String, value: String, status: BrainChannelVersionStatus) -> some View {
         VStack(alignment: .leading, spacing: 5) {
-            Label(title, systemImage: symbol)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+            Text(title).font(.system(size: 10, weight: .semibold)).foregroundStyle(.secondary).lineLimit(1)
             Text(value)
-                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                .font(.system(size: 14, weight: .semibold, design: .monospaced))
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
                 .help(value)
-            if isInstalled {
-                Label(localizedString("about.installedVersion"), systemImage: "checkmark.circle.fill")
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(.green)
-                    .padding(.top, 2)
-            }
+            Label(localizedString(status.localizationKey), systemImage: status.symbol)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(status.color)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 8)
+        .padding(10)
+        .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 
     private var aboutText: some View {
@@ -858,6 +856,7 @@ struct ProjectLibraryView: View {
 struct PKSettingsModeView: View {
     @ObservedObject var settings: AppSettings
     @ObservedObject var clipboard: ClipboardManager
+    @ObservedObject private var updater = UpdaterManager.shared
     let storageRootURL: URL
     let initialSection: PKSettingsSection
     let onRunBackupNow: () -> Void
@@ -1083,11 +1082,26 @@ struct PKSettingsModeView: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 10)
 
-            Text("PKbrain \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? AppVersion.current)")
-                .font(.system(size: 11, weight: .medium, design: .monospaced))
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 18)
+            HStack(spacing: 5) {
+                Text("PKbrain \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? AppVersion.current)")
+                    .font(.system(size: 10, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                if let available = updater.availableUpdateVersion {
+                    Button { updater.checkForUpdates() } label: {
+                        Label(available, systemImage: "arrow.down.circle.fill")
+                            .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(Color.accentColor)
+                    .help(String(format: localizedString("about.installVersion"), available))
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.bottom, 18)
         }
         .frame(width: 220)
         .background(.regularMaterial)
@@ -1167,6 +1181,7 @@ struct PKSettingsModeView: View {
         .onReceive(NotificationCenter.default.publisher(for: .appLanguageDidChange)) { _ in
             language = settings.selectedLanguage
         }
+        .onAppear { updater.refreshAvailableVersions() }
     }
 }
 

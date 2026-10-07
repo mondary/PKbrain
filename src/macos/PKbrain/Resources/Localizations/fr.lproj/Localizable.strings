@@ -374,6 +374,12 @@
 "about.notPublished" = "Non publiée";
 "about.installedVersion" = "Version installée";
 "about.checkForUpdates" = "Rechercher les mises à jour…";
+"about.installVersion" = "Installer %@";
+"about.statusUpdateAvailable" = "Mise à jour disponible";
+"about.statusUpToDate" = "À jour";
+"about.statusInstalledAhead" = "Version installée plus récente";
+"about.statusOtherChannel" = "Autre canal";
+"about.statusUnavailable" = "Version indisponible";
 "about.credits" = "Crédits";
 "credits.jorts" = "L'app de post-it originale dont PKbrain est le port macOS natif.";
 "credits.numara" = "Inspiration du calculateur intégré (submodule).";

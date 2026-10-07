@@ -5,6 +5,12 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.10.5] - 2026-10-07
+
+### Changed
+- À propos compare les builds publiées et installées à partir de leurs numéros numériques (y compris les versions CalVer à points), affiche le statut Stable/Dev et signale une mise à jour disponible dans la sidebar.
+- La vérification manuelle et le changement de canal rafraîchissent les appcasts avec cache-busting.
+
 ## [2026.10.4] - 2026-10-07
 
 ### Added

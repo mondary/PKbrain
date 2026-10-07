@@ -373,6 +373,12 @@
 "about.notPublished" = "Nicht veröffentlicht";
 "about.installedVersion" = "Installierte Version";
 "about.checkForUpdates" = "Nach Updates suchen…";
+"about.installVersion" = "%@ installieren";
+"about.statusUpdateAvailable" = "Update verfügbar";
+"about.statusUpToDate" = "Aktuell";
+"about.statusInstalledAhead" = "Installierte Version ist neuer";
+"about.statusOtherChannel" = "Anderer Kanal";
+"about.statusUnavailable" = "Version nicht verfügbar";
 "about.credits" = "Credits";
 "credits.jorts" = "Die originale Haftnotizen-App, von der PKbrain ein nativer macOS-Port ist.";
 "credits.numara" = "Inspiration für den integrierten Rechner (Submodule).";

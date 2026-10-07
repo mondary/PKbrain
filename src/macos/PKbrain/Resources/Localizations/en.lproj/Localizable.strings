@@ -374,6 +374,12 @@
 "about.notPublished" = "Not published";
 "about.installedVersion" = "Installed version";
 "about.checkForUpdates" = "Check for Updates…";
+"about.installVersion" = "Install %@";
+"about.statusUpdateAvailable" = "Update available";
+"about.statusUpToDate" = "Up to date";
+"about.statusInstalledAhead" = "Installed version is newer";
+"about.statusOtherChannel" = "Other channel";
+"about.statusUnavailable" = "Version unavailable";
 "about.credits" = "Credits";
 "credits.jorts" = "The original sticky-notes app PKbrain is a native macOS port of.";
 "credits.numara" = "Inline calculator inspiration (submodule).";

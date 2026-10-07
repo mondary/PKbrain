@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.10.4** — [Changelog](CHANGELOG.md)
+version **2026.10.5** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
@@ -109,7 +109,7 @@ version **2026.10.4** — [Changelog](CHANGELOG.md)
      - bouton paramètres en footer qui bascule toute la fenêtre en mode paramètres, bouton retour vers le studio
      - sidebar 220 pt sur material avec recherche profonde des réglages (surlignage du réglage ciblé), groupes `APP` / `NOTES` / `PROJETS PK`, drapeaux de langue (bascule immédiate FR/EN/IT/DE/ES) et version en pied
      - sections : `Général`, `Raccourcis`, `Labo`, `Post-it`, `PKClipboard`, `Tiroir`, `Project Library`, `Soutenir`, `À propos`
-     - `À propos` : canal de mise à jour Stable/Dev, dernières versions publiées des deux appcasts, section Crédits (Jorts, Numara, Caligator, developer-icons, PastePal)
+      - `À propos` : version installée, comparaison exacte des builds Stable/Dev, statut de mise à jour, bouton de vérification avec appcast rafraîchi et section Crédits (Jorts, Numara, Caligator, developer-icons, PastePal)
      - `Soutenir` : carte Ko-fi + liens GitHub/Issues/projet original ; `Project Library` : la collection PK partagée avec vedette PKbrain
    - `Cmd+,` redirigé vers `PKClipboard` en mode paramètres (plus de popup séparé)
    - Sparkle : mises à jour in-app avec canaux Stable/Dev
@@ -186,7 +186,7 @@ version **2026.10.4** — [Changelog](CHANGELOG.md)
 ## ⚙️ Réglages
 - Shell PK partagé (sidebar, recherche profonde, drapeaux de langue, version en pied) — `Général` affiché par défaut (langue, accessibilité, stockage, import/export).
 - Préférences clipboard, drawer, stickies, raccourcis, lab.
-- `À propos` : canal Stable/Dev, mises à jour in-app (Sparkle), crédits des inspirations.
+- `À propos` : version installée, statut exact des canaux Stable/Dev, mises à jour in-app (Sparkle), crédits des inspirations.
 - Activation/désactivation du calcul inline.
 - Position du clipboard drawer.
 - Backup automatique vers un dossier choisi, avec intervalle réglable.
