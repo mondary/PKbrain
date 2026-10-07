@@ -7,8 +7,23 @@ BUNDLE_NAME="PKbrain"
 BUNDLE_ID="io.github.mondary.pkbrain"
 MIN_SYSTEM_VERSION="13.0"
 BUILD_CHANNEL="release"
-APP_VERSION="$(tr -d '[:space:]' < VERSION)"
-BUILD_VERSION="$APP_VERSION"
+# CalVer lu depuis CHANGELOG.md (source de vérité, convention PK).
+ROOT_DIR_TMP="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+APP_VERSION="$(sed -nE 's/^##? \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/p' "$ROOT_DIR_TMP/CHANGELOG.md" | sed -n '1p')"
+if [[ -z "$APP_VERSION" ]]; then
+  echo "erreur: aucune version CalVer trouvée en tête de CHANGELOG.md" >&2
+  exit 1
+fi
+# PK_DEV_BUILD=1 : versionnement du canal Dev (suffixe -dev + CFBundleVersion
+# epoch, pattern PKmonitor — Sparkle ordonne Dev et Stable entre eux).
+if [[ "${PK_DEV_BUILD:-0}" == "1" ]]; then
+  BUILD_CHANNEL="dev"
+  MARKETING_VERSION="$APP_VERSION-dev.$(date -u +%H%M)"
+  BUILD_VERSION="$(date +%s)"
+else
+  MARKETING_VERSION="$APP_VERSION"
+  BUILD_VERSION="$APP_VERSION"
+fi
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_ROOT="$ROOT_DIR"
@@ -95,9 +110,15 @@ cat >"$INFO_PLIST" <<PLIST
   <key>CFBundleDisplayName</key>
   <string>PKbrain</string>
   <key>CFBundleShortVersionString</key>
-  <string>$APP_VERSION</string>
+  <string>$MARKETING_VERSION</string>
   <key>CFBundleVersion</key>
   <string>$BUILD_VERSION</string>
+  <key>SUFeedURL</key>
+  <string>https://raw.githubusercontent.com/mondary/PKbrain/main/appcast.xml</string>
+  <key>SUPublicEDKey</key>
+  <string>OoygS0py6kkvRJBB8QAXiAli30SXSYvV7V54Z0Gtcj0=</string>
+  <key>SUEnableInstallerLauncherService</key>
+  <true/>
   <key>CFBundleURLTypes</key>
   <array>
     <dict>

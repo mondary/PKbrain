@@ -22,6 +22,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
     private var isClipboardViewAtDefaultContext = true
     private var standardWindowController: NSWindowController?
     private var standardStartsInSettingsMode: Bool = false
+    private var pendingSettingsSection: PKSettingsSection = .general
     private var hasRequestedAccessibilityPastePermission = false
     private let onShowPreferences: () -> Void
     private let onOpenFinder: () -> Void
@@ -175,7 +176,10 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
 
         if let standardWindow = standardWindowController?.window {
             if standardStartsInSettingsMode {
-                let host = NSHostingController(rootView: makeStandardClipboardWindowView(startInSettings: true))
+                let host = NSHostingController(rootView: makeStandardClipboardWindowView(
+                    startInSettings: true,
+                    initialSection: pendingSettingsSection
+                ))
                 standardWindow.contentViewController = host
                 standardStartsInSettingsMode = false
             }
@@ -184,7 +188,10 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
             return
         }
 
-        let host = NSHostingController(rootView: makeStandardClipboardWindowView(startInSettings: standardStartsInSettingsMode))
+        let host = NSHostingController(rootView: makeStandardClipboardWindowView(
+            startInSettings: standardStartsInSettingsMode,
+            initialSection: pendingSettingsSection
+        ))
         standardStartsInSettingsMode = false
         let autosaveName = "PKclipboardWindowFrame"
         let window = NSWindow(
@@ -207,8 +214,9 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         standardWindowController = NSWindowController(window: window)
     }
 
-    func showStandardClipboardSettings() {
+    func showStandardClipboardSettings(section: PKSettingsSection = .general) {
         standardStartsInSettingsMode = true
+        pendingSettingsSection = section
         showStandardClipboardWindow()
     }
 
@@ -221,12 +229,16 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         showStandardClipboardWindow()
     }
 
-    private func makeStandardClipboardWindowView(startInSettings: Bool = false) -> ClipboardStandardWindowView {
+    private func makeStandardClipboardWindowView(
+        startInSettings: Bool = false,
+        initialSection: PKSettingsSection = .general
+    ) -> ClipboardStandardWindowView {
         ClipboardStandardWindowView(
             clipboard: clipboard,
             settings: settings,
             storageRootURL: manager.storageURL.deletingLastPathComponent(),
             startsInSettingsMode: startInSettings,
+            initialSettingsSection: initialSection,
             notesProvider: { [weak manager] in
                 (manager?.documents ?? []).map { doc in
                     ClipboardView.NoteDeckItem(

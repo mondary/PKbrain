@@ -338,3 +338,85 @@
 "ocr_permission_title" = "Autorisation d'enregistrement d'écran requise";
 "ocr_permission_body" = "PKbrain a besoin de l'autorisation d'enregistrement d'écran pour capturer la zone sélectionnée. Activez-la dans Réglages Système > Confidentialité et sécurité > Enregistrement de l'écran, puis réessayez.";
 "ocr_permission_open_settings" = "Ouvrir les Réglages Système";
+
+/* ===== Shell de réglages (pattern pk-settings-shell, aligné PKmonitor) ===== */
+
+"app_tagline" = "Notes & presse-papiers";
+"sidebar.settings" = "Réglages";
+"sidebar.searchPlaceholder" = "Rechercher";
+"sidebar.general" = "Général";
+"sidebar.shortcuts" = "Raccourcis";
+"sidebar.lab" = "Labo";
+"sidebar.stickies" = "Post-it";
+"sidebar.clipboard" = "PKClipboard";
+"sidebar.drawer" = "Tiroir";
+"sidebar.library" = "Project Library";
+"sidebar.support" = "Soutenir";
+"sidebar.about" = "À propos";
+"group.app" = "APP";
+"group.notes" = "NOTES & PRESSE-PAPIERS";
+"group.projects" = "PROJETS PK";
+"search.noResults" = "Aucun réglage trouvé";
+"check_for_updates" = "Rechercher les mises à jour…";
+
+"about.greeting" = "Salut l'ami,";
+"about.pitch" = "PKbrain a commencé comme un port Swift de Jorts, une app de post-it que j'adorais — et il est devenu autre chose : des notes natives, une mémoire du presse-papiers et des raccourcis clavier en priorité.";
+"about.body" = "Des post-it discrets, un tiroir presse-papiers à un raccourci, du calcul intégré pendant la frappe et une palette de commandes pour le reste. Binaire natif, tout reste sur votre Mac. Construit sur l'app open source jorts d'elly-code.";
+"about.care" = "Conçu avec soin pour la communauté Mac. Discret quand vous n'en avez pas besoin, présent quand vous le regardez.";
+"about.thanks" = "Merci d'en faire partie.";
+"about.byPK" = "Par PK";
+"about.updates" = "Mises à jour";
+"about.updateChannel" = "Canal de mise à jour";
+"about.channelDevCaption" = "Les builds Dev vérifient le canal Dev et s'installent/redémarrent automatiquement. Pour revenir en Stable, réinstallez la dernière version publiée.";
+"about.channelStableCaption" = "Versions publiées uniquement, testées. Vous êtes averti quand une nouvelle version paraît.";
+"about.stableVersion" = "Version Stable";
+"about.devVersion" = "Version Dev";
+"about.notPublished" = "Non publiée";
+"about.installedVersion" = "Version installée";
+"about.checkForUpdates" = "Rechercher les mises à jour…";
+"about.credits" = "Crédits";
+"credits.jorts" = "L'app de post-it originale dont PKbrain est le port macOS natif.";
+"credits.numara" = "Inspiration du calculateur intégré (submodule).";
+"credits.caligator" = "Inspiration du calcul inline.";
+"credits.devicons" = "Icônes de marque embarquées pour les notes (submodule).";
+"credits.pastepal" = "Inspiration de l'interface PKClipboard.";
+"credits.note" = "PKbrain est une implémentation indépendante — ses inspirations ne sont ni affiliées ni responsables du projet.";
+
+"support.title" = "Soutenir PKbrain";
+"support.subtitle" = "Si vous appréciez cette app, pensez à soutenir son développement.";
+"support.kofi.subtitle" = "Offrir un café au développeur";
+"support.donate" = "Soutenir sur Ko-fi";
+"support.github.subtitle" = "Code source et versions";
+"support.issues.title" = "Signaler un problème";
+"support.issues.subtitle" = "Bugs, demandes de fonctionnalités, retours";
+"support.original.title" = "Projet original";
+"support.original.subtitle" = "jorts par elly-code, d'où PKbrain est parti";
+"support.profile.title" = "PK sur GitHub";
+"support.profile.subtitle" = "Le reste de la collection de projets";
+"footer.supportOnKofi" = "Soutenir sur Ko-fi";
+
+"library.title" = "Project Library";
+"library.subtitle" = "Découvrez les autres outils et projets que je construis.";
+"library.more" = "Plus de projets";
+"library.star" = "Étoiler sur GitHub";
+"library.viewAll" = "Voir tous les dépôts sur GitHub";
+"kind.macos" = "app macOS";
+"kind.chrome" = "extension Chrome";
+"kind.cross" = "Chrome / macOS / Windows / Linux";
+"desc.PKbrain" = "App de notes avec calcul intégré, palette de commandes et raccourcis clavier en priorité.";
+"desc.PKmonitor" = "CPU, GPU, RAM, réseau et disque dans la barre de menus.";
+"desc.PKwindowsManagement" = "Gérez vos fenêtres au clavier, organisez vos sessions en Rooms et lancez vite vos applications depuis la barre de menus.";
+"desc.MonoCodePK" = "Tous vos abonnements d'agents de code dans une app native — Claude Code, Codex, Cursor, OpenCode et plus. Les onglets sont des sessions, le compositeur est l'entrée.";
+"desc.PKMediaDownloader" = "Téléchargeur de vidéos propulsé par yt-dlp — YouTube, Instagram, X, TikTok et des milliers d'autres.";
+"desc.PKarchives" = "Archivez votre Bureau vers Google Drive avec rclone, via une interface macOS native ou en CLI/TUI.";
+"desc.PKpowerlines" = "Une powerline native multi-écrans affichant RAM, CPU, réseau ou batterie en temps réel.";
+"desc.LaunchPad" = "Analysez et auditez les agents utilisateur et démons système avec une analyse de sécurité locale.";
+"desc.PKMail" = "Client mail IMAP immersif avec interface HTML vanilla et workflows façon Gmail.";
+"desc.PKChromeShortcuts" = "Contrôlez onglets, navigation et split view au clavier.";
+
+"edge_deck_title" = "Afficher les post-it sur les bords de l'écran";
+"edge_deck_hint" = "Les masquer ne ferme pas les notes : cela cache uniquement leurs petits onglets.";
+"edge_deck_edges" = "Bords utilisés :";
+"ocr_card_title" = "OCR de capture d'écran";
+"ocr_card_subtitle" = "Choisir la destination du texte reconnu.";
+"ocr_card_output" = "Sortie";

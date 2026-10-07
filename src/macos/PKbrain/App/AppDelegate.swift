@@ -5,7 +5,6 @@ import Carbon.HIToolbox
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let settings = AppSettings()
     private lazy var manager = NoteManager(settings: settings)
-    private var preferencesWindowController: PreferencesWindowController?
     private var notesListWindowController: NotesListWindowController?
     private var commandPaletteWindowController: CommandPaletteWindowController?
     private var clipboardWindowController: ClipboardWindowController?
@@ -42,6 +41,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         applyDevIconVariantIfNeeded()
         observeSettings()
         buildMainMenu()
+        UpdaterManager.shared.start()
         manager.onShowList = { [weak self] in self?.showNotesList(nil) }
         manager.launch()
         buildStatusMenu()
@@ -64,7 +64,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         clipboard.start()
         _ = autoBackupService
         observeActiveApplications()
+        handleLaunchArguments()
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    /// Arguments de lancement (QA/script) : `--open-settings [section]`
+    /// ouvre la fenêtre PKclipboard directement en mode Réglages sur la
+    /// section demandée (about, support, library, general, shortcuts…).
+    private func handleLaunchArguments() {
+        let args = ProcessInfo.processInfo.arguments
+        guard let flag = args.firstIndex(of: "--open-settings") else { return }
+        let raw = args.indices.contains(flag + 1) ? args[flag + 1] : "general"
+        let aliases: [String: PKSettingsSection] = [
+            "general": .general,
+            "shortcuts": .shortcuts,
+            "lab": .lab,
+            "stickies": .stickies,
+            "clipboard": .clipboard,
+            "pkclipboard": .clipboard,
+            "drawer": .drawer,
+            "library": .library,
+            "support": .support,
+            "about": .about,
+        ]
+        let section = aliases[raw.lowercased()] ?? PKSettingsSection(rawValue: raw) ?? .general
+        DispatchQueue.main.async {
+            self.showClipboardWindowSettings(nil, section: section)
+        }
     }
 
     private func observeActiveApplications() {
@@ -173,78 +199,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return .terminateNow
     }
 
+    /// About ouvre l'onglet À propos des Réglages (pattern PKmonitor) :
+    /// versions Stable/Dev, crédits des inspirations et Ko-fi y vivent.
     @objc private func showAbout(_ sender: Any?) {
-        let credits = NSMutableAttributedString()
-
-        let header = "PKbrain\n\n"
-        let headerAttr: [NSAttributedString.Key: Any] = [.font: NSFont.boldSystemFont(ofSize: 13)]
-        credits.append(NSAttributedString(string: header, attributes: headerAttr))
-
-        let description = "Native macOS Swift port\n\n"
-        credits.append(NSAttributedString(string: description))
-
-        let originalText = "Original project: "
-        credits.append(NSAttributedString(string: originalText))
-
-        let originalLink = "elly-code/jorts\n"
-        if let originalURL = URL(string: "https://github.com/elly-code/jorts") {
-            let originalLinkAttr: [NSAttributedString.Key: Any] = [
-                .link: originalURL,
-                .foregroundColor: NSColor.systemBlue,
-                .font: NSFont.systemFont(ofSize: 11)
-            ]
-            credits.append(NSAttributedString(string: originalLink, attributes: originalLinkAttr))
-        }
-
-        let forkText = "macOS fork: "
-        credits.append(NSAttributedString(string: forkText))
-
-        let forkLink = "mondary/PKbrain"
-        if let forkURL = URL(string: "https://github.com/mondary/PKbrain") {
-            let forkLinkAttr: [NSAttributedString.Key: Any] = [
-                .link: forkURL,
-                .foregroundColor: NSColor.systemBlue,
-                .font: NSFont.systemFont(ofSize: 11)
-            ]
-            credits.append(NSAttributedString(string: forkLink, attributes: forkLinkAttr))
-        }
-
-        credits.append(NSAttributedString(string: "\n"))
-
-        let supportText = "☕ Support the original developer: "
-        credits.append(NSAttributedString(string: supportText))
-
-        let supportLink = "ko-fi.com/teamcons"
-        if let supportURL = URL(string: "https://ko-fi.com/teamcons/tip") {
-            let supportLinkAttr: [NSAttributedString.Key: Any] = [
-                .link: supportURL,
-                .foregroundColor: NSColor.systemBlue,
-                .font: NSFont.systemFont(ofSize: 11)
-            ]
-            credits.append(NSAttributedString(string: supportLink, attributes: supportLinkAttr))
-        }
-
-        credits.append(NSAttributedString(string: "\n"))
-
-        let forkSupportText = "☕ Support this macOS fork: "
-        credits.append(NSAttributedString(string: forkSupportText))
-
-        let forkSupportLink = "ko-fi.com/pouark"
-        if let forkSupportURL = URL(string: "https://ko-fi.com/pouark") {
-            let forkSupportAttr: [NSAttributedString.Key: Any] = [
-                .link: forkSupportURL,
-                .foregroundColor: NSColor.systemBlue,
-                .font: NSFont.systemFont(ofSize: 11)
-            ]
-            credits.append(NSAttributedString(string: forkSupportLink, attributes: forkSupportAttr))
-        }
-
-        NSApp.orderFrontStandardAboutPanel(options: [
-            .applicationName: "PKbrain",
-            .applicationVersion: "\(AppVersion.current) macOS port",
-            .credits: credits
-        ])
-        NSApp.activate(ignoringOtherApps: true)
+        showClipboardWindowSettings(sender, section: .about)
     }
 
     @objc private func newNote(_ sender: Any?) {
@@ -543,7 +501,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         showClipboardWindowSettings(sender)
     }
 
-    @objc private func showClipboardWindowSettings(_ sender: Any?) {
+    private func showClipboardWindowSettings(_ sender: Any?, section: PKSettingsSection = .general) {
         if clipboardWindowController == nil {
             clipboardWindowController = ClipboardWindowController(
                 manager: manager,
@@ -557,7 +515,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 onRunBackupNow: { [weak self] in self?.autoBackupService.performBackupNow() }
             )
         }
-        clipboardWindowController?.showStandardClipboardSettings()
+        clipboardWindowController?.showStandardClipboardSettings(section: section)
     }
 
     private func restartForLanguageChange() {
@@ -852,6 +810,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onStickNotesToEdges: { [weak self] in self?.toggleStuckNotes() },
             isStuckToEdges: { [weak self] in self?.notesStuckToEdges ?? false },
             onQuit: { NSApp.terminate(nil) },
+            onCheckForUpdates: { [weak self] in
+                UpdaterManager.shared.refreshAvailableVersions()
+                UpdaterManager.shared.checkForUpdates()
+            },
             settings: settings
         )
     }

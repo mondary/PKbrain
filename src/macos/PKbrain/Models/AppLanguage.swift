@@ -19,6 +19,24 @@ enum AppLanguage: String, CaseIterable, Codable, Identifiable {
         }
     }
 
+    /// Drapeau pour les boutons de langue de la sidebar Réglages
+    /// (pattern pk-settings-shell).
+    var flagEmoji: String {
+        switch self {
+        case .english: "🇬🇧"
+        case .french: "🇫🇷"
+        case .italian: "🇮🇹"
+        case .german: "🇩🇪"
+        case .spanish: "🇪🇸"
+        }
+    }
+
+    /// Langue effective : celle du LocalizationController (tenue à jour par
+    /// AppSettings.applyLanguagePreference), avec repli anglais.
+    static var current: AppLanguage {
+        AppLanguage(rawValue: LocalizationController.shared.languageCode) ?? .english
+    }
+
     var localizedName: String {
         switch self {
         case .english: "English"

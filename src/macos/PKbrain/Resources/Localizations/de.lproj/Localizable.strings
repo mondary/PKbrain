@@ -337,3 +337,85 @@
 "ocr_permission_title" = "Bildschirmaufnahme-Berechtigung erforderlich";
 "ocr_permission_body" = "PKbrain benötigt die Berechtigung zur Bildschirmaufnahme, um den ausgewählten Bereich zu erfassen. Aktiviere sie unter Systemeinstellungen > Datenschutz & Sicherheit > Bildschirmaufnahme und versuche es erneut.";
 "ocr_permission_open_settings" = "Systemeinstellungen öffnen";
+
+/* ===== Einstellungen-Shell (pk-settings-shell-Muster, wie PKmonitor) ===== */
+
+"app_tagline" = "Notizen & Zwischenablage";
+"sidebar.settings" = "Einstellungen";
+"sidebar.searchPlaceholder" = "Suchen";
+"sidebar.general" = "Allgemein";
+"sidebar.shortcuts" = "Tastenkürzel";
+"sidebar.lab" = "Labor";
+"sidebar.stickies" = "Haftnotizen";
+"sidebar.clipboard" = "PKClipboard";
+"sidebar.drawer" = "Schublade";
+"sidebar.library" = "Projekt-Bibliothek";
+"sidebar.support" = "Unterstützen";
+"sidebar.about" = "Über";
+"group.app" = "APP";
+"group.notes" = "NOTIZEN & ZWISCHENABLAGE";
+"group.projects" = "PK-PROJEKTE";
+"search.noResults" = "Keine Einstellung gefunden";
+"check_for_updates" = "Nach Updates suchen…";
+
+"about.greeting" = "Hallo Freund,";
+"about.pitch" = "PKbrain begann als Swift-Port von Jorts, einer Haftnotizen-App, die ich liebte — und wurde zu etwas Eigenem: native Notizen, ein Gedächtnis der Zwischenablage und Tastatur-first-Kürzel.";
+"about.body" = "Haftnotizen, die sich nicht in den Weg stellen, eine Zwischenablage-Schublade ein Kürzel entfernt, integrierte Berechnung beim Tippen und eine Befehlspalette für alles andere. Native Binary, alles bleibt auf deinem Mac. Baut auf der Open-Source-App jorts von elly-code auf.";
+"about.care" = "Mit Sorgfalt für die Mac-Community gebaut. Diskret, wenn du es nicht brauchst, da, wenn du hinschaust.";
+"about.thanks" = "Danke, dass du dabei bist.";
+"about.byPK" = "Von PK";
+"about.updates" = "Aktualisierungen";
+"about.updateChannel" = "Update-Kanal";
+"about.channelDevCaption" = "Dev-Builds prüfen den Dev-Kanal und werden automatisch installiert/neu gestartet. Für Stable die neueste veröffentlichte Version neu installieren.";
+"about.channelStableCaption" = "Nur getestete, versionierte Releases. Du wirst benachrichtigt, wenn eine neue Version erscheint.";
+"about.stableVersion" = "Stable-Version";
+"about.devVersion" = "Dev-Version";
+"about.notPublished" = "Nicht veröffentlicht";
+"about.installedVersion" = "Installierte Version";
+"about.checkForUpdates" = "Nach Updates suchen…";
+"about.credits" = "Credits";
+"credits.jorts" = "Die originale Haftnotizen-App, von der PKbrain ein nativer macOS-Port ist.";
+"credits.numara" = "Inspiration für den integrierten Rechner (Submodule).";
+"credits.caligator" = "Inspiration für die integrierte Berechnung.";
+"credits.devicons" = "Eingebettete Marken-Icons für Notizen (Submodule).";
+"credits.pastepal" = "Inspiration für die PKClipboard-Oberfläche.";
+"credits.note" = "PKbrain ist eine unabhängige Implementierung — die Inspirationen sind weder mit dem Projekt verbunden noch dafür verantwortlich.";
+
+"support.title" = "PKbrain unterstützen";
+"support.subtitle" = "Wenn dir diese App gefällt, unterstütze gerne ihre Entwicklung.";
+"support.kofi.subtitle" = "Unterstütze den Entwickler mit einem Kaffee";
+"support.donate" = "Auf Ko-fi unterstützen";
+"support.github.subtitle" = "Quellcode und Releases";
+"support.issues.title" = "Problem melden";
+"support.issues.subtitle" = "Fehler, Feature-Wünsche, Feedback";
+"support.original.title" = "Originalprojekt";
+"support.original.subtitle" = "jorts von elly-code, wo PKbrain begann";
+"support.profile.title" = "PK auf GitHub";
+"support.profile.subtitle" = "Der Rest der Projektsammlung";
+"footer.supportOnKofi" = "Auf Ko-fi unterstützen";
+
+"library.title" = "Projekt-Bibliothek";
+"library.subtitle" = "Entdecke die anderen Tools und Projekte, die ich baue.";
+"library.more" = "Weitere Projekte";
+"library.star" = "Star auf GitHub";
+"library.viewAll" = "Alle Repositories auf GitHub ansehen";
+"kind.macos" = "macOS-App";
+"kind.chrome" = "Chrome-Erweiterung";
+"kind.cross" = "Chrome / macOS / Windows / Linux";
+"desc.PKbrain" = "Notizen-App mit integrierter Berechnung, Befehlspalette und Tastatur-first-Kürzeln.";
+"desc.PKmonitor" = "CPU, GPU, RAM, Netzwerk und Festplatte in der Menüleiste.";
+"desc.PKwindowsManagement" = "Fenster per Tastatur verwalten, Sitzungen in Rooms organisieren und Apps schnell über die Menüleiste starten.";
+"desc.MonoCodePK" = "Alle Coding-Agent-Abos in einer nativen App — Claude Code, Codex, Cursor, OpenCode und mehr. Tabs sind Sitzungen, der Composer ist die Eingabe.";
+"desc.PKMediaDownloader" = "Video-Downloader mit yt-dlp — YouTube, Instagram, X, TikTok und Tausende mehr.";
+"desc.PKarchives" = "Desktop per rclone nach Google Drive archivieren — mit nativer macOS-Oberfläche oder CLI/TUI.";
+"desc.PKpowerlines" = "Eine native Multi-Display-Powerline mit RAM, CPU, Netzwerk oder Akku in Echtzeit.";
+"desc.LaunchPad" = "Benutzer-Agenten und System-Daemons prüfen und auditiieren mit lokaler Sicherheitsanalyse.";
+"desc.PKMail" = "Immersiver IMAP-Mailclient mit schlichter HTML-Oberfläche und Gmail-Workflows.";
+"desc.PKChromeShortcuts" = "Tabs, Navigation und Split-View per Tastenkürzeln steuern.";
+
+"edge_deck_title" = "Haftnotizen an den Bildschirmrändern anzeigen";
+"edge_deck_hint" = "Ausblenden schließt die Notizen nicht: es versteckt nur ihre kleinen Tabs.";
+"edge_deck_edges" = "Aktive Ränder:";
+"ocr_card_title" = "Screenshot-OCR";
+"ocr_card_subtitle" = "Wähle, wohin der erkannte Text gesendet wird.";
+"ocr_card_output" = "Ausgabe";

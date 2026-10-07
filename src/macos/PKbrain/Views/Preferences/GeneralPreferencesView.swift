@@ -119,21 +119,21 @@ struct GeneralPreferencesView: View {
 
                 Divider()
 
-                Toggle("Afficher les post-it sur les bords de l’écran", isOn: $settings.edgeDeckVisible)
+                Toggle(localizedString("edge_deck_title"), isOn: $settings.edgeDeckVisible)
                     .toggleStyle(.switch)
 
-                Text("Les masquer ne ferme pas les notes : cela cache uniquement leurs petits onglets.")
+                Text(localizedString("edge_deck_hint"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
                 if settings.edgeDeckVisible {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Bords utilisés :")
+                        Text(localizedString("edge_deck_edges"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        Toggle("Gauche", isOn: $settings.edgeDeckLeft).toggleStyle(.checkbox)
-                        Toggle("Droite", isOn: $settings.edgeDeckRight).toggleStyle(.checkbox)
-                        Toggle("Bas", isOn: $settings.edgeDeckBottom).toggleStyle(.checkbox)
+                        Toggle(localizedString("position_left"), isOn: $settings.edgeDeckLeft).toggleStyle(.checkbox)
+                        Toggle(localizedString("position_right"), isOn: $settings.edgeDeckRight).toggleStyle(.checkbox)
+                        Toggle(localizedString("position_bottom"), isOn: $settings.edgeDeckBottom).toggleStyle(.checkbox)
                     }
                 }
 
@@ -233,11 +233,11 @@ struct GeneralPreferencesView: View {
 
     private var ocrCard: some View {
         PreferenceSectionCard(
-            title: "Screenshot OCR",
-            subtitle: "Choose where recognized text should be sent.",
+            title: localizedString("ocr_card_title"),
+            subtitle: localizedString("ocr_card_subtitle"),
             systemImage: "text.viewfinder"
         ) {
-            Picker("Output", selection: $settings.ocrOutput) {
+            Picker(localizedString("ocr_card_output"), selection: $settings.ocrOutput) {
                 ForEach(OCROutput.allCases) { output in
                     Text(output.displayName).tag(output)
                 }

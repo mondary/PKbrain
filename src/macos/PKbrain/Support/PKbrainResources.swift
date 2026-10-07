@@ -7,10 +7,15 @@ enum PKbrainResources {
     }()
 }
 
-/// CalVer version (YYYY.MM.PATCH). Source of truth: the VERSION file at the
-/// repo root, bundled as a resource at build time.
+/// CalVer version (YYYY.MM.PATCH). Source de vérité : CHANGELOG.md, injecté
+/// dans CFBundleShortVersionString par les scripts de build ; la ressource
+/// VERSION embarquée n'est qu'un repli (exécution du binaire nu).
 enum AppVersion {
     static let current: String = {
+        if let info = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+           !info.isEmpty {
+            return info
+        }
         if let url = PKbrainResources.bundle.url(forResource: "VERSION", withExtension: nil),
            let text = try? String(contentsOf: url, encoding: .utf8) {
             let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)

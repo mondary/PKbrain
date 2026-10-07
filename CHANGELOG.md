@@ -1,7 +1,32 @@
 # Changelog
 
 Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
-Le fichier `VERSION` à la racine est la source de vérité.
+`CHANGELOG.md` est la source de vérité de la version (les scripts de build la
+lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
+repli embarqué, régénéré à chaque version).
+
+## [2026.10.1] - 2026-10-07
+
+### Added
+- Shell de réglages PKmonitor (skill pk-settings-shell) : sidebar 220 pt sur material, recherche profonde des réglages avec surlignage accent, groupes APP / NOTES / PROJETS PK, drapeaux de langue (FR/EN/IT/DE/ES, bascule immédiate) et version en pied — les réglages remplacent le contenu de la fenêtre PKclipboard avec bouton retour vers le studio.
+- Section À propos refondue : texte éditorial, canal de mise à jour Stable/Dev, comparaison des dernières versions publiées des deux appcasts, bouton « Rechercher les mises à jour… », footer GitHub / Issues / Ko-fi.
+- Section Crédits dans À propos (pattern Pulse) : Jorts, Numara Calculator, Caligator, developer-icons et PastePal nommés et liés, avec note d'implémentation indépendante.
+- Page Soutenir (Ko-fi, carte café + CTA rouge, liens GitHub/Issues/projet original/profil PK) et Project Library partagée (10 projets PK, vedette PKbrain avec capture).
+- Sparkle : dépendance + UpdaterManager avec canaux (clé "updateChannel"), clés SUFeedURL/SUPublicEDKey dans les Info.plist générés, appcast.xml/appcast-dev.xml squelettes.
+- Clic droit sur l'icône de barre de menus : menu compact Settings / Soutenir sur Ko-fi / Rechercher les mises à jour / À propos / Quitter ; clic gauche réordonné (données d'abord, bloc d'actions compact) — chaque item porte un picto 16×16 inline aligné sur le logo Ko-fi.
+- Argument de lancement `--open-settings [section]` pour ouvrir les réglages de façon scriptable.
+
+### Changed
+- « À propos » du menu et de la barre de menus ouvre désormais l'onglet À propos des Réglages (plus de panneau système).
+- La version est lue dans CHANGELOG.md par les scripts de build (build dev : suffixe `-dev.HHMM` + CFBundleVersion epoch pour ordonner Dev/Stable dans Sparkle) ; package_macos.sh ne dépend plus du fichier VERSION racine supprimé.
+- AppVersion lit d'abord CFBundleShortVersionString, avec repli sur la ressource VERSION embarquée.
+
+### Fixed
+- Versionnage incohérent : scripts hardcodés en 4.2.x, Resources/VERSION en retard, package_macos.sh cassé par la suppression du VERSION racine — tout converge vers le CalVer du CHANGELOG.
+- Localisation : bloc « post-it sur les bords » codé en dur en français et carte OCR codée en dur en anglais désormais localisés dans les 5 langues (~75 nouvelles clés par langue, alignées sur les valeurs partagées PKmonitor/PKwindowsManagement).
+
+### Removed
+- Code mort : PreferencesWindowController, PreferencesView (NavigationSplitView), GlobalSettingsInClipboardView, PreferencePageHeader, PreferenceSidebarButton, ancien AboutPreferencesView et panneau About système.
 
 ## [2026.09.10] - 2026-10-01
 

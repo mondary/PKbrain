@@ -1187,7 +1187,7 @@ struct ClipboardStandardWindowView: View {
     @State private var currentPage: Int = 1
     @State private var itemsPerPage: Int = 50
     @State private var isSettingsMode: Bool = false
-    @State private var selectedSettingsSection: SettingsSection = .data
+    @State private var initialSettingsSection: PKSettingsSection = .general
     @FocusState private var searchFocused: Bool
     private let gridMinCardWidth: CGFloat = 190
     private let gridMaxCardWidth: CGFloat = 260
@@ -1200,6 +1200,7 @@ struct ClipboardStandardWindowView: View {
         settings: AppSettings,
         storageRootURL: URL,
         startsInSettingsMode: Bool,
+        initialSettingsSection: PKSettingsSection = .general,
         notesProvider: @escaping () -> [ClipboardView.NoteDeckItem],
         onCreateNoteFromItem: @escaping (ClipboardManager.Item) -> Void,
         onOpenNote: @escaping (UUID) -> Void,
@@ -1215,6 +1216,7 @@ struct ClipboardStandardWindowView: View {
         self.settings = settings
         self.storageRootURL = storageRootURL
         self.startsInSettingsMode = startsInSettingsMode
+        self.initialSettingsSection = initialSettingsSection
         self.notesProvider = notesProvider
         self.onCreateNoteFromItem = onCreateNoteFromItem
         self.onOpenNote = onOpenNote
@@ -1235,41 +1237,6 @@ struct ClipboardStandardWindowView: View {
         case app(String)
     }
 
-    private enum SettingsSection: String, CaseIterable, Identifiable {
-        case data
-        case pkclipboard
-        case drawer
-        case stickies
-        case shortcuts
-        case lab
-        case about
-
-        var id: String { rawValue }
-        var title: String {
-            switch self {
-            case .pkclipboard: return localizedString("settings_section_clipboard")
-            case .drawer: return localizedString("settings_section_drawer")
-            case .stickies: return localizedString("settings_section_stickies")
-            case .shortcuts: return localizedString("shortcuts")
-            case .data: return localizedString("settings_section_data")
-            case .lab: return localizedString("settings_section_lab")
-            case .about: return localizedString("about_section")
-            }
-        }
-
-        var systemImage: String {
-            switch self {
-            case .pkclipboard: return "clipboard"
-            case .drawer: return "rectangle.bottomthird.inset.filled"
-            case .stickies: return "note.text"
-            case .shortcuts: return "keyboard"
-            case .data: return "externaldrive"
-            case .lab: return "flask"
-            case .about: return "info.circle"
-            }
-        }
-    }
-
     enum GridEntry: Identifiable, Equatable {
         case clipboard(ClipboardManager.Item)
         case note(ClipboardView.NoteDeckItem)
@@ -1285,22 +1252,37 @@ struct ClipboardStandardWindowView: View {
     var body: some View {
         ZStack {
             Color(NSColor.windowBackgroundColor)
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    sidebar
-                        .frame(width: isSidebarCollapsed ? 56 : 220)
-                    Divider()
-                    mainGrid
-                }
-                if !isSettingsMode {
+            if isSettingsMode {
+                // Les réglages remplacent le contenu de travail de la fenêtre
+                // (pattern pk-settings-shell), avec retour vers le studio.
+                PKSettingsModeView(
+                    settings: settings,
+                    clipboard: clipboard,
+                    storageRootURL: storageRootURL,
+                    initialSection: initialSettingsSection,
+                    onRunBackupNow: { self.onRunBackupNow() },
+                    onBack: {
+                        withAnimation(.easeInOut(duration: 0.16)) {
+                            isSettingsMode = false
+                        }
+                    }
+                )
+            } else {
+                VStack(spacing: 0) {
+                    HStack(spacing: 0) {
+                        sidebar
+                            .frame(width: isSidebarCollapsed ? 56 : 220)
+                        Divider()
+                        mainGrid
+                    }
                     Divider()
                     footer
                         .frame(minHeight: 56)
                 }
+                .padding(.top, 8)
+                .padding(.bottom, 8)
             }
         }
-        .padding(.top, 8)
-        .padding(.bottom, 8)
         .background(Color(NSColor.windowBackgroundColor))
         .frame(minWidth: 1120, minHeight: 720)
         .onAppear {
@@ -1334,41 +1316,7 @@ struct ClipboardStandardWindowView: View {
                 .padding(.horizontal, isSidebarCollapsed ? 14 : 16)
                 .padding(.bottom, 6)
 
-                if isSettingsMode {
-                    Button {
-                        isSettingsMode = false
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "arrow.left")
-                                .frame(width: 16, height: 16)
-                            if !isSidebarCollapsed {
-                                Text(localizedString("back"))
-                                    .font(.system(size: 13, weight: .semibold))
-                                Spacer(minLength: 0)
-                            }
-                        }
-                        .padding(.horizontal, isSidebarCollapsed ? 12 : 16)
-                        .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
-                        )
-                        .padding(.horizontal, isSidebarCollapsed ? 6 : 8)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.bottom, 6)
-
-                    ForEach(SettingsSection.allCases) { section in
-                        sidebarButton(
-                            title: section.title,
-                            systemImage: section.systemImage,
-                            isSelected: selectedSettingsSection == section
-                        ) {
-                            selectedSettingsSection = section
-                        }
-                    }
-                } else {
-                    sidebarButton(
+                sidebarButton(
                         title: localizedString("filter_all"),
                         systemImage: "house.fill",
                         isSelected: selectedSource == .all
@@ -1504,59 +1452,14 @@ struct ClipboardStandardWindowView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                }
             }
             .padding(.vertical, 8)
         }
         .background(Color(NSColor.windowBackgroundColor).opacity(0.96))
     }
 
-    @ViewBuilder
     private var mainGrid: some View {
-        if isSettingsMode {
-            ScrollView {
-                Group {
-                    switch selectedSettingsSection {
-                    case .pkclipboard:
-                        ClipboardDataSettingsView(
-                            settings: settings,
-                            clipboard: clipboard,
-                            storageRootURL: storageRootURL
-                        )
-                    case .drawer:
-                        DrawerSettingsView(settings: settings)
-                            .padding(12)
-                    case .stickies:
-                        StickiesSettingsView(settings: settings)
-                            .padding(12)
-                    case .shortcuts:
-                        ShortcutsPreferencesView(settings: settings)
-                            .padding(12)
-                    case .data:
-                        GeneralPreferencesView(
-                            settings: settings,
-                            storageURL: storageRootURL.appendingPathComponent("saved_state.json"),
-                            onRestartRequested: {
-                                let alert = NSAlert()
-                                alert.messageText = localizedString("restart_required")
-                                alert.informativeText = localizedString("restart_required_message")
-                                alert.runModal()
-                            },
-                            onRunBackupNow: { self.onRunBackupNow() }
-                        )
-                    case .lab:
-                        LabSettingsView(storageRootURL: storageRootURL)
-                            .padding(12)
-                    case .about:
-                        AboutPreferencesView()
-                            .padding(12)
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            }
-            .background(Color(NSColor.windowBackgroundColor))
-        } else {
-            GeometryReader { proxy in
+        GeometryReader { proxy in
                 ScrollView(.vertical, showsIndicators: true) {
                     LazyVGrid(
                         columns: [GridItem(.adaptive(minimum: gridMinCardWidth, maximum: gridMaxCardWidth), spacing: gridSpacing)],
@@ -1611,7 +1514,6 @@ struct ClipboardStandardWindowView: View {
                     updateItemsPerPage(for: size)
                 }
             }
-        }
     }
 
     private var footer: some View {
@@ -1652,14 +1554,14 @@ struct ClipboardStandardWindowView: View {
             .help(localizedString("open_notes_folder"))
 
             Button {
+                initialSettingsSection = .general
                 isSettingsMode = true
-                selectedSettingsSection = .data
             } label: {
                 Image(systemName: "gearshape")
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
-            .help("Settings")
+            .help(localizedString("settings"))
 
             if !isSettingsMode {
                 HStack(spacing: 6) {
@@ -2054,7 +1956,7 @@ struct ClipboardStandardWindowView: View {
     }
 }
 
-private struct ClipboardDataSettingsView: View {
+struct ClipboardDataSettingsView: View {
     @ObservedObject var settings: AppSettings
     @ObservedObject var clipboard: ClipboardManager
     let storageRootURL: URL
@@ -2076,9 +1978,11 @@ private struct ClipboardDataSettingsView: View {
                             Text(localizedString("capture_active"))
                         }
                         .toggleStyle(.switch)
+                        .modifier(SettingHighlight(title: localizedString("capture_active")))
 
                         HStack(spacing: 12) {
                             Text(localizedString("max_items"))
+                                .modifier(SettingHighlight(title: localizedString("max_items")))
                             Stepper(value: $settings.clipboardMaxItems, in: 5000...50000, step: 500) {
                                 Text("\(settings.clipboardMaxItems)")
                                     .frame(minWidth: 80, alignment: .leading)
@@ -2087,6 +1991,7 @@ private struct ClipboardDataSettingsView: View {
 
                         HStack(spacing: 12) {
                             Text(localizedString("max_age_days"))
+                                .modifier(SettingHighlight(title: localizedString("max_age_days")))
                             Stepper(value: $settings.clipboardMaxAgeDays, in: 365...3650, step: 30) {
                                 Text("\(settings.clipboardMaxAgeDays)")
                                     .frame(minWidth: 80, alignment: .leading)
@@ -2110,6 +2015,7 @@ private struct ClipboardDataSettingsView: View {
                 GroupBox {
                     VStack(alignment: .leading, spacing: 10) {
                         Text(localizedString("source_privacy_mode"))
+                            .modifier(SettingHighlight(title: localizedString("source_privacy_mode")))
                         Picker("", selection: $settings.clipboardSourceMode) {
                             Text(localizedString("allow_all")).tag(ClipboardSourceMode.allowAll)
                             Text(localizedString("block_list")).tag(ClipboardSourceMode.blockList)
@@ -2139,6 +2045,7 @@ private struct ClipboardDataSettingsView: View {
                 GroupBox {
                     VStack(alignment: .leading, spacing: 10) {
                         Text(localizedString("data_backup_full"))
+                            .modifier(SettingHighlight(title: localizedString("data_backup_full")))
                         HStack(spacing: 10) {
                             Button(localizedString("export_full_backup")) { exportFullBackup() }
                             Button(localizedString("restore_full_backup")) { importFullBackup() }
@@ -2244,7 +2151,7 @@ private struct ClipboardDataSettingsView: View {
     }
 }
 
-private struct DrawerSettingsView: View {
+struct DrawerSettingsView: View {
     @ObservedObject var settings: AppSettings
 
     var body: some View {
@@ -2254,6 +2161,7 @@ private struct DrawerSettingsView: View {
             GroupBox {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(localizedString("drawer_position"))
+                        .modifier(SettingHighlight(title: localizedString("drawer_position")))
                     Picker("", selection: $settings.clipboardDrawerEdge) {
                         Text(localizedString("position_top")).tag(ClipboardDrawerEdge.top)
                         Text(localizedString("position_bottom")).tag(ClipboardDrawerEdge.bottom)
@@ -2270,7 +2178,7 @@ private struct DrawerSettingsView: View {
     }
 }
 
-private struct StickiesSettingsView: View {
+struct StickiesSettingsView: View {
     @ObservedObject var settings: AppSettings
 
     var body: some View {
@@ -2281,10 +2189,13 @@ private struct StickiesSettingsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Toggle(localizedString("randomize_new_note_position"), isOn: $settings.randomizeNewNotePosition)
                         .toggleStyle(.switch)
+                        .modifier(SettingHighlight(title: localizedString("randomize_new_note_position")))
                     Toggle(localizedString("show_results_while_typing"), isOn: $settings.inlineCalculations)
                         .toggleStyle(.switch)
+                        .modifier(SettingHighlight(title: localizedString("show_results_while_typing")))
                     Toggle(localizedString("show_brand_icons_while_typing"), isOn: $settings.inlineBrandIcons)
                         .toggleStyle(.switch)
+                        .modifier(SettingHighlight(title: localizedString("show_brand_icons_while_typing")))
                 }
                 .padding(12)
             }
@@ -2294,7 +2205,7 @@ private struct StickiesSettingsView: View {
     }
 }
 
-private struct LabSettingsView: View {
+struct LabSettingsView: View {
     let storageRootURL: URL
 
     private var pluginsDirectoryURL: URL {
@@ -2309,6 +2220,7 @@ private struct LabSettingsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(localizedString("community_plugins"))
                         .font(.system(size: 13, weight: .semibold))
+                        .modifier(SettingHighlight(title: localizedString("community_plugins")))
                     Text(localizedString("community_plugins_desc"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -2346,80 +2258,6 @@ private struct LabSettingsView: View {
         }
         """
         try? json.data(using: .utf8)?.write(to: manifestURL, options: .atomic)
-    }
-}
-
-private struct GlobalSettingsInClipboardView: View {
-    @ObservedObject var settings: AppSettings
-    @ObservedObject var clipboard: ClipboardManager
-    let storageRootURL: URL
-    let onRunBackupNow: () -> Void
-    @State private var section: Section = .general
-
-    private enum Section: String, CaseIterable, Identifiable {
-        case general
-        case shortcuts
-        case clipboard
-        case about
-
-        var id: String { rawValue }
-        var label: String {
-            switch self {
-            case .general: return localizedString("general")
-            case .shortcuts: return localizedString("shortcuts")
-            case .clipboard: return localizedString("settings_section_clipboard")
-            case .about: return localizedString("about_section")
-            }
-        }
-    }
-
-    private var storageStateURL: URL {
-        storageRootURL.appendingPathComponent("saved_state.json")
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Picker("", selection: $section) {
-                ForEach(Section.allCases) { item in
-                    Text(item.label).tag(item)
-                }
-            }
-            .pickerStyle(.segmented)
-
-            Group {
-                switch section {
-                case .general:
-                    GeneralPreferencesView(
-                        settings: settings,
-                        storageURL: storageStateURL,
-                        onRestartRequested: {
-                            let alert = NSAlert()
-                            alert.messageText = localizedString("restart_required")
-                            alert.informativeText = localizedString("restart_required_message")
-                            alert.runModal()
-                        },
-                        onRunBackupNow: { self.onRunBackupNow() }
-                    )
-                case .shortcuts:
-                    ShortcutsPreferencesView(settings: settings)
-                        .padding(12)
-                case .clipboard:
-                    ClipboardDataSettingsView(
-                        settings: settings,
-                        clipboard: clipboard,
-                        storageRootURL: storageRootURL
-                    )
-                case .about:
-                    AboutPreferencesView()
-                        .padding(12)
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(NSColor.windowBackgroundColor).opacity(0.55))
-            )
-        }
     }
 }
 

@@ -44,6 +44,7 @@ final class AppSettings: ObservableObject {
         static let autoBackupEnabled = "auto-backup-enabled"
         static let autoBackupDirectoryPath = "auto-backup-directory-path"
         static let autoBackupIntervalHours = "auto-backup-interval-hours"
+        static let updateChannel = "updateChannel"
     }
 
     private let defaults: UserDefaults
@@ -89,6 +90,15 @@ final class AppSettings: ObservableObject {
         didSet {
             defaults.set(selectedLanguage.rawValue, forKey: Keys.selectedLanguage)
             applyLanguagePreference()
+        }
+    }
+
+    /// Canal de mise à jour Sparkle ("stable" ou "dev") — même clé
+    /// UserDefaults que les autres apps PK (pattern pk-settings-shell).
+    @Published var updateChannel: String {
+        didSet {
+            defaults.set(updateChannel, forKey: Keys.updateChannel)
+            NotificationCenter.default.post(name: Notification.Name("PKUpdateChannelDidChange"), object: nil)
         }
     }
 
@@ -188,7 +198,8 @@ final class AppSettings: ObservableObject {
             Keys.ocrOutput: OCROutput.clipboardAndWindow.rawValue,
             Keys.autoBackupEnabled: false,
             Keys.autoBackupDirectoryPath: "",
-            Keys.autoBackupIntervalHours: 24
+            Keys.autoBackupIntervalHours: 24,
+            Keys.updateChannel: "stable"
         ])
 
         scribblyModeActive = defaults.bool(forKey: Keys.scribblyModeActive)
@@ -231,6 +242,7 @@ final class AppSettings: ObservableObject {
         autoBackupEnabled = defaults.bool(forKey: Keys.autoBackupEnabled)
         autoBackupDirectoryPath = defaults.string(forKey: Keys.autoBackupDirectoryPath) ?? ""
         autoBackupIntervalHours = max(1, defaults.integer(forKey: Keys.autoBackupIntervalHours))
+        updateChannel = defaults.string(forKey: Keys.updateChannel) == "dev" ? "dev" : "stable"
 
         migrateReservedShortcutsIfNeeded(shortcuts: &shortcuts)
 
@@ -239,6 +251,7 @@ final class AppSettings: ObservableObject {
 
     private func applyLanguagePreference() {
         LocalizationController.shared.setLanguage(code: selectedLanguage.rawValue)
+        NotificationCenter.default.post(name: .appLanguageDidChange, object: nil)
 
         // Best-effort: also update system localization preferences for formatters, etc.
         defaults.set([selectedLanguage.rawValue], forKey: "AppleLanguages")

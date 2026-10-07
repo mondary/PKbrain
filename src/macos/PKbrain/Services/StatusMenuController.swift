@@ -19,6 +19,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     private let onStickNotesToEdges: () -> Void
     private let isStuckToEdges: () -> Bool
     private let onQuit: () -> Void
+    private let onCheckForUpdates: () -> Void
     private let settings: AppSettings
 
     init(
@@ -37,6 +38,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         onStickNotesToEdges: @escaping () -> Void = {},
         isStuckToEdges: @escaping () -> Bool = { false },
         onQuit: @escaping () -> Void,
+        onCheckForUpdates: @escaping () -> Void = {},
         settings: AppSettings
     ) {
         statusItem = NSStatusBar.system.statusItem(withLength: 26)
@@ -55,6 +57,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         self.onStickNotesToEdges = onStickNotesToEdges
         self.isStuckToEdges = isStuckToEdges
         self.onQuit = onQuit
+        self.onCheckForUpdates = onCheckForUpdates
         self.settings = settings
 
         super.init()
@@ -64,14 +67,32 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             button.imagePosition = .imageOnly
             button.imageScaling = .scaleProportionallyUpOrDown
             button.toolTip = "PKbrain"
+            button.target = self
+            button.action = #selector(statusItemClicked(_:))
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
 
         menu.delegate = self
-        statusItem.menu = menu
     }
 
-    func menuWillOpen(_ menu: NSMenu) {
+    func menuWillOpen(_ theMenu: NSMenu) {
+        guard theMenu === menu else { return }
         rebuildMenu()
+    }
+
+    func menuDidClose(_ theMenu: NSMenu) {
+        // Le menu est monté à la volée pour ce clic : on le détache pour que
+        // le clic suivant (gauche ou droit) repasse par statusItemClicked.
+        statusItem.menu = nil
+    }
+
+    /// Clic gauche = menu complet (les notes d'abord, puis les actions) ;
+    /// clic droit = bloc d'actions compact Settings / Ko-fi / Updates /
+    /// About / Quit (pattern PKmonitor).
+    @objc private func statusItemClicked(_ sender: Any?) {
+        let isRightClick = NSApp.currentEvent?.type == .rightMouseUp
+        statusItem.menu = isRightClick ? makeCompactMenu() : menu
+        statusItem.button?.performClick(nil)
     }
 
     @objc private func openNote(_ sender: NSMenuItem) {
@@ -143,11 +164,16 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     private func rebuildMenu() {
         menu.removeAllItems()
 
+        // Ordre canonique (pattern PKmonitor) : la DONNÉE d'abord — les notes
+        // ouvertes. Puis les actions de l'app en un bloc, un bloc compact
+        // Settings / Ko-fi / Updates / About, et Quit sous un séparateur.
+        // Chaque item porte un picto 16×16 inline (aligné sur le logo Ko-fi).
         let notes = manager?.menuEntries() ?? []
 
         if notes.isEmpty {
             let emptyItem = NSMenuItem(title: localizedString("no_notes"), action: nil, keyEquivalent: "")
             emptyItem.isEnabled = false
+            Self.setInlineMenuIcon(Self.menuSymbol("note.text"), on: emptyItem)
             menu.addItem(emptyItem)
         } else {
             for note in notes {
@@ -158,17 +184,22 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
                 )
                 item.target = self
                 item.representedObject = note.id.uuidString
-                item.image = note.theme.menuSwatchImage
+                if let swatch = note.theme.menuSwatchImage {
+                    swatch.size = NSSize(width: 16, height: 16)
+                    Self.setInlineMenuIcon(swatch, on: item)
+                } else {
+                    Self.setInlineMenuIcon(Self.menuSymbol("note.text"), on: item)
+                }
                 menu.addItem(item)
             }
         }
 
         menu.addItem(.separator())
-        menu.addItem(actionItem(localizedString("new_note"), action: #selector(newNote(_:)), shortcut: .newStickyNote))
+        menu.addItem(actionItem(localizedString("new_note"), action: #selector(newNote(_:)), shortcut: .newStickyNote, systemImage: "plus.square.on.square"))
         if manager?.areAllNotesVisible == true {
-            menu.addItem(actionItem(localizedString("hide_all_notes"), action: #selector(hideAllNotes(_:)), shortcut: .showAllNotes))
+            menu.addItem(actionItem(localizedString("hide_all_notes"), action: #selector(hideAllNotes(_:)), shortcut: .showAllNotes, systemImage: "eye.slash"))
         } else {
-            menu.addItem(actionItem(localizedString("show_all_notes"), action: #selector(showAllNotes(_:)), shortcut: .showAllNotes))
+            menu.addItem(actionItem(localizedString("show_all_notes"), action: #selector(showAllNotes(_:)), shortcut: .showAllNotes, systemImage: "eye"))
         }
         menu.addItem(actionItem(localizedString("show_list"), action: #selector(showList(_:)), shortcut: .showNotesList, systemImage: "list.bullet.rectangle"))
         menu.addItem(actionItem(localizedString("show_clipboard_drawer"), action: #selector(showClipboard(_:)), keyEquivalent: "v", modifiers: [.command, .shift], systemImage: "clipboard"))
@@ -181,15 +212,105 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             systemImage: isStuckToEdges() ? "rectangle.on.rectangle.slash" : "rectangle.on.rectangle"
         ))
         menu.addItem(.separator())
-        menu.addItem(actionItem(localizedString("settings"), action: #selector(showSettings(_:)), shortcut: .preferences, systemImage: "gearshape"))
-        menu.addItem(actionItem(localizedString("about_pkbrain"), action: #selector(showAbout(_:)), keyEquivalent: ""))
-        menu.addItem(actionItem(localizedString("support_pkbrain"), action: #selector(supportDeveloper(_:)), keyEquivalent: "", systemImage: "heart"))
-        menu.addItem(actionItem(localizedString("restart_pkbrain"), action: #selector(restart(_:)), keyEquivalent: ""))
-        menu.addItem(actionItem(localizedString("quit_pkbrain"), action: #selector(quit(_:)), keyEquivalent: "q"))
+
+        menu.addItem(actionItem(localizedString("settings"), action: #selector(showSettings(_:)), shortcut: .preferences, systemImage: "gearshape.fill"))
+
+        let donate = NSMenuItem(title: localizedString("support_pkbrain"), action: #selector(supportDeveloper(_:)), keyEquivalent: "")
+        donate.target = self
+        Self.setInlineMenuIcon(Self.kofiMenuLogo() ?? Self.menuSymbol("heart.fill"), on: donate)
+        menu.addItem(donate)
+
+        let updateItem = NSMenuItem(title: localizedString("check_for_updates"), action: #selector(checkForUpdates(_:)), keyEquivalent: "")
+        updateItem.target = self
+        Self.setInlineMenuIcon(Self.menuSymbol("arrow.clockwise.circle.fill"), on: updateItem)
+        menu.addItem(updateItem)
+
+        let aboutItem = NSMenuItem(title: localizedString("about_pkbrain"), action: #selector(showAbout(_:)), keyEquivalent: "")
+        aboutItem.target = self
+        Self.setInlineMenuIcon(Self.menuSymbol("info.circle.fill"), on: aboutItem)
+        menu.addItem(aboutItem)
+
         menu.addItem(.separator())
-        let versionItem = NSMenuItem(title: "PKbrain \(AppVersion.current)", action: nil, keyEquivalent: "")
-        versionItem.isEnabled = false
-        menu.addItem(versionItem)
+        let restartItem = NSMenuItem(title: localizedString("restart_pkbrain"), action: #selector(restart(_:)), keyEquivalent: "")
+        restartItem.target = self
+        Self.setInlineMenuIcon(Self.menuSymbol("arrow.triangle.2.circlepath"), on: restartItem)
+        menu.addItem(restartItem)
+        let quit = NSMenuItem(title: localizedString("quit_pkbrain"), action: #selector(quit(_:)), keyEquivalent: "q")
+        quit.target = self
+        Self.setInlineMenuIcon(Self.menuSymbol("rectangle.portrait.and.arrow.right"), on: quit)
+        menu.addItem(quit)
+    }
+
+    /// Bloc d'actions compact du clic droit : Settings, Ko-fi, Updates,
+    /// About, puis Restart/Quit sous un séparateur (pattern PKmonitor).
+    private func makeCompactMenu() -> NSMenu {
+        let compact = NSMenu(title: "PKbrain")
+        compact.delegate = self
+        compact.addItem(actionItem(localizedString("settings"), action: #selector(showSettings(_:)), shortcut: .preferences, systemImage: "gearshape.fill"))
+
+        let donate = NSMenuItem(title: localizedString("support_pkbrain"), action: #selector(supportDeveloper(_:)), keyEquivalent: "")
+        donate.target = self
+        Self.setInlineMenuIcon(Self.kofiMenuLogo() ?? Self.menuSymbol("heart.fill"), on: donate)
+        compact.addItem(donate)
+
+        let updateItem = NSMenuItem(title: localizedString("check_for_updates"), action: #selector(checkForUpdates(_:)), keyEquivalent: "")
+        updateItem.target = self
+        Self.setInlineMenuIcon(Self.menuSymbol("arrow.clockwise.circle.fill"), on: updateItem)
+        compact.addItem(updateItem)
+
+        let aboutItem = NSMenuItem(title: localizedString("about_pkbrain"), action: #selector(showAbout(_:)), keyEquivalent: "")
+        aboutItem.target = self
+        Self.setInlineMenuIcon(Self.menuSymbol("info.circle.fill"), on: aboutItem)
+        compact.addItem(aboutItem)
+
+        compact.addItem(.separator())
+        let restartItem = NSMenuItem(title: localizedString("restart_pkbrain"), action: #selector(restart(_:)), keyEquivalent: "")
+        restartItem.target = self
+        Self.setInlineMenuIcon(Self.menuSymbol("arrow.triangle.2.circlepath"), on: restartItem)
+        compact.addItem(restartItem)
+        let quit = NSMenuItem(title: localizedString("quit_pkbrain"), action: #selector(quit(_:)), keyEquivalent: "q")
+        quit.target = self
+        Self.setInlineMenuIcon(Self.menuSymbol("rectangle.portrait.and.arrow.right"), on: quit)
+        compact.addItem(quit)
+        return compact
+    }
+
+    @objc private func checkForUpdates(_ sender: NSMenuItem) {
+        onCheckForUpdates()
+    }
+
+    /// Picto de menu : SF Symbol en template (adapte dark/light), 16×16 pour
+    /// s'aligner sur les swatches de notes et le logo Ko-fi.
+    private static func menuSymbol(_ name: String) -> NSImage? {
+        let configuration = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)?
+            .withSymbolConfiguration(configuration)
+        image?.isTemplate = true
+        image?.size = NSSize(width: 16, height: 16)
+        return image
+    }
+
+    /// Logo Ko-fi 16×16 non template pour le menu (le vrai logo, pas un SF
+    /// Symbol de repli).
+    private static func kofiMenuLogo() -> NSImage? {
+        guard let logo = KofiLogo.image else { return nil }
+        logo.isTemplate = false
+        logo.size = NSSize(width: 16, height: 16)
+        return logo
+    }
+
+    /// Dans le menu du status item, NSMenuItem.image n'était pas rendu de
+    /// façon fiable. Une attachment dans le titre rend l'icône visible et
+    /// réserve exactement la même largeur pour tous les items.
+    private static func setInlineMenuIcon(_ image: NSImage?, on item: NSMenuItem) {
+        guard let image else { return }
+        let attachment = NSTextAttachment()
+        attachment.image = image
+        attachment.bounds = NSRect(x: 0, y: -3, width: 16, height: 16)
+        let title = NSMutableAttributedString(attachment: attachment)
+        title.append(NSAttributedString(string: "  \(item.title)"))
+        item.image = nil
+        item.attributedTitle = title
     }
 
     private func actionItem(
@@ -219,7 +340,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         item.target = self
         item.keyEquivalentModifierMask = keyEquivalent.isEmpty ? [] : modifiers
         if let systemImage {
-            item.image = NSImage(systemSymbolName: systemImage, accessibilityDescription: title)
+            Self.setInlineMenuIcon(Self.menuSymbol(systemImage), on: item)
         }
         return item
     }
