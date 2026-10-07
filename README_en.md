@@ -2,7 +2,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.09.7** — [Changelog](CHANGELOG.md)
+version **2026.10.1** — [Changelog](CHANGELOG.md)
 
 [🇬🇧 EN](README_en.md) · [🇫🇷 FR](README.md)
 
@@ -76,7 +76,9 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
   - import/export
   - duplicate/backup archiving
   - automatic backups to a chosen folder, on a configurable interval, with timestamped snapshots
-  - `Data` tab shown by default when opening settings (language, accessibility, storage)
+  - settings shell shared across PK apps (same rendering as PKmonitor): 220 pt sidebar with deep setting search (targeted highlight), APP / NOTES / PK PROJECTS groups, language flags (instant switch FR/EN/IT/DE/ES), version in the footer
+  - General, Shortcuts, Lab, Stickies, PKClipboard, Drawer, Project Library, Support and About sections; About shows the Stable/Dev update channel, published versions and a Credits section (Jorts, Numara, Caligator, developer-icons, PastePal)
+  - in-app Sparkle updates with Stable/Dev channels; right-click the menu bar icon for a compact Settings / Support on Ko-fi / Check for Updates / About / Quit menu
   - open storage folder in Finder
 - Internationalization:
   - 5 languages: English, French, Spanish, German, Italian
@@ -131,8 +133,9 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
 > Direct paste requires the macOS **Accessibility** permission for PKbrain. macOS prompts on the first paste; permission can also be managed in **System Settings > Privacy & Security > Accessibility**.
 
 ## ⚙️ Settings
-- `Data` tab shown by default (language, accessibility, storage, import/export).
+- Shared PK settings shell (sidebar, deep search, language flags, version footer) — General shown by default (language, accessibility, storage, import/export).
 - Clipboard, drawer, stickies, shortcuts, and lab preferences.
+- About: Stable/Dev update channel, in-app Sparkle updates, credits for inspirations.
 - Inline calculator on/off.
 - Clipboard drawer position.
 - Automatic backups to a chosen folder, with a configurable interval.

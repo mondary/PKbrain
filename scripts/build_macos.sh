@@ -8,10 +8,8 @@ BUNDLE_ID="io.github.mondary.pkbrain"
 MIN_SYSTEM_VERSION="13.0"
 BUILD_CHANNEL="dev"
 # CalVer lu depuis CHANGELOG.md (source de vérité, convention PK).
-APP_VERSION="$(sed -nE 's/^##? \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/p' "$PWD/../CHANGELOG.md" 2>/dev/null | sed -n '1p')"
-if [[ -z "$APP_VERSION" ]]; then
-  APP_VERSION="$(sed -nE 's/^##? \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/p' "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/CHANGELOG.md" | sed -n '1p')"
-fi
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+APP_VERSION="$(sed -nE 's/^##? \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/p' "$ROOT_DIR/CHANGELOG.md" | sed -n '1p')"
 if [[ -z "$APP_VERSION" ]]; then
   echo "erreur: aucune version CalVer trouvée en tête de CHANGELOG.md" >&2
   exit 1
@@ -21,7 +19,6 @@ fi
 MARKETING_VERSION="$APP_VERSION-dev.$(date -u +%H%M)"
 BUILD_VERSION="$(date +%s)"
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_ROOT="$ROOT_DIR"
 DIST_DIR="$REPO_ROOT/releases"
 LEGACY_DIST_LINK="$ROOT_DIR/dist"

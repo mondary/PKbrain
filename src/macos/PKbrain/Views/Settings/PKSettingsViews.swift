@@ -880,6 +880,7 @@ struct PKSettingsModeView: View {
         self.storageRootURL = storageRootURL
         self.initialSection = initialSection
         self.onRunBackupNow = onRunBackupNow
+        self.onBack = onBack
         _selection = State(initialValue: initialSection)
         _language = State(initialValue: settings.selectedLanguage)
     }

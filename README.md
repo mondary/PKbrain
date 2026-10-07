@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.09.7** — [Changelog](CHANGELOG.md)
+version **2026.10.1** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
@@ -105,16 +105,16 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
   - preview agrandi en popover, fermeture par clic extérieur + `Esc`
   - cartes notes rendues en style sticky note (fond/thème distinctifs)
   - boutons rapides `Paramètres` + `Ouvrir dossier local` ajoutés dans drawer et PKClipboard
-  - mode `Settings` intégré:
-    - bouton paramètres en footer qui bascule toute la fenêtre en mode paramètres
-    - sidebar dédiée (`Data`, `Clipboard`, `Drawer`, `Stickies`, `Shortcuts`, `Lab`, `About`)
-    - `Data` comme onglet par défaut (langue, accessibilité, stockage, import/export)
-    - écran principal dynamique selon la section sélectionnée
-    - sortie mode paramètres via `Esc` ou bouton `Retour`
-  - `Cmd+,` redirigé vers `PKClipboard` en mode paramètres (plus de popup séparé)
-   - section backup complète dans paramètres clipboard (export/restore dossier de données complet)
-   - onglet `Data` affiché par défaut à l'ouverture des paramètres (langue, accessibilité, stockage)
-  - gestion corbeille notes enrichie: clic droit par ligne `Restaurer` / `Supprimer`
+   - mode `Settings` intégré (shell PK partagé — même rendu que PKmonitor) :
+     - bouton paramètres en footer qui bascule toute la fenêtre en mode paramètres, bouton retour vers le studio
+     - sidebar 220 pt sur material avec recherche profonde des réglages (surlignage du réglage ciblé), groupes `APP` / `NOTES` / `PROJETS PK`, drapeaux de langue (bascule immédiate FR/EN/IT/DE/ES) et version en pied
+     - sections : `Général`, `Raccourcis`, `Labo`, `Post-it`, `PKClipboard`, `Tiroir`, `Project Library`, `Soutenir`, `À propos`
+     - `À propos` : canal de mise à jour Stable/Dev, dernières versions publiées des deux appcasts, section Crédits (Jorts, Numara, Caligator, developer-icons, PastePal)
+     - `Soutenir` : carte Ko-fi + liens GitHub/Issues/projet original ; `Project Library` : la collection PK partagée avec vedette PKbrain
+   - `Cmd+,` redirigé vers `PKClipboard` en mode paramètres (plus de popup séparé)
+   - Sparkle : mises à jour in-app avec canaux Stable/Dev
+   - clic droit sur l'icône de barre de menus : menu compact Réglages / Soutenir sur Ko-fi / Mises à jour / À propos / Quitter, pictos alignés sur le logo Ko-fi
+    - section backup complète dans paramètres clipboard (export/restore dossier de données complet)
 - Persistance et stockage:
   - stockage Markdown par note
   - métadonnées note en fin de fichier (`<!-- JORTS_META ... -->`)
@@ -184,8 +184,9 @@ version **2026.09.7** — [Changelog](CHANGELOG.md)
 > Le collage direct nécessite l'autorisation macOS **Accessibilité** pour PKbrain. macOS affiche la demande au premier collage; l'autorisation peut aussi être gérée dans **Réglages Système > Confidentialité et sécurité > Accessibilité**.
 
 ## ⚙️ Réglages
-- Onglet `Data` affiché par défaut (langue, accessibilité, stockage, import/export).
+- Shell PK partagé (sidebar, recherche profonde, drapeaux de langue, version en pied) — `Général` affiché par défaut (langue, accessibilité, stockage, import/export).
 - Préférences clipboard, drawer, stickies, raccourcis, lab.
+- `À propos` : canal Stable/Dev, mises à jour in-app (Sparkle), crédits des inspirations.
 - Activation/désactivation du calcul inline.
 - Position du clipboard drawer.
 - Backup automatique vers un dossier choisi, avec intervalle réglable.
