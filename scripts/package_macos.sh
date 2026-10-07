@@ -14,15 +14,15 @@ if [[ -z "$APP_VERSION" ]]; then
   echo "erreur: aucune version CalVer trouvée en tête de CHANGELOG.md" >&2
   exit 1
 fi
-# PK_DEV_BUILD=1 : versionnement du canal Dev (suffixe -dev + CFBundleVersion
-# epoch, pattern PKmonitor — Sparkle ordonne Dev et Stable entre eux).
+# Les deux canaux utilisent un CFBundleVersion epoch afin que Sparkle puisse
+# ordonner une Stable publiée après une Dev déjà installée.
 if [[ "${PK_DEV_BUILD:-0}" == "1" ]]; then
   BUILD_CHANNEL="dev"
   MARKETING_VERSION="$APP_VERSION-dev.$(date -u +%H%M)"
   BUILD_VERSION="$(date +%s)"
 else
   MARKETING_VERSION="$APP_VERSION"
-  BUILD_VERSION="$APP_VERSION"
+  BUILD_VERSION="$(date +%s)"
 fi
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
