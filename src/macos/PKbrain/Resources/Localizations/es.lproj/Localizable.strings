@@ -380,12 +380,16 @@
 "about.statusOtherChannel" = "Otro canal";
 "about.statusUnavailable" = "Versión no disponible";
 "about.credits" = "Créditos";
-"credits.jorts" = "La app de notas adhesivas original de la que PKbrain es un port nativo de macOS.";
-"credits.numara" = "Inspiración de la calculadora integrada (submodule).";
+"credits.title" = "Créditos e inspiraciones";
+"credits.subtitle" = "Los proyectos originales, recursos e inspiraciones de interfaz de PKbrain.";
+"credits.tools" = "Proyecto de origen y recursos utilizados";
+"credits.inspirations" = "Inspiraciones de interfaz";
+"credits.jorts" = "elly-code · app open source de notas adhesivas en la que se basa este port nativo de macOS.";
+"credits.numara" = "bornova · código integrado en el cálculo inline.";
 "credits.caligator" = "Inspiración del cálculo integrado.";
-"credits.devicons" = "Iconos de marca integrados para las notas (submodule).";
+"credits.devicons" = "xandemon · iconos de marca integrados en las notas.";
 "credits.pastepal" = "Inspiración de la interfaz PKClipboard.";
-"credits.note" = "PKbrain es una implementación independiente — sus inspiraciones no están afiliadas ni son responsables del proyecto.";
+"credits.note" = "PKbrain es un proyecto independiente. Estas referencias no están afiliadas ni son responsables del proyecto.";
 
 "support.title" = "Apoyar PKbrain";
 "support.subtitle" = "Si te gusta esta app, considera apoyar su desarrollo.";

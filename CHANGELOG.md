@@ -5,6 +5,12 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.10.6] - 2026-10-07
+
+### Changed
+- Crédits & inspirations disposent d’une section dédiée, distincte d’À propos, avec séparation des ressources utilisées et des inspirations ; Project Library est localisée en français.
+- Les builds du canal Dev sont désormais produits depuis la branche `dev`.
+
 ## [2026.10.5] - 2026-10-07
 
 ### Changed

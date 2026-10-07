@@ -381,12 +381,16 @@
 "about.statusOtherChannel" = "Other channel";
 "about.statusUnavailable" = "Version unavailable";
 "about.credits" = "Credits";
-"credits.jorts" = "The original sticky-notes app PKbrain is a native macOS port of.";
-"credits.numara" = "Inline calculator inspiration (submodule).";
+"credits.title" = "Credits & inspirations";
+"credits.subtitle" = "The original projects, resources and interface inspirations behind PKbrain.";
+"credits.tools" = "Origin project and resources used";
+"credits.inspirations" = "Interface inspirations";
+"credits.jorts" = "elly-code · open-source sticky-notes app behind this native macOS port.";
+"credits.numara" = "bornova · code integrated into inline calculation.";
 "credits.caligator" = "Inline calculation inspiration.";
-"credits.devicons" = "Embedded brand icons for notes (submodule).";
+"credits.devicons" = "xandemon · brand icons integrated into notes.";
 "credits.pastepal" = "PKClipboard interface inspiration.";
-"credits.note" = "PKbrain is an independent implementation — its inspirations are not affiliated with or responsible for this project.";
+"credits.note" = "PKbrain is an independent project. These references are not affiliated with or responsible for it.";
 
 "support.title" = "Support PKbrain";
 "support.subtitle" = "If you enjoy using this app, consider supporting its development.";

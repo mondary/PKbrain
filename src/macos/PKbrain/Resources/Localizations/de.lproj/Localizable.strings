@@ -380,12 +380,16 @@
 "about.statusOtherChannel" = "Anderer Kanal";
 "about.statusUnavailable" = "Version nicht verfügbar";
 "about.credits" = "Credits";
-"credits.jorts" = "Die originale Haftnotizen-App, von der PKbrain ein nativer macOS-Port ist.";
-"credits.numara" = "Inspiration für den integrierten Rechner (Submodule).";
+"credits.title" = "Credits & Inspirationen";
+"credits.subtitle" = "Die Ursprungsprojekte, Ressourcen und Interface-Inspirationen von PKbrain.";
+"credits.tools" = "Ursprungsprojekt und verwendete Ressourcen";
+"credits.inspirations" = "Interface-Inspirationen";
+"credits.jorts" = "elly-code · Open-Source-Haftnotizen-App hinter diesem nativen macOS-Port.";
+"credits.numara" = "bornova · integrierter Code für Inline-Berechnungen.";
 "credits.caligator" = "Inspiration für die integrierte Berechnung.";
-"credits.devicons" = "Eingebettete Marken-Icons für Notizen (Submodule).";
+"credits.devicons" = "xandemon · in Notizen eingebundene Marken-Icons.";
 "credits.pastepal" = "Inspiration für die PKClipboard-Oberfläche.";
-"credits.note" = "PKbrain ist eine unabhängige Implementierung — die Inspirationen sind weder mit dem Projekt verbunden noch dafür verantwortlich.";
+"credits.note" = "PKbrain ist ein unabhängiges Projekt. Diese Referenzen sind weder verbunden noch verantwortlich.";
 
 "support.title" = "PKbrain unterstützen";
 "support.subtitle" = "Wenn dir diese App gefällt, unterstütze gerne ihre Entwicklung.";

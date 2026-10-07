@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.10.5** — [Changelog](CHANGELOG.md)
+version **2026.10.6** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
@@ -108,9 +108,9 @@ version **2026.10.5** — [Changelog](CHANGELOG.md)
    - mode `Settings` intégré (shell PK partagé — même rendu que PKmonitor) :
      - bouton paramètres en footer qui bascule toute la fenêtre en mode paramètres, bouton retour vers le studio
      - sidebar 220 pt sur material avec recherche profonde des réglages (surlignage du réglage ciblé), groupes `APP` / `NOTES` / `PROJETS PK`, drapeaux de langue (bascule immédiate FR/EN/IT/DE/ES) et version en pied
-     - sections : `Général`, `Raccourcis`, `Labo`, `Post-it`, `PKClipboard`, `Tiroir`, `Project Library`, `Soutenir`, `À propos`
-      - `À propos` : version installée, comparaison exacte des builds Stable/Dev, statut de mise à jour, bouton de vérification avec appcast rafraîchi et section Crédits (Jorts, Numara, Caligator, developer-icons, PastePal)
-     - `Soutenir` : carte Ko-fi + liens GitHub/Issues/projet original ; `Project Library` : la collection PK partagée avec vedette PKbrain
+      - sections : `Général`, `Raccourcis`, `Labo`, `Post-it`, `PKClipboard`, `Tiroir`, `Crédits`, `Bibliothèque de projets`, `Soutenir`, `À propos`
+       - `À propos` : version installée, comparaison exacte des builds Stable/Dev, statut de mise à jour et bouton de vérification avec appcast rafraîchi
+      - `Crédits` : projets d’origine, ressources utilisées et inspirations séparés ; `Soutenir` : carte Ko-fi et liens GitHub/Issues ; `Bibliothèque de projets` : collection PK partagée
    - `Cmd+,` redirigé vers `PKClipboard` en mode paramètres (plus de popup séparé)
    - Sparkle : mises à jour in-app avec canaux Stable/Dev
    - clic droit sur l'icône de barre de menus : menu compact Réglages / Soutenir sur Ko-fi / Mises à jour / À propos / Quitter, pictos alignés sur le logo Ko-fi
@@ -186,7 +186,7 @@ version **2026.10.5** — [Changelog](CHANGELOG.md)
 ## ⚙️ Réglages
 - Shell PK partagé (sidebar, recherche profonde, drapeaux de langue, version en pied) — `Général` affiché par défaut (langue, accessibilité, stockage, import/export).
 - Préférences clipboard, drawer, stickies, raccourcis, lab.
-- `À propos` : version installée, statut exact des canaux Stable/Dev, mises à jour in-app (Sparkle), crédits des inspirations.
+- `À propos` : version installée, statut exact des canaux Stable/Dev et mises à jour in-app (Sparkle) ; les crédits et inspirations ont leur propre section.
 - Activation/désactivation du calcul inline.
 - Position du clipboard drawer.
 - Backup automatique vers un dossier choisi, avec intervalle réglable.

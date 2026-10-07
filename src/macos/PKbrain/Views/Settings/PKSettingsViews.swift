@@ -5,7 +5,7 @@
 //  Shell de réglages commun aux apps PK — port fidèle du pattern PKmonitor
 //  (voir la skill pk-settings-shell) : sidebar 220 pt sur .regularMaterial,
 //  recherche profonde avec surlignage, groupes localisés, drapeaux de langue,
-//  version en pied ; pages partagées About (versions Stable/Dev + crédits),
+//  version en pied ; pages partagées About (versions Stable/Dev), Crédits,
 //  Support (Ko-fi) et Project Library.
 //
 
@@ -34,6 +34,7 @@ enum PKSettingsSection: String, CaseIterable, Identifiable {
     case stickies = "Stickies"
     case clipboard = "PKClipboard"
     case drawer = "Drawer"
+    case credits = "Credits"
     case library = "Project Library"
     case support = "Help & Support"
     case about = "About"
@@ -48,6 +49,7 @@ enum PKSettingsSection: String, CaseIterable, Identifiable {
         case .stickies: "note.text"
         case .clipboard: "clipboard"
         case .drawer: "rectangle.bottomthird.inset.filled"
+        case .credits: "text.book.closed"
         case .library: "square.grid.2x2"
         case .support: "heart.fill"
         case .about: "info.circle"
@@ -63,6 +65,7 @@ enum PKSettingsSection: String, CaseIterable, Identifiable {
         case .stickies: localizedString("sidebar.stickies")
         case .clipboard: localizedString("sidebar.clipboard")
         case .drawer: localizedString("sidebar.drawer")
+        case .credits: localizedString("about.credits")
         case .library: localizedString("sidebar.library")
         case .support: localizedString("sidebar.support")
         case .about: localizedString("sidebar.about")
@@ -73,7 +76,7 @@ enum PKSettingsSection: String, CaseIterable, Identifiable {
         switch self {
         case .general, .shortcuts, .lab: "APP"
         case .stickies, .clipboard, .drawer: "NOTES"
-        case .library, .support, .about: "PK PROJECTS"
+        case .credits, .library, .support, .about: "PK PROJECTS"
         }
     }
 
@@ -104,7 +107,8 @@ enum PKSettingsSection: String, CaseIterable, Identifiable {
         case .stickies: extra = "stickies post-it notes typing effets calcul inline"
         case .clipboard: extra = "clipboard presse-papiers history historique capture items"
         case .drawer: extra = "drawer tiroir edge bord position"
-        case .about: extra = "about à propos versions updates crédits credits"
+        case .credits: extra = "credits crédits inspirations inspiration dependencies dépendances outils tools"
+        case .about: extra = "about à propos versions updates"
         default: extra = ""
         }
         return "\(rawValue) \(category) \(extra)".lowercased()
@@ -167,7 +171,7 @@ enum PKSettingsSearch {
         .init(settingKey: "community_plugins", section: .lab, keywords: "plugins communauté community template dossier folder"),
         // About
         .init(settingKey: "about.updates", section: .about, keywords: "updates mises à jour canal channel stable dev versions sparkle"),
-        .init(settingKey: "about.credits", section: .about, keywords: "credits crédits inspirations jorts numara pastepal open source"),
+        .init(settingKey: "credits.title", section: .credits, keywords: "credits crédits inspirations jorts numara pastepal open source"),
     ]
 
     static func match(_ query: String) -> [SettingsSearchEntry] {
@@ -298,13 +302,15 @@ struct PKLinkRow: View {
     let title: String
     let subtitle: String
     let url: URL
+    var tint: Color = .secondary
+    var license: String? = nil
 
     var body: some View {
         Link(destination: url) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.system(size: 16))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(tint)
                     .frame(width: 36)
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -313,6 +319,14 @@ struct PKLinkRow: View {
                     Text(subtitle)
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
+                }
+
+                if let license {
+                    Text(license)
+                        .font(.system(size: 9, weight: .medium, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 5).padding(.vertical, 2)
+                        .background(Color.primary.opacity(0.06), in: Capsule())
                 }
 
                 Spacer()
@@ -392,11 +406,6 @@ struct AboutSettingsView: View {
                     aboutText
                         .frame(maxWidth: 480)
                         .padding(.bottom, 32)
-
-                    creditsSection
-                        .frame(maxWidth: 480)
-                        .padding(.bottom, 32)
-
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -422,37 +431,6 @@ struct AboutSettingsView: View {
         .onReceive(NotificationCenter.default.publisher(for: .appLanguageDidChange)) { _ in
             language = settings.selectedLanguage
         }
-    }
-
-    /// Crédits des projets sur lesquels PKbrain est construit ou dont il
-    /// s'inspire (pattern Pulse : chaque inspiration est nommée et liée).
-    private var creditsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(localizedString("about.credits"))
-                .font(.headline)
-                .modifier(SettingHighlight(title: localizedString("about.credits")))
-
-            VStack(spacing: 0) {
-                PKLinkRow(icon: "note.text", title: "Jorts", subtitle: localizedString("credits.jorts"), url: ProjectLinks.jorts)
-                Divider().padding(.leading, 52)
-                PKLinkRow(icon: "plus.forwardslash.minus", title: "Numara Calculator", subtitle: localizedString("credits.numara"), url: URL(string: "https://github.com/bornova/numara-calculator")!)
-                Divider().padding(.leading, 52)
-                PKLinkRow(icon: "function", title: "Caligator", subtitle: localizedString("credits.caligator"), url: URL(string: "https://github.com/teamxenox/caligator")!)
-                Divider().padding(.leading, 52)
-                PKLinkRow(icon: "paintbrush", title: "developer-icons", subtitle: localizedString("credits.devicons"), url: URL(string: "https://github.com/xandemon/developer-icons")!)
-                Divider().padding(.leading, 52)
-                PKLinkRow(icon: "macwindow", title: "PastePal", subtitle: localizedString("credits.pastepal"), url: URL(string: "https://pasteapp.org")!)
-            }
-            .background(Color(NSColor.controlBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-
-            Text(localizedString("credits.note"))
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .padding(16)
-        .background(RoundedRectangle(cornerRadius: 14).fill(Color.primary.opacity(0.025)))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.primary.opacity(0.08), lineWidth: 1))
     }
 
     /// Gestion des mises à jour collée au À propos (pattern PKmonitor) :
@@ -588,6 +566,70 @@ struct AboutSettingsView: View {
             Text("macOS 13+")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
+        }
+    }
+}
+
+// MARK: - Crédits & inspirations
+
+struct CreditsInspirationsSettingsView: View {
+    @State private var language = AppLanguage.current
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 18) {
+                VStack(spacing: 8) {
+                    Image(systemName: "text.book.closed.fill")
+                        .font(.system(size: 36, weight: .medium))
+                        .foregroundStyle(Color.accentColor)
+                    Text(localizedString("credits.title"))
+                        .font(.system(size: 20, weight: .bold))
+                        .modifier(SettingHighlight(title: localizedString("credits.title")))
+                    Text(localizedString("credits.subtitle"))
+                        .font(.system(size: 13)).foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.top, 36).padding(.bottom, 4)
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(localizedString("credits.tools"))
+                        .font(.system(size: 13, weight: .semibold))
+                    VStack(spacing: 0) {
+                        PKLinkRow(icon: "note.text", title: "Jorts", subtitle: localizedString("credits.jorts"), url: ProjectLinks.jorts, tint: .purple, license: "GPL-3.0")
+                        Divider().padding(.leading, 52)
+                        PKLinkRow(icon: "plus.forwardslash.minus", title: "Numara Calculator", subtitle: localizedString("credits.numara"), url: URL(string: "https://github.com/bornova/numara-calculator")!, tint: .blue, license: "MIT")
+                        Divider().padding(.leading, 52)
+                        PKLinkRow(icon: "paintbrush", title: "developer-icons", subtitle: localizedString("credits.devicons"), url: URL(string: "https://github.com/xandemon/developer-icons")!, tint: .orange, license: "MIT")
+                    }
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                    Text(localizedString("credits.inspirations"))
+                        .font(.system(size: 13, weight: .semibold))
+                        .padding(.top, 8)
+                    VStack(spacing: 0) {
+                        PKLinkRow(icon: "function", title: "Caligator", subtitle: localizedString("credits.caligator"), url: URL(string: "https://github.com/teamxenox/caligator")!, tint: .teal)
+                        Divider().padding(.leading, 52)
+                        PKLinkRow(icon: "macwindow", title: "PastePal", subtitle: localizedString("credits.pastepal"), url: URL(string: "https://pasteapp.org")!, tint: .indigo)
+                    }
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                    Text(localizedString("credits.note"))
+                        .font(.caption).foregroundStyle(.secondary).padding(.top, 4)
+                }
+                .frame(maxWidth: 520, alignment: .leading)
+                .padding(16)
+                .background(RoundedRectangle(cornerRadius: 14).fill(Color.primary.opacity(0.025)))
+                .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.primary.opacity(0.08), lineWidth: 1))
+            }
+            .padding(.horizontal, 24).padding(.bottom, 32)
+            .frame(maxWidth: .infinity)
+        }
+        .id(language)
+        .onAppear { language = AppLanguage.current }
+        .onReceive(NotificationCenter.default.publisher(for: .appLanguageDidChange)) { _ in
+            language = AppLanguage.current
         }
     }
 }
@@ -1156,6 +1198,8 @@ struct PKSettingsModeView: View {
                 DrawerSettingsView(settings: settings)
                     .padding(24)
             }
+        case .credits:
+            CreditsInspirationsSettingsView()
         case .library:
             ProjectLibraryView()
         case .support:

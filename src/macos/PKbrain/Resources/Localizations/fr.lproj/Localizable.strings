@@ -350,7 +350,7 @@
 "sidebar.stickies" = "Post-it";
 "sidebar.clipboard" = "PKClipboard";
 "sidebar.drawer" = "Tiroir";
-"sidebar.library" = "Project Library";
+"sidebar.library" = "Bibliothèque de projets";
 "sidebar.support" = "Soutenir";
 "sidebar.about" = "À propos";
 "group.app" = "APP";
@@ -381,12 +381,16 @@
 "about.statusOtherChannel" = "Autre canal";
 "about.statusUnavailable" = "Version indisponible";
 "about.credits" = "Crédits";
-"credits.jorts" = "L'app de post-it originale dont PKbrain est le port macOS natif.";
-"credits.numara" = "Inspiration du calculateur intégré (submodule).";
+"credits.title" = "Crédits & inspirations";
+"credits.subtitle" = "Les projets d’origine, ressources utilisées et inspirations de PKbrain.";
+"credits.tools" = "Projet d’origine et ressources utilisées";
+"credits.inspirations" = "Inspirations d’interface";
+"credits.jorts" = "elly-code · application open source à l’origine du port macOS natif.";
+"credits.numara" = "bornova · code intégré au calcul inline.";
 "credits.caligator" = "Inspiration du calcul inline.";
-"credits.devicons" = "Icônes de marque embarquées pour les notes (submodule).";
+"credits.devicons" = "xandemon · icônes de marque intégrées aux notes.";
 "credits.pastepal" = "Inspiration de l'interface PKClipboard.";
-"credits.note" = "PKbrain est une implémentation indépendante — ses inspirations ne sont ni affiliées ni responsables du projet.";
+"credits.note" = "PKbrain est un projet indépendant. Ces références ne sont ni affiliées ni responsables du projet.";
 
 "support.title" = "Soutenir PKbrain";
 "support.subtitle" = "Si vous appréciez cette app, pensez à soutenir son développement.";
@@ -401,7 +405,7 @@
 "support.profile.subtitle" = "Le reste de la collection de projets";
 "footer.supportOnKofi" = "Soutenir sur Ko-fi";
 
-"library.title" = "Project Library";
+"library.title" = "Bibliothèque de projets";
 "library.subtitle" = "Découvrez les autres outils et projets que je construis.";
 "library.more" = "Plus de projets";
 "library.star" = "Étoiler sur GitHub";
