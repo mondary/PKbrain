@@ -47,12 +47,12 @@ swift build
 BUILD_DIR="$(swift build --show-bin-path)"
 BUILD_BINARY="$BUILD_DIR/$APP_NAME"
 
-# Keep legacy path for older docs/scripts: src/dist -> ../releases
+# Keep legacy path for older docs/scripts: dist -> releases.
 if [[ -e "$LEGACY_DIST_LINK" && ! -L "$LEGACY_DIST_LINK" ]]; then
   rm -rf "$LEGACY_DIST_LINK"
 fi
 if [[ ! -L "$LEGACY_DIST_LINK" ]]; then
-  ln -s "../releases" "$LEGACY_DIST_LINK" || true
+  ln -s "releases" "$LEGACY_DIST_LINK" || true
 fi
 
 mkdir -p "$DIST_DIR"
