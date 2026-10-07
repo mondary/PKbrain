@@ -5,5 +5,14 @@
     <link>https://raw.githubusercontent.com/mondary/PKbrain/main/appcast.xml</link>
     <description>Most recent changes for PKbrain.</description>
     <language>en</language>
+      <item>
+        <title>PKbrain 2026.10.6</title>
+        <pubDate>Wed, 07 Oct 2026 21:44:16 +0000</pubDate>
+        <sparkle:version>1791409361</sparkle:version>
+        <sparkle:shortVersionString>2026.10.6</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+        <description><![CDATA[<h4>Changed</h4><ul><li>Crédits &amp; inspirations disposent d’une section dédiée, distincte d’À propos, avec séparation des ressources utilisées et des inspirations ; Project Library est localisée en français.</li><li>Les builds du canal Dev sont désormais produits depuis la branche `dev`.</li></ul>]]></description>
+        <enclosure url="https://github.com/mondary/PKbrain/releases/download/v2026.10.6/PKbrain-2026.10.6.dmg" type="application/octet-stream" sparkle:edSignature="pU/PhsCRNe7bfSE6uZDlaKbGlpr/jL7ECncZSWIC+y2s2hhP+HkfzDXhsC19s11Y1TYzFAeOtWrUvNt6w9yRAw==" length="7559101" />
+      </item>
   </channel>
 </rss>
