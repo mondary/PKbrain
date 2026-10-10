@@ -37,9 +37,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v${{ steps.ver.outputs.version }}" "dist/PKbrain-${{ steps.ver.outputs.version }}.dmg" \
+          cp "dist/PKbrain-${{ steps.ver.outputs.version }}.dmg" dist/PKbrain.dmg
+          gh release create "v${{ steps.ver.outputs.version }}" "dist/PKbrain-${{ steps.ver.outputs.version }}.dmg" dist/PKbrain.dmg \
             --target "$GITHUB_SHA" --title "PKbrain ${{ steps.ver.outputs.version }}" --generate-notes || \
-          gh release upload "v${{ steps.ver.outputs.version }}" "dist/PKbrain-${{ steps.ver.outputs.version }}.dmg" --clobber
+          gh release upload "v${{ steps.ver.outputs.version }}" "dist/PKbrain-${{ steps.ver.outputs.version }}.dmg" dist/PKbrain.dmg --clobber
 
       - name: Sign Stable appcast
         env:
