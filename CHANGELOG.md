@@ -5,6 +5,21 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.10.7] - 2026-10-23
+
+### Added
+- Favoris : étoile sur les cartes, filtre « Favoris » dans le bandeau et la fenêtre standard, et conservation lors des purges automatiques (âge et nombre).
+- Séparateur visuel entre le bloc épinglé et le reste de l'historique.
+
+### Changed
+- Les cartes épinglées forment désormais un bloc en tête du bandeau, triées par date d'épinglage (la plus récente en premier) ; désépingler les replace à leur position chronologique.
+- L'épingle protège aussi de la purge par âge, en plus du plafond en nombre.
+- Le clic sur l'épingle sélectionne la carte et fait défiler jusqu'à elle pour rendre le déplacement visible.
+
+### Fixed
+- Dédoublonnage des copies consécutives lorsqu'une carte épinglée occupe la tête de l'historique.
+- Le message de mise à jour distingue désormais un build installé plus récent du dernier build publié sur le canal choisi, au lieu d'afficher le nom du build Dev comme s'il était plus récent.
+
 ## [2026.10.6] - 2026-10-07
 
 ### Changed

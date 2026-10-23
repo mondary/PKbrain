@@ -189,8 +189,11 @@
 "filter_files" = "Archivos";
 "filter_color" = "Color";
 "pinned" = "Fijado";
+"favorites" = "Favoritos";
 "recent" = "Reciente";
 "pin" = "Fijar";
+"favorite" = "Favorito";
+"remove_favorite" = "Quitar de favoritos";
 "lock" = "Bloquear";
 "insert_emoji" = "Insertar emoji";
 "change_color" = "Cambiar color";
@@ -256,6 +259,7 @@
 "open_plugins_folder" = "Abrir carpeta de plugins";
 "create_plugin_template" = "Crear plantilla de plugin";
 "pinned_badge" = "Fijado";
+"favorite_badge" = "Favorito";
 "chars_suffix" = " car.";
 
 /* Preferencias generales - previamente hardcoded */
@@ -379,6 +383,9 @@
 "about.statusInstalledAhead" = "La versión instalada es más reciente";
 "about.statusOtherChannel" = "Otro canal";
 "about.statusUnavailable" = "Versión no disponible";
+"updates.upToDateMessage" = "Estás al día en el canal %@ (%@).";
+"updates.installedAheadTitle" = "No hay actualización disponible";
+"updates.installedAheadMessage" = "La última compilación %@ publicada es %@; tu versión instalada (%@) es más reciente. No hay actualización disponible. La próxima compilación %@ se ofrecerá automáticamente.";
 "about.credits" = "Créditos";
 "credits.title" = "Créditos e inspiraciones";
 "credits.subtitle" = "Los proyectos originales, recursos e inspiraciones de interfaz de PKbrain.";

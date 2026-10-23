@@ -56,6 +56,7 @@ struct ClipboardView: View {
     @State private var noteTags: [UUID: [String]] = [:]
     private let deckScale: CGFloat = 0.82
     @State private var pinnedOnly: Bool = false
+    @State private var favoritesOnly: Bool = false
     @State private var recentOnly: Bool = false
     @State private var recentMinutes: Int = 60
     @State private var showExportPanel: Bool = false
@@ -175,10 +176,18 @@ struct ClipboardView: View {
             .clipShape(RoundedRectangle(cornerRadius: 6))
 
             HStack(spacing: 3) {
-                Deck2FilterPill(title: "", systemName: "square.grid.2x2", isSelected: kind == .all) { kind = .all; selectedSource = .all }
-                Deck2FilterPill(title: "", systemName: "text.alignleft", isSelected: kind == .text && selectedSource == .all) { kind = .text; selectedSource = .all }
-                Deck2FilterPill(title: "", systemName: "link", isSelected: kind == .url) { kind = .url; selectedSource = .all }
-                Deck2FilterPill(title: "", systemName: "photo", isSelected: kind == .image) { kind = .image; selectedSource = .all }
+                Deck2FilterPill(title: "", systemName: "square.grid.2x2", isSelected: kind == .all && !favoritesOnly) { kind = .all; selectedSource = .all; favoritesOnly = false }
+                Deck2FilterPill(title: "", systemName: "text.alignleft", isSelected: kind == .text && selectedSource == .all && !favoritesOnly) { kind = .text; selectedSource = .all; favoritesOnly = false }
+                Deck2FilterPill(title: "", systemName: "link", isSelected: kind == .url && !favoritesOnly) { kind = .url; selectedSource = .all; favoritesOnly = false }
+                Deck2FilterPill(title: "", systemName: "photo", isSelected: kind == .image && !favoritesOnly) { kind = .image; selectedSource = .all; favoritesOnly = false }
+                Deck2FilterPill(title: "", systemName: favoritesOnly ? "star.fill" : "star", isSelected: favoritesOnly) {
+                    favoritesOnly.toggle()
+                    if favoritesOnly {
+                        kind = .all
+                        selectedSource = .all
+                    }
+                }
+                    .help(localizedString("favorites"))
             }
             .padding(.horizontal, 4)
         }
@@ -190,10 +199,14 @@ struct ClipboardView: View {
     @ViewBuilder
     private var deck2SidebarViewport: some View {
         let entries = filteredEntries
+        let dividerIndex = pinnedDividerIndex(in: entries)
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(alignment: .center, spacing: 8) {
                     ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                        if let dividerIndex, index == dividerIndex {
+                            PinnedSectionDivider(isVertical: true)
+                        }
                         switch entry {
                         case .clipboard(let item):
                             DeckCard(
@@ -205,7 +218,11 @@ struct ClipboardView: View {
                                 onMakeNote: { onCreateNoteFromItem(item) },
                                 scale: 1,
                                 onDelete: { clipboard.delete(item.id) },
-                                onTogglePin: { clipboard.togglePin(item.id) },
+                                onTogglePin: {
+                                    clipboard.togglePin(item.id)
+                                    selectedID = item.id
+                                },
+                                onToggleFavorite: { clipboard.toggleFavorite(item.id) },
                                 onToggleLock: { clipboard.toggleLock(item.id) },
                                 onQuickLook: { urls in quickLookURLs = urls },
                                 onLightbox: { img in lightboxImage = img },
@@ -228,6 +245,7 @@ struct ClipboardView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 6)
                 .padding(.vertical, 6)
+                .animation(.spring(response: 0.34, dampingFraction: 0.86), value: entries.map(\.id))
             }
             .onAppear {
                 if selectedID == nil || !entries.contains(where: { $0.id == selectedID }) { selectedID = entries.first?.id }
@@ -281,21 +299,36 @@ struct ClipboardView: View {
             deck2Search
 
             HStack(spacing: 4) {
-                Deck2FilterPill(title: localizedString("filter_all"), systemName: "square.grid.2x2", isSelected: kind == .all) {
+                Deck2FilterPill(title: localizedString("filter_all"), systemName: "square.grid.2x2", isSelected: kind == .all && !favoritesOnly) {
                     kind = .all
                     selectedSource = .all
+                    favoritesOnly = false
                 }
-                Deck2FilterPill(title: localizedString("filter_image"), systemName: "photo", isSelected: kind == .image) {
+                Deck2FilterPill(title: localizedString("filter_image"), systemName: "photo", isSelected: kind == .image && !favoritesOnly) {
                     kind = .image
                     selectedSource = .all
+                    favoritesOnly = false
                 }
-                Deck2FilterPill(title: localizedString("filter_text"), systemName: "text.alignleft", isSelected: kind == .text && selectedSource == .all) {
+                Deck2FilterPill(title: localizedString("filter_text"), systemName: "text.alignleft", isSelected: kind == .text && selectedSource == .all && !favoritesOnly) {
                     kind = .text
                     selectedSource = .all
+                    favoritesOnly = false
                 }
-                Deck2FilterPill(title: localizedString("filter_url"), systemName: "link", isSelected: kind == .url) {
+                Deck2FilterPill(title: localizedString("filter_url"), systemName: "link", isSelected: kind == .url && !favoritesOnly) {
                     kind = .url
                     selectedSource = .all
+                    favoritesOnly = false
+                }
+                Rectangle()
+                    .fill(Color(NSColor.separatorColor))
+                    .frame(width: 1, height: 16)
+                    .padding(.horizontal, 2)
+                Deck2FilterPill(title: localizedString("favorites"), systemName: favoritesOnly ? "star.fill" : "star", isSelected: favoritesOnly) {
+                    favoritesOnly.toggle()
+                    if favoritesOnly {
+                        kind = .all
+                        selectedSource = .all
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -370,10 +403,14 @@ struct ClipboardView: View {
     @ViewBuilder
     private var deck2ScrollViewport: some View {
         let entries = filteredEntries
+        let dividerIndex = pinnedDividerIndex(in: entries)
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 14) {
                     ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                        if let dividerIndex, index == dividerIndex {
+                            PinnedSectionDivider(isVertical: false)
+                        }
                         switch entry {
                         case .clipboard(let item):
                             DeckCard(
@@ -385,7 +422,11 @@ struct ClipboardView: View {
                                 onMakeNote: { onCreateNoteFromItem(item) },
                                 scale: 1,
                                 onDelete: { clipboard.delete(item.id) },
-                                onTogglePin: { clipboard.togglePin(item.id) },
+                                onTogglePin: {
+                                    clipboard.togglePin(item.id)
+                                    selectedID = item.id
+                                },
+                                onToggleFavorite: { clipboard.toggleFavorite(item.id) },
                                 onToggleLock: { clipboard.toggleLock(item.id) },
                                 onQuickLook: { urls in quickLookURLs = urls },
                                 onLightbox: { img in lightboxImage = img },
@@ -408,6 +449,7 @@ struct ClipboardView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
                 .padding(.bottom, 8)
+                .animation(.spring(response: 0.34, dampingFraction: 0.86), value: entries.map(\.id))
             }
             .frame(maxWidth: .infinity)
             .frame(height: 308)
@@ -522,7 +564,11 @@ struct ClipboardView: View {
                                 onMakeNote: { onCreateNoteFromItem(item) },
                                 scale: deckScale,
                                 onDelete: { clipboard.delete(item.id) },
-                                onTogglePin: { clipboard.togglePin(item.id) },
+                                onTogglePin: {
+                                    clipboard.togglePin(item.id)
+                                    selectedID = item.id
+                                },
+                                onToggleFavorite: { clipboard.toggleFavorite(item.id) },
                                 onToggleLock: { clipboard.toggleLock(item.id) },
                                 onQuickLook: { urls in quickLookURLs = urls },
                                 onLightbox: { img in lightboxImage = img },
@@ -601,22 +647,22 @@ struct ClipboardView: View {
                 HStack(spacing: 4) {
                     SourceChip(
                         title: localizedString("all_sources"),
-                        isSelected: selectedSource == .all,
+                        isSelected: selectedSource == .all && !favoritesOnly,
                         icon: nil
-                    ) { selectedSource = .all }
+                    ) { favoritesOnly = false; selectedSource = .all }
 
                     SourceChip(
                         title: localizedString("notes"),
                         isSelected: selectedSource == .notes,
                         icon: notesSourceIcon
-                    ) { selectedSource = .notes }
+                    ) { favoritesOnly = false; selectedSource = .notes }
 
                     ForEach(sourceChips, id: \.bundleID) { chip in
                         SourceChip(
                             title: chip.name,
                             isSelected: selectedSource == .app(chip.bundleID),
                             icon: chip.icon
-                        ) { selectedSource = .app(chip.bundleID) }
+                        ) { favoritesOnly = false; selectedSource = .app(chip.bundleID) }
                     }
                 }
                 .padding(.vertical, 0)
@@ -753,6 +799,7 @@ struct ClipboardView: View {
             kind: kind,
             sourceBundleID: sourceBundleID,
             pinnedOnly: pinnedOnly,
+            favoritesOnly: favoritesOnly,
             recentOnly: recentOnly,
             recentWindowMinutes: recentMinutes
         )
@@ -765,26 +812,42 @@ struct ClipboardView: View {
             entries = filteredItems.map { .clipboard($0) }
         }
 
-        let notes = notesProvider()
-        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        // Notes have no favorite flag; the Favoris view only lists clipboard items.
+        if !favoritesOnly {
+            let notes = notesProvider()
+            let needle = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
 
-        for note in notes {
-            if pinnedOnly && !note.isPinned { continue }
-            if recentOnly && note.updatedAt < Date().addingTimeInterval(-Double(recentMinutes) * 60.0) { continue }
-            if kind != .all && kind != .text { continue }
+            for note in notes {
+                if pinnedOnly && !note.isPinned { continue }
+                if recentOnly && note.updatedAt < Date().addingTimeInterval(-Double(recentMinutes) * 60.0) { continue }
+                if kind != .all && kind != .text { continue }
 
-            if selectedSource == .all || selectedSource == .notes {
-                // allowed
-            } else {
-                continue
+                if selectedSource == .all || selectedSource == .notes {
+                    // allowed
+                } else {
+                    continue
+                }
+                if !needle.isEmpty {
+                    let haystack = "\(note.title)\n\(note.content)".lowercased()
+                    if !haystack.contains(needle) { continue }
+                }
+                entries.append(.note(note))
             }
-            if !needle.isEmpty {
-                let haystack = "\(note.title)\n\(note.content)".lowercased()
-                if !haystack.contains(needle) { continue }
-            }
-            entries.append(.note(note))
         }
         return entries
+    }
+
+    private func pinnedDividerIndex(in entries: [DeckEntry]) -> Int? {
+        let pinnedCount = entries.prefix(while: { entry in
+            if case .clipboard(let item) = entry { return item.isPinned }
+            return false
+        }).count
+        guard pinnedCount > 0, pinnedCount < entries.count else { return nil }
+        let hasUnpinnedClipboard = entries.dropFirst(pinnedCount).contains { entry in
+            if case .clipboard = entry { return true }
+            return false
+        }
+        return hasUnpinnedClipboard ? pinnedCount : nil
     }
 
 
@@ -954,6 +1017,7 @@ struct ClipboardView: View {
         selectedSource == .all &&
         kind == .all &&
         pinnedOnly == false &&
+        favoritesOnly == false &&
         recentOnly == false &&
         selectedID == defaultSelectionID
     }
@@ -964,6 +1028,7 @@ struct ClipboardView: View {
             sourceContextKey,
             kind.rawValue,
             pinnedOnly ? "pinned" : "unpinned",
+            favoritesOnly ? "favorites" : "all-favorites",
             recentOnly ? "recent" : "all-time",
             selectedID?.uuidString ?? "nil",
             defaultSelectionID?.uuidString ?? "nil"
@@ -992,6 +1057,7 @@ struct ClipboardView: View {
         selectedSource = .all
         kind = .all
         pinnedOnly = false
+        favoritesOnly = false
         recentOnly = false
         searchFocused = false
 
@@ -1178,6 +1244,7 @@ struct ClipboardStandardWindowView: View {
 
     @State private var selectedSource: SourceFilter = .all
     @State private var kind: ClipboardManager.Query.KindFilter = .all
+    @State private var favoritesOnly = false
     @State private var selectedTag: String? = nil
     @State private var selectedID: UUID?
     @State private var noteTags: [UUID: [String]] = [:]
@@ -1319,9 +1386,22 @@ struct ClipboardStandardWindowView: View {
                 sidebarButton(
                         title: localizedString("filter_all"),
                         systemImage: "house.fill",
-                        isSelected: selectedSource == .all
+                        isSelected: selectedSource == .all && !favoritesOnly
                     ) {
+                        favoritesOnly = false
                         selectedSource = .all
+                        selectedTag = nil
+                        currentPage = 1
+                    }
+
+                    sidebarButton(
+                        title: localizedString("favorites"),
+                        systemImage: favoritesOnly ? "star.fill" : "star",
+                        isSelected: favoritesOnly
+                    ) {
+                        favoritesOnly = true
+                        selectedSource = .all
+                        kind = .all
                         selectedTag = nil
                         currentPage = 1
                     }
@@ -1331,6 +1411,7 @@ struct ClipboardStandardWindowView: View {
                         systemImage: "note.text",
                         isSelected: selectedSource == .notes
                     ) {
+                        favoritesOnly = false
                         selectedSource = .notes
                         selectedTag = nil
                         currentPage = 1
@@ -1341,6 +1422,7 @@ struct ClipboardStandardWindowView: View {
                         systemImage: "trash",
                         isSelected: selectedSource == .trash
                     ) {
+                        favoritesOnly = false
                         selectedSource = .trash
                         selectedTag = nil
                         currentPage = 1
@@ -1352,8 +1434,9 @@ struct ClipboardStandardWindowView: View {
                     sidebarButton(
                         title: localizedString("filter_all"),
                         systemImage: "square.grid.2x2",
-                        isSelected: kind == .all
+                        isSelected: kind == .all && !favoritesOnly
                     ) {
+                        favoritesOnly = false
                         kind = .all
                         currentPage = 1
                     }
@@ -1362,6 +1445,7 @@ struct ClipboardStandardWindowView: View {
                         systemImage: "text.alignleft",
                         isSelected: kind == .text
                     ) {
+                        favoritesOnly = false
                         kind = .text
                         currentPage = 1
                     }
@@ -1370,6 +1454,7 @@ struct ClipboardStandardWindowView: View {
                         systemImage: "link",
                         isSelected: kind == .url
                     ) {
+                        favoritesOnly = false
                         kind = .url
                         currentPage = 1
                     }
@@ -1378,6 +1463,7 @@ struct ClipboardStandardWindowView: View {
                         systemImage: "photo",
                         isSelected: kind == .image
                     ) {
+                        favoritesOnly = false
                         kind = .image
                         currentPage = 1
                     }
@@ -1386,6 +1472,7 @@ struct ClipboardStandardWindowView: View {
                         systemImage: "doc",
                         isSelected: kind == .file
                     ) {
+                        favoritesOnly = false
                         kind = .file
                         currentPage = 1
                     }
@@ -1394,6 +1481,7 @@ struct ClipboardStandardWindowView: View {
                         systemImage: "paintpalette",
                         isSelected: kind == .color
                     ) {
+                        favoritesOnly = false
                         kind = .color
                         currentPage = 1
                     }
@@ -1410,6 +1498,7 @@ struct ClipboardStandardWindowView: View {
                     }
                     ForEach(sourceChips, id: \.bundleID) { source in
                         Button {
+                            favoritesOnly = false
                             selectedSource = .app(source.bundleID)
                             selectedTag = nil
                             currentPage = 1
@@ -1482,7 +1571,14 @@ struct ClipboardStandardWindowView: View {
                             onRemoveTag: { id, tag in clipboard.removeTag(tag, from: id) },
                             onRestoreItem: { id in clipboard.restore(id) },
                             onDeletePermanently: { id in clipboard.deletePermanently(id) },
-                            onTogglePin: { id in clipboard.togglePin(id) },
+                            onTogglePin: { id in
+                                if let item = clipboard.items.first(where: { $0.id == id }), !item.isPinned {
+                                    selectedID = id
+                                    currentPage = 1
+                                }
+                                clipboard.togglePin(id)
+                            },
+                            onToggleFavorite: { id in clipboard.toggleFavorite(id) },
                             onToggleLock: { id in clipboard.toggleLock(id) },
                             onDeleteItem: { id in clipboard.delete(id) },
                             noteTags: noteTags,
@@ -1623,6 +1719,7 @@ struct ClipboardStandardWindowView: View {
     private func tagRow(_ tag: TagItem) -> some View {
         let isSelected = selectedTag == tag.name
         return Button {
+            favoritesOnly = false
             selectedTag = (selectedTag == tag.name) ? nil : tag.name
             currentPage = 1
         } label: {
@@ -1726,6 +1823,7 @@ struct ClipboardStandardWindowView: View {
                 text: needle,
                 kind: kind,
                 sourceBundleID: sourceBundleID,
+                favoritesOnly: favoritesOnly,
                 includeTrashed: selectedSource == .trash
             )
             let clipboardItems = clipboard.filteredItems(query).filter { item in
@@ -1737,7 +1835,7 @@ struct ClipboardStandardWindowView: View {
             output.append(contentsOf: clipboardItems.map { ClipboardStandardWindowView.GridEntry.clipboard($0) })
         }
 
-        if (selectedSource == .all || selectedSource == .notes), kind == .all || kind == .text {
+        if !favoritesOnly, (selectedSource == .all || selectedSource == .notes), kind == .all || kind == .text {
             let notes = notesProvider().filter { note in
                 guard !needle.isEmpty else { return true }
                 return "\(note.title)\n\(note.content)".lowercased().contains(needle)
@@ -2277,6 +2375,7 @@ private struct StandardClipboardCard: View {
     let onRestoreItem: (UUID) -> Void
     let onDeletePermanently: (UUID) -> Void
     let onTogglePin: (UUID) -> Void
+    let onToggleFavorite: (UUID) -> Void
     let onToggleLock: (UUID) -> Void
     let onDeleteItem: (UUID) -> Void
     let noteTags: [UUID: [String]]
@@ -2332,6 +2431,25 @@ private struct StandardClipboardCard: View {
                     .foregroundStyle(shortcutColor)
             }
             Spacer()
+            if case .clipboard(let item) = entry {
+                if item.isPinned {
+                    Image(systemName: "pin.fill")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(timeColor)
+                }
+                if !item.isTrashed {
+                    Button {
+                        onToggleFavorite(item.id)
+                    } label: {
+                        Image(systemName: item.isFavorite ? "star.fill" : "star")
+                            .font(.system(size: 11.5, weight: .semibold))
+                            .foregroundStyle(item.isFavorite ? Color.yellow : Color(NSColor.tertiaryLabelColor))
+                            .frame(width: 16, height: 16)
+                    }
+                    .buttonStyle(.plain)
+                    .help(localizedString(item.isFavorite ? "remove_favorite" : "favorite"))
+                }
+            }
             Text(relativeTime)
                 .font(.system(size: 11))
                 .foregroundStyle(timeColor)
@@ -2688,6 +2806,14 @@ private struct StandardClipboardCard: View {
             Button(localizedString("restore")) { onRestoreItem(item.id) }
             Button(localizedString("delete"), role: .destructive) { onDeletePermanently(item.id) }
         } else {
+            Button {
+                onToggleFavorite(item.id)
+            } label: {
+                Label(
+                    localizedString(item.isFavorite ? "remove_favorite" : "favorite"),
+                    systemImage: item.isFavorite ? "star.fill" : "star"
+                )
+            }
             Button(localizedString("pin")) { onTogglePin(item.id) }
             Button(localizedString("lock")) { onToggleLock(item.id) }
             Button(localizedString("copy")) { onCopyItem(item) }
@@ -2797,6 +2923,8 @@ private struct StandardClipboardCard: View {
             if let source = item.sourceAppName { badges.append(source) }
             badges.append(item.kind.rawValue.capitalized)
             badges.append("\(item.previewText.count) chars")
+            if item.isPinned { badges.append(localizedString("pinned_badge")) }
+            if item.isFavorite { badges.append(localizedString("favorite_badge")) }
             if !item.tags.isEmpty { badges.append("Tags: \(item.tags.joined(separator: ", "))") }
             badges.append(relativeTime)
             return badges
@@ -2947,6 +3075,42 @@ private struct SourceChip: View {
     }
 }
 
+private struct PinnedSectionDivider: View {
+    let isVertical: Bool
+
+    var body: some View {
+        if isVertical {
+            HStack(spacing: 6) {
+                Rectangle()
+                    .fill(Color(NSColor.separatorColor))
+                    .frame(height: 1)
+                Image(systemName: "pin.fill")
+                    .font(.system(size: 8, weight: .semibold))
+                    .foregroundStyle(Color(NSColor.tertiaryLabelColor))
+                Rectangle()
+                    .fill(Color(NSColor.separatorColor))
+                    .frame(height: 1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 3)
+            .accessibilityHidden(true)
+        } else {
+            VStack(spacing: 8) {
+                Image(systemName: "pin.fill")
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(Color(NSColor.tertiaryLabelColor))
+                Rectangle()
+                    .fill(Color(NSColor.separatorColor))
+                    .frame(width: 1)
+                    .frame(maxHeight: .infinity)
+            }
+            .frame(width: 18)
+            .frame(height: 220)
+            .accessibilityHidden(true)
+        }
+    }
+}
+
 private struct DeckCard: View {
     let item: ClipboardManager.Item
     let shortcutIndex: Int
@@ -2957,6 +3121,7 @@ private struct DeckCard: View {
     let scale: CGFloat
     let onDelete: (() -> Void)?
     let onTogglePin: (() -> Void)?
+    let onToggleFavorite: (() -> Void)?
     let onToggleLock: (() -> Void)?
     let onQuickLook: (([URL]) -> Void)?
     let onLightbox: ((NSImage) -> Void)?
@@ -2979,6 +3144,7 @@ private struct DeckCard: View {
         isVerticalDrawer: Bool = false,
         onDelete: (() -> Void)? = nil,
         onTogglePin: (() -> Void)? = nil,
+        onToggleFavorite: (() -> Void)? = nil,
         onToggleLock: (() -> Void)? = nil,
         onQuickLook: (([URL]) -> Void)? = nil,
         onLightbox: ((NSImage) -> Void)? = nil,
@@ -2995,6 +3161,7 @@ private struct DeckCard: View {
         self.isVerticalDrawer = isVerticalDrawer
         self.onDelete = onDelete
         self.onTogglePin = onTogglePin
+        self.onToggleFavorite = onToggleFavorite
         self.onToggleLock = onToggleLock
         self.onQuickLook = onQuickLook
         self.onLightbox = onLightbox
@@ -3018,6 +3185,18 @@ private struct DeckCard: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
+                if !item.isTrashed {
+                    Button {
+                        onToggleFavorite?()
+                    } label: {
+                        Image(systemName: item.isFavorite ? "star.fill" : "star")
+                            .font(.system(size: 12.5 * scale, weight: .semibold))
+                            .foregroundStyle(item.isFavorite ? Color.yellow : Color(NSColor.tertiaryLabelColor))
+                            .frame(width: 18, height: 18)
+                    }
+                    .buttonStyle(.plain)
+                    .help(localizedString(item.isFavorite ? "remove_favorite" : "favorite"))
+                }
                 if shortcutIndex <= 9 {
                     Text("⌘\(shortcutIndex)")
                         .font(.system(size: 10.5, weight: .semibold))
@@ -3140,6 +3319,17 @@ private struct DeckCard: View {
         .offset(y: hovering ? -4 : 0)
         .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .contextMenu {
+            if !item.isTrashed {
+                Button {
+                    onToggleFavorite?()
+                } label: {
+                    Label(
+                        localizedString(item.isFavorite ? "remove_favorite" : "favorite"),
+                        systemImage: item.isFavorite ? "star.fill" : "star"
+                    )
+                }
+            }
+
             Button {
                 onTogglePin?()
             } label: {

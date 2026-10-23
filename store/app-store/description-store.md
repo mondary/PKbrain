@@ -34,7 +34,7 @@ EN :
 - **Calcul inline dans les notes** — évaluation en direct, variables par lignes, conversions d'unités
 - **Icônes inline automatiques** — plus de 300 icônes techniques insérées après les mots reconnus
 - **Raccourcis globaux configurables** — focus sur la dernière note, création de note, raccourcis éditables dans les préférences
-- **Tiroir presse-papiers global** — capture texte, URL, images, fichiers et couleurs hex, avec recherche instantanée, filtres, pins, tags et collage direct dans la dernière app active
+- **Tiroir presse-papiers global** — capture texte, URL, images, fichiers et couleurs hex, avec recherche instantanée, filtres, favoris, épingles en tête, tags et collage direct dans la dernière app active
 - **Fenêtre PKClipboard** — grille paginée, raccourcis ⌘1–⌘9, aperçus agrandis, mode paramètres intégré
 - **Stockage Markdown par note** — historique de versions, migration JSON, import/export, backups automatiques horodatés
 - **Internationalisation** — 5 langues : anglais, français, espagnol, allemand, italien
@@ -50,7 +50,7 @@ EN :
 - **Inline calculator in notes** — real-time evaluation, per-line variables, unit conversions
 - **Automatic inline icons** — 300+ technical icons inserted after recognized words
 - **Configurable global shortcuts** — focus last note, create note, editable shortcuts in preferences
-- **Global clipboard drawer** — captures text, URLs, images, files, and hex colors, with instant search, filters, pins, tags, and direct paste into the last active app
+- **Global clipboard drawer** — captures text, URLs, images, files, and hex colors, with instant search, filters, favorites, pinned block, tags, and direct paste into the last active app
 - **PKClipboard window** — paginated grid, ⌘1–⌘9 shortcuts, enlarged previews, built-in settings mode
 - **Markdown-first per-note storage** — version history, JSON migration, import/export, timestamped automatic backups
 - **Internationalization** — 5 languages: English, French, Spanish, German, Italian

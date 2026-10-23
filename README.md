@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.10.6** — [Changelog](CHANGELOG.md)
+version **2026.10.7** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
@@ -55,8 +55,8 @@ version **2026.10.6** — [Changelog](CHANGELOG.md)
   - historique persistant dans le dossier de stockage
   - pictogrammes de l'application source pour chaque item
   - recherche instantanée + filtres par type
-  - filtres par source, favoris et récent
-  - pins, lock, suppression item par item
+  - filtres par source, type et favoris
+  - bloc épinglé en tête, favoris, lock, suppression item par item
   - navigation clavier complète
   - `Enter` et `Cmd+V` collent la carte sélectionnée dans la dernière app externe active
   - collage direct validé depuis le drawer et la fenêtre standard `PKClipboard`
@@ -82,7 +82,7 @@ version **2026.10.6** — [Changelog](CHANGELOG.md)
   - ouverture drawer priorise l'écran actif (multi-écrans)
   - position haute collée à la barre de menu macOS, sans espace visible
   - fallback icône app au lancement direct (`swift run`) pour `Cmd+Tab`
-  - clic droit sur carte clipboard: épingler, verrouiller, copier, convertir en note ou supprimer
+  - clic droit sur carte clipboard: épingler, ajouter aux favoris, verrouiller, copier, convertir en note ou supprimer
  - Fenêtre standard PKClipboard:
   - taille par défaut: 1200x1000
   - raccourcis visuels limités aux 9 premières tuiles (`⌘1` ... `⌘9`)
@@ -170,11 +170,12 @@ version **2026.10.6** — [Changelog](CHANGELOG.md)
 - `Enter`: copie puis colle dans la dernière app externe active + ferme le drawer ou masque `PKClipboard`
 - `Cmd+V`: copie puis colle directement la carte sélectionnée vers la dernière app externe active
 - `Cmd+C`: copie la carte sélectionnée vers le presse-papier système
-- Clic droit sur carte: épingler, verrouiller, copier, convertir en note ou supprimer
+- Clic droit sur carte: épingler, ajouter aux favoris, verrouiller, copier, convertir en note ou supprimer
+- Épingle: la carte rejoint le bloc en tête du bandeau (dernière épinglée en premier) et n'est jamais purgée; l'étoile marque un favori, conservé lors des purges, accessible via le filtre Favoris, sans déplacer la carte
 - badges raccourcis visibles sur les 9 premières cartes (`⌘1...⌘9`)
 - Clic hors drawer: ferme le drawer
 - `Cmd+Enter`: convertir en note
-- Filtres: texte, URL, image, fichier, couleur, source, épinglé, récent
+- Filtres: texte, URL, image, fichier, couleur, source, favoris
 - Couleurs: copier `#2C3861` crée une carte couleur avec:
   - Hex: `#2C3861`
   - RGB: `44, 56, 97`

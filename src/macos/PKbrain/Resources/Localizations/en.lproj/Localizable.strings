@@ -190,8 +190,11 @@
 "filter_files" = "Files";
 "filter_color" = "Color";
 "pinned" = "Pinned";
+"favorites" = "Favorites";
 "recent" = "Recent";
 "pin" = "Pin";
+"favorite" = "Favorite";
+"remove_favorite" = "Remove from favorites";
 "lock" = "Lock";
 "insert_emoji" = "Insert emoji";
 "change_color" = "Change color";
@@ -257,6 +260,7 @@
 "open_plugins_folder" = "Open plugins folder";
 "create_plugin_template" = "Create plugin template";
 "pinned_badge" = "Pinned";
+"favorite_badge" = "Favorite";
 "chars_suffix" = " chars";
 
 /* General Preferences - previously hardcoded */
@@ -380,6 +384,9 @@
 "about.statusInstalledAhead" = "Installed version is newer";
 "about.statusOtherChannel" = "Other channel";
 "about.statusUnavailable" = "Version unavailable";
+"updates.upToDateMessage" = "You are up to date on the %@ channel (%@).";
+"updates.installedAheadTitle" = "No update available";
+"updates.installedAheadMessage" = "The latest published %@ build is %@; your installed version (%@) is newer. No update is available. The next %@ build will be offered automatically.";
 "about.credits" = "Credits";
 "credits.title" = "Credits & inspirations";
 "credits.subtitle" = "The original projects, resources and interface inspirations behind PKbrain.";

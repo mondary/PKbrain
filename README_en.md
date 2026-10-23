@@ -2,7 +2,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.10.6** — [Changelog](CHANGELOG.md)
+version **2026.10.7** — [Changelog](CHANGELOG.md)
 
 [🇬🇧 EN](README_en.md) · [🇫🇷 FR](README.md)
 
@@ -53,8 +53,8 @@ version **2026.10.6** — [Changelog](CHANGELOG.md)
   - persistent history in the storage folder
   - source app icon for each item
   - instant search + type filters
-  - source, pinned, and recent filters
-  - pins, lock, per-item delete
+  - source, type, and favorites filters
+  - pinned block at the head, favorites, lock, per-item delete
   - full keyboard navigation
   - `Enter` and `Cmd+V` paste the selected card into the last active external app
   - direct paste verified from both the drawer and the standard `PKClipboard` window
@@ -65,7 +65,7 @@ version **2026.10.6** — [Changelog](CHANGELOG.md)
   - smart color preview with Hex/RGB/HSL/OKLCH
   - configurable drawer position: top, bottom, left, right
   - top position flush with the macOS menu bar, without a visible gap
-  - clipboard-card context menu: pin, lock, copy, convert to note, or delete
+  - clipboard-card context menu: pin, add to favorites, lock, copy, convert to note, or delete
 - Persistence/storage:
   - Markdown-first per-note storage
   - JSON sidecar note version history
@@ -122,9 +122,10 @@ version **2026.10.6** — [Changelog](CHANGELOG.md)
 - `Enter`: copy, paste into the last active external app, and close the drawer or hide `PKClipboard`
 - `Cmd+V`: copy and paste the selected card directly into the last active external app
 - `Cmd+C`: copy the selected card to the system clipboard
-- Right-click a card: pin, lock, copy, convert to note, or delete
+- Right-click a card: pin, add to favorites, lock, copy, convert to note, or delete
+- Pin: the card joins the block at the head of the strip (most recently pinned first) and is never purged; the star marks a favorite, kept through purges, available through the Favorites filter, without moving the card
 - `Cmd+Enter`: convert to note
-- Filters: text, URL, image, file, color, source, pinned, recent
+- Filters: text, URL, image, file, color, source, favorites
 - Colors: copying `#2C3861` creates a color card with:
   - Hex: `#2C3861`
   - RGB: `44, 56, 97`

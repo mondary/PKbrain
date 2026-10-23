@@ -86,16 +86,18 @@ final class UpdaterManager: NSObject, ObservableObject {
     /// Dernières versions publiées sur chaque canal, lues directement dans les
     /// appcasts (indépendant de Sparkle) pour affichage dans la page About.
     func refreshAvailableVersions() {
-        Task {
-            async let stable = Self.latestInfo(at: Self.stableFeedURL)
-            async let dev = Self.latestInfo(at: Self.devFeedURL)
-            let feeds = await (stable, dev)
-            latestStableVersion = feeds.0?.shortVersion
-            latestStableBuild = feeds.0?.buildVersion
-            latestDevVersion = feeds.1?.shortVersion
-            latestDevBuild = feeds.1?.buildVersion
-            refreshUpdateAvailability()
-        }
+        Task { await refreshAvailableVersionsNow() }
+    }
+
+    private func refreshAvailableVersionsNow() async {
+        async let stable = Self.latestInfo(at: Self.stableFeedURL)
+        async let dev = Self.latestInfo(at: Self.devFeedURL)
+        let feeds = await (stable, dev)
+        latestStableVersion = feeds.0?.shortVersion
+        latestStableBuild = feeds.0?.buildVersion
+        latestDevVersion = feeds.1?.shortVersion
+        latestDevBuild = feeds.1?.buildVersion
+        refreshUpdateAvailability()
     }
 
     private static func latestInfo(at address: String) async -> BrainAppcastInfo? {
@@ -153,10 +155,67 @@ final class UpdaterManager: NSObject, ObservableObject {
         #if DEBUG
         return
         #else
-        refreshAvailableVersions()
         NSApp.activate(ignoringOtherApps: true)
-        controller.checkForUpdates(nil)
+        Task {
+            await refreshAvailableVersionsNow()
+
+            guard let installedBuild = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String else {
+                controller.checkForUpdates(nil)
+                return
+            }
+            let isDevBuild = (Bundle.main.object(forInfoDictionaryKey: "PKbrainBuildChannel") as? String) == "dev"
+            let channel = isDevBuild ? "dev" : UserDefaults.standard.string(forKey: "updateChannel") ?? "stable"
+            let latestBuild = channel == "dev" ? latestDevBuild : latestStableBuild
+            let latestVersion = channel == "dev" ? latestDevVersion : latestStableVersion
+
+            guard let latestBuild, let latestVersion,
+                  let order = compareBuildNumbers(latestBuild, installedBuild)
+            else {
+                // Feed illisible : laisser Sparkle afficher son propre diagnostic.
+                controller.checkForUpdates(nil)
+                return
+            }
+
+            switch order {
+            case .orderedDescending:
+                controller.checkForUpdates(nil)
+            case .orderedSame:
+                presentUpdateStatusAlert(installedAhead: false, channel: channel, latestVersion: latestVersion)
+            case .orderedAscending:
+                presentUpdateStatusAlert(installedAhead: true, channel: channel, latestVersion: latestVersion)
+            }
+        }
         #endif
+    }
+
+    /// Évite le message trompeur de Sparkle lorsqu'un build installé est plus
+    /// récent que le dernier build publié sur le canal choisi.
+    private func presentUpdateStatusAlert(installedAhead: Bool, channel: String, latestVersion: String) {
+        let installedVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
+        let channelLabel = channel == "dev" ? "Dev" : "Stable"
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+
+        if installedAhead {
+            alert.messageText = localizedString("updates.installedAheadTitle")
+            alert.informativeText = String(
+                format: localizedString("updates.installedAheadMessage"),
+                channelLabel,
+                latestVersion,
+                installedVersion,
+                channelLabel
+            )
+        } else {
+            alert.messageText = localizedString("about.statusUpToDate")
+            alert.informativeText = String(
+                format: localizedString("updates.upToDateMessage"),
+                channelLabel,
+                latestVersion
+            )
+        }
+
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
 }
 

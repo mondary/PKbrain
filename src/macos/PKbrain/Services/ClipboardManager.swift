@@ -19,6 +19,8 @@ final class ClipboardManager: ObservableObject {
         let previewText: String
         let payload: Payload
         var isPinned: Bool
+        var isFavorite: Bool = false
+        var pinnedAt: Date? = nil
         var isLocked: Bool
         var isTrashed: Bool
         var tags: [String]
@@ -138,6 +140,7 @@ final class ClipboardManager: ObservableObject {
         var kind: KindFilter = .all
         var sourceBundleID: String? = nil
         var pinnedOnly: Bool = false
+        var favoritesOnly: Bool = false
         var recentOnly: Bool = false
         var recentWindowMinutes: Int = 60
         var includeTrashed: Bool = false
@@ -147,9 +150,10 @@ final class ClipboardManager: ObservableObject {
         let needle = q.text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         let cutoff = Date().addingTimeInterval(-Double(q.recentWindowMinutes) * 60.0)
 
-        return items.filter { item in
+        let filtered = items.filter { item in
             if !q.includeTrashed && item.isTrashed { return false }
             if q.pinnedOnly && !item.isPinned { return false }
+            if q.favoritesOnly && !item.isFavorite { return false }
             if q.recentOnly && item.createdAt < cutoff { return false }
             if let source = q.sourceBundleID, item.sourceBundleID != source { return false }
             switch q.kind {
@@ -171,11 +175,33 @@ final class ClipboardManager: ObservableObject {
             if (item.sourceAppName?.lowercased().contains(needle) ?? false) { return true }
             return false
         }
+
+        return filtered.sorted(by: Self.displayOrder)
+    }
+
+    /// Pinned cards form a block at the head (most recently pinned first);
+    /// everything else stays in reverse chronological order.
+    private static func displayOrder(_ lhs: Item, _ rhs: Item) -> Bool {
+        if lhs.isPinned != rhs.isPinned { return lhs.isPinned }
+        if lhs.isPinned, rhs.isPinned {
+            let lhsPin = lhs.pinnedAt ?? lhs.createdAt
+            let rhsPin = rhs.pinnedAt ?? rhs.createdAt
+            if lhsPin != rhsPin { return lhsPin > rhsPin }
+        }
+        if lhs.createdAt != rhs.createdAt { return lhs.createdAt > rhs.createdAt }
+        return lhs.id.uuidString < rhs.id.uuidString
     }
 
     func togglePin(_ id: UUID) {
         guard let idx = items.firstIndex(where: { $0.id == id }) else { return }
         items[idx].isPinned.toggle()
+        items[idx].pinnedAt = items[idx].isPinned ? Date() : nil
+        scheduleSave()
+    }
+
+    func toggleFavorite(_ id: UUID) {
+        guard let idx = items.firstIndex(where: { $0.id == id }) else { return }
+        items[idx].isFavorite.toggle()
         scheduleSave()
     }
 
@@ -205,6 +231,8 @@ final class ClipboardManager: ObservableObject {
         guard let idx = items.firstIndex(where: { $0.id == id }) else { return }
         items[idx].isTrashed = true
         items[idx].isPinned = false
+        items[idx].pinnedAt = nil
+        items[idx].isFavorite = false
         scheduleSave()
     }
 
@@ -405,18 +433,18 @@ final class ClipboardManager: ObservableObject {
             }
             }
     private func append(_ item: Item) {
-        // De-dupe simple: if last item has same preview/kind/source, ignore.
-        if let last = items.first,
-           last.kind == item.kind,
-           last.previewText == item.previewText,
-           last.sourceBundleID == item.sourceBundleID
+        // De-dupe simple: if the most recent capture has same preview/kind/source, ignore.
+        if let latest = items.max(by: { $0.createdAt < $1.createdAt }),
+           latest.kind == item.kind,
+           latest.previewText == item.previewText,
+           latest.sourceBundleID == item.sourceBundleID
         {
             return
         }
 
-        // Keep pinned items at the top, then newest items.
-        let insertionIndex = items.firstIndex(where: { !$0.isPinned }) ?? items.count
-        items.insert(item, at: insertionIndex)
+        // Storage order stays chronological; the pinned block is a display concern
+        // computed by `filteredItems`.
+        items.insert(item, at: 0)
         purgeIfNeeded()
         scheduleSave()
 
@@ -544,18 +572,18 @@ final class ClipboardManager: ObservableObject {
     }
 
     private func purgeIfNeeded() {
-        // 1) Age-based purge for non-locked items.
+        // 1) Age-based purge for non-pinned/non-favorite/non-locked items.
         let cutoff = Date().addingTimeInterval(-Double(maxAgeDays) * 86400.0)
         items.removeAll { item in
-            guard !item.isLocked else { return false }
+            guard !item.isLocked, !item.isPinned, !item.isFavorite else { return false }
             return item.createdAt < cutoff
         }
 
-        // 2) Count-based purge for non-pinned/non-locked oldest items.
+        // 2) Count-based purge for non-pinned/non-favorite/non-locked oldest items.
         if items.count > maxItems {
-            // Keep pinned + locked regardless.
-            var keep: [Item] = items.filter { $0.isPinned || $0.isLocked }
-            let rest = items.filter { !$0.isPinned && !$0.isLocked }
+            // Keep pinned + favorite + locked regardless.
+            var keep: [Item] = items.filter { $0.isPinned || $0.isFavorite || $0.isLocked }
+            let rest = items.filter { !$0.isPinned && !$0.isFavorite && !$0.isLocked }
             let remainingSlots = max(0, maxItems - keep.count)
             keep.append(contentsOf: rest.prefix(remainingSlots))
             items = keep
@@ -735,6 +763,8 @@ private struct StoredItem: Codable {
     let kind: ClipboardManager.Item.Kind
     let previewText: String
     let isPinned: Bool
+    let isFavorite: Bool?
+    let pinnedAt: Date?
     let isLocked: Bool
     let isTrashed: Bool?
     let tags: [String]?
@@ -757,6 +787,8 @@ private struct StoredItem: Codable {
         kind = item.kind
         previewText = item.previewText
         isPinned = item.isPinned
+        isFavorite = item.isFavorite
+        pinnedAt = item.pinnedAt
         isLocked = item.isLocked
         isTrashed = item.isTrashed
         tags = item.tags
@@ -830,6 +862,8 @@ private struct StoredItem: Codable {
             previewText: previewText,
             payload: payload,
             isPinned: isPinned,
+            isFavorite: isFavorite ?? false,
+            pinnedAt: pinnedAt,
             isLocked: isLocked,
             isTrashed: isTrashed ?? false,
             tags: tags ?? [],
