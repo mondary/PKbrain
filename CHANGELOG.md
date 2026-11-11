@@ -5,6 +5,12 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.4] - 2026-11-11
+
+### Fixed
+- Réouverture des notes au lancement : l'état ouvert/fermé de chaque fenêtre est désormais persisté dans les métadonnées Markdown (`isOpen`) et toutes les notes qui étaient ouvertes se rouvrent, au lieu de la seule dernière éditée.
+- Diagnostic d'affichage : trace `NSLog` du contenu réel de la fenêtre à l'ouverture et au focus depuis la liste (longueur du document et du `NSTextView`), pour objectiver le cas des notes qui apparaîtraient vides.
+
 ## [2026.11.3] - 2026-11-11
 
 ### Added

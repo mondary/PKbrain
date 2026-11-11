@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.11.3** — [Changelog](CHANGELOG.md)
+version **2026.11.4** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 

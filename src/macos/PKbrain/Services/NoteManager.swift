@@ -45,9 +45,9 @@ final class NoteManager {
                 ($0.updatedAt ?? .distantPast) < ($1.updatedAt ?? .distantPast)
             })?.id
             loadedNotes.forEach { note in
-                let visible = note.id == lastEditedID
-                createNote(note, activate: false, scheduleSave: false, initiallyVisible: note.isOpen && visible)
+                createNote(note, activate: false, scheduleSave: false, initiallyVisible: note.isOpen)
             }
+            lastFocusedNoteID = lastEditedID
         }
     }
 
@@ -203,8 +203,10 @@ final class NoteManager {
 
     func focusNote(documentID: UUID) {
         guard let controller = controllers[documentID] else {
+            NSLog("PKbrain: focusNote — contrôleur introuvable pour %@", documentID.uuidString)
             return
         }
+        NSLog("PKbrain: focusNote — %@ (%d chars)", controller.noteDocument.title, controller.noteDocument.content.count)
 
         controller.showWindow(nil)
         controller.window?.deminiaturize(nil)

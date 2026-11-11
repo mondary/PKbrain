@@ -386,6 +386,7 @@ final class NoteStorage {
         existing.y = incoming.y ?? existing.y
         existing.macFrameVersion = incoming.macFrameVersion
         existing.isArchived = incoming.isArchived
+        existing.isOpen = incoming.isOpen
         return existing
     }
 
@@ -448,6 +449,7 @@ final class NoteStorage {
             "macFrameVersion": String(note.macFrameVersion)
         ]
         if note.isArchived { metadata["archived"] = "true" }
+        if !note.isOpen { metadata["isOpen"] = "false" }
         if let x = note.x { metadata["x"] = String(x) }
         if let y = note.y { metadata["y"] = String(y) }
         for (k, v) in extraFrontMatter {
@@ -522,7 +524,7 @@ final class NoteStorage {
     private func serializeTrailingMetadata(_ metadata: [String: String]) -> String {
         let preferredOrder = [
             "id", "title", "theme", "monospace", "fontFamily", "zoom",
-            "width", "height", "x", "y", "macFrameVersion", "archived", "deletedAt"
+            "width", "height", "x", "y", "macFrameVersion", "archived", "isOpen", "deletedAt"
         ]
 
         var lines: [String] = ["<!-- JORTS_META"]
@@ -558,6 +560,7 @@ final class NoteStorage {
             y: Double(frontMatter["y"] ?? ""),
             macFrameVersion: Int(frontMatter["macFrameVersion"] ?? "") ?? NoteData.currentMacFrameVersion,
             versions: [], // versions stay in JSON for now
+            isOpen: parseBool(frontMatter["isOpen"]) ?? true,
             isArchived: parseBool(frontMatter["archived"]) ?? false
         )
         if let idString = frontMatter["id"], let id = UUID(uuidString: idString) {

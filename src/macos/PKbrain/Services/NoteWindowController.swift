@@ -125,6 +125,26 @@ final class NoteWindowController: NSWindowController, NSWindowDelegate {
         noteDocument.updateFrame(window.frame)
     }
 
+    override func showWindow(_ sender: Any?) {
+        super.showWindow(sender)
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let content = self.window?.contentView else { return }
+            let length = Self.firstTextView(in: content).map { ($0.string as NSString).length } ?? -1
+            NSLog(
+                "PKbrain: fenêtre « %@ » — document %d chars, NSTextView %d chars",
+                self.noteDocument.title, self.noteDocument.content.count, length
+            )
+        }
+    }
+
+    private static func firstTextView(in view: NSView) -> NSTextView? {
+        if let textView = view as? NSTextView { return textView }
+        for subview in view.subviews {
+            if let found = firstTextView(in: subview) { return found }
+        }
+        return nil
+    }
+
     func windowDidMove(_ notification: Notification) {
         guard let window else { return }
         noteDocument.updateFrame(window.frame)
