@@ -330,6 +330,12 @@
 /* Notizenliste */
 "all_my_notes" = "Alle meine Notizen";
 "trash_title" = "Papierkorb";
+"archived_notes" = "Archivierte Notizen";
+"no_archived_notes" = "Keine archivierten Notizen";
+"show_archived_notes" = "Archivierte Notizen anzeigen";
+"archive_note" = "Notiz archivieren";
+"restore_from_archive" = "Aus dem Archiv wiederherstellen";
+"move_to_trash" = "In den Papierkorb verschieben";
 "no_content" = "Kein Inhalt";
 
 "stick_notes_to_edges" = "Notizen an die Bildschirmränder kleben";

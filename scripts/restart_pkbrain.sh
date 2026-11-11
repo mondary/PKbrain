@@ -7,6 +7,14 @@ PIDFILE="/tmp/pkbrain.pid"
 LOGFILE="/tmp/pkbrain_run.log"
 
 cd "$ROOT"
+# SDK : le SDK par défaut (27.x) des CommandLineTools casse les macros SwiftUI ;
+# retomber sur le dernier SDK 26.x présent quand aucun Xcode n'est sélectionné.
+if [[ -z "${SDKROOT:-}" ]] && ! xcode-select -p 2>/dev/null | grep -q "Xcode"; then
+  LEGACY_SDK="$(find /Library/Developer/CommandLineTools/SDKs -maxdepth 1 -name 'MacOSX26.*.sdk' 2>/dev/null | sort -V | tail -1)"
+  if [[ -n "$LEGACY_SDK" ]]; then
+    export SDKROOT="$LEGACY_SDK"
+  fi
+fi
 swift build
 
 # Kill previous managed instance (pidfile first)

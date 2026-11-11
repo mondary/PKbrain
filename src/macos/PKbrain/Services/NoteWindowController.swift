@@ -8,19 +8,22 @@ final class NoteWindowController: NSWindowController, NSWindowDelegate {
     private let onDocumentChanged: () -> Void
     private let onBecameKey: (UUID) -> Void
     private var cancellables: Set<AnyCancellable> = []
-    private var isDeleting = false
+    private var isClosingProgrammatically = false
 
     init(
         document: NoteDocument,
         settings: AppSettings,
         onNew: @escaping () -> Void,
         onDelete: @escaping () -> Void,
+        onArchive: @escaping () -> Void = {},
         onSave: @escaping () -> Void,
         onShowEmoji: @escaping () -> Void,
         onShowList: @escaping () -> Void,
         mode: NoteViewMode = .normal,
         onRestoreFromTrash: (() -> Void)? = nil,
         onDeletePermanently: (() -> Void)? = nil,
+        onRestoreFromArchive: (() -> Void)? = nil,
+        onMoveArchivedToTrash: (() -> Void)? = nil,
         onBecameKey: @escaping (UUID) -> Void = { _ in },
         onDocumentChanged: @escaping () -> Void
     ) {
@@ -33,12 +36,15 @@ final class NoteWindowController: NSWindowController, NSWindowDelegate {
             settings: settings,
             onNew: onNew,
             onDelete: onDelete,
+            onArchive: onArchive,
             onSave: onSave,
             onShowEmoji: onShowEmoji,
             onShowList: onShowList,
             mode: mode,
             onRestoreFromTrash: onRestoreFromTrash,
-            onDeletePermanently: onDeletePermanently
+            onDeletePermanently: onDeletePermanently,
+            onRestoreFromArchive: onRestoreFromArchive,
+            onMoveArchivedToTrash: onMoveArchivedToTrash
         )
 
         let hostingController = NSHostingController(rootView: rootView)
@@ -138,7 +144,7 @@ final class NoteWindowController: NSWindowController, NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        guard !isDeleting else {
+        guard !isClosingProgrammatically else {
             return true
         }
 
@@ -148,8 +154,8 @@ final class NoteWindowController: NSWindowController, NSWindowDelegate {
         return false
     }
 
-    func closeForDelete() {
-        isDeleting = true
+    func closeForRemoval() {
+        isClosingProgrammatically = true
         window?.delegate = nil
         close()
     }

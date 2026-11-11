@@ -12,12 +12,15 @@ struct NoteView: View {
 
     let onNew: () -> Void
     let onDelete: () -> Void
+    let onArchive: () -> Void
     let onSave: () -> Void
     let onShowEmoji: () -> Void
     let onShowList: () -> Void
     let mode: NoteViewMode
     let onRestoreFromTrash: (() -> Void)?
     let onDeletePermanently: (() -> Void)?
+    let onRestoreFromArchive: (() -> Void)?
+    let onMoveArchivedToTrash: (() -> Void)?
 
     @FocusState private var focus: FocusTarget?
 
@@ -50,6 +53,8 @@ struct NoteView: View {
                         actionBar
                     case .trash:
                         trashActionBar
+                    case .archive:
+                        archiveActionBar
                     }
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -76,7 +81,8 @@ struct NoteView: View {
                 font: titleFontBold,
                 textColor: document.theme.autoTextColor,
                 onTabToEditor: { editorFocusRequestToken += 1 },
-                isNewNote: document.isNewNote
+                isNewNote: document.isNewNote,
+                isEditable: mode == .normal
             )
             .frame(maxWidth: 420)
             .focused($focus, equals: .title)
@@ -95,6 +101,7 @@ struct NoteView: View {
         HStack(spacing: 10) {
             iconButton("plus", help: localizedString("new_sticky_note"), action: onNew)
             iconButton("trash", role: .destructive, help: localizedString("delete_sticky_note"), action: onDelete)
+            iconButton("archivebox", help: localizedString("archive_note"), action: onArchive)
 
             Spacer()
 
@@ -160,6 +167,28 @@ struct NoteView: View {
                 onDeletePermanently?()
             } label: {
                 Label(localizedString("delete"), systemImage: "trash")
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(document.theme.backgroundColor.opacity(0.98))
+    }
+
+    private var archiveActionBar: some View {
+        HStack(spacing: 10) {
+            Spacer()
+
+            Button {
+                onRestoreFromArchive?()
+            } label: {
+                Label(localizedString("restore_from_archive"), systemImage: "archivebox")
+            }
+            .keyboardShortcut(.defaultAction)
+
+            Button(role: .destructive) {
+                onMoveArchivedToTrash?()
+            } label: {
+                Label(localizedString("move_to_trash"), systemImage: "trash")
             }
         }
         .padding(.horizontal, 12)
@@ -508,4 +537,5 @@ private enum FocusTarget: Hashable {
 enum NoteViewMode: Hashable {
     case normal
     case trash
+    case archive
 }

@@ -330,6 +330,12 @@
 /* Lista de notas */
 "all_my_notes" = "Todas mis notas";
 "trash_title" = "Papelera";
+"archived_notes" = "Notas archivadas";
+"no_archived_notes" = "No hay notas archivadas";
+"show_archived_notes" = "Mostrar notas archivadas";
+"archive_note" = "Archivar nota";
+"restore_from_archive" = "Restaurar del archivo";
+"move_to_trash" = "Mover a la papelera";
 "no_content" = "Sin contenido";
 
 "stick_notes_to_edges" = "Pegar las notas en los bordes";

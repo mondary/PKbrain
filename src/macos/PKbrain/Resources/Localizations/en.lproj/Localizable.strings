@@ -331,6 +331,12 @@
 /* Notes List */
 "all_my_notes" = "All my notes";
 "trash_title" = "Trash";
+"archived_notes" = "Archived notes";
+"no_archived_notes" = "No archived notes";
+"show_archived_notes" = "Show archived notes";
+"archive_note" = "Archive note";
+"restore_from_archive" = "Restore from archive";
+"move_to_trash" = "Move to Trash";
 "no_content" = "No content";
 
 "stick_notes_to_edges" = "Stick Notes to Screen Edges";

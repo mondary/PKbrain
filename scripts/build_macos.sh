@@ -21,6 +21,18 @@ BUILD_VERSION="$(date +%s)"
 
 REPO_ROOT="$ROOT_DIR"
 DIST_DIR="$REPO_ROOT/releases"
+
+# SDK : avec CommandLineTools seul, le SDK par défaut (27.x) casse les macros
+# SwiftUI (@State) — le plugin SwiftUIMacros est absent du toolchain. Retomber
+# sur le dernier SDK 26.x fonctionnel quand il est présent et qu'aucun Xcode
+# n'est sélectionné.
+if [[ -z "${SDKROOT:-}" ]] && ! xcode-select -p 2>/dev/null | grep -q "Xcode"; then
+  LEGACY_SDK="$(find /Library/Developer/CommandLineTools/SDKs -maxdepth 1 -name 'MacOSX26.*.sdk' 2>/dev/null | sort -V | tail -1)"
+  if [[ -n "$LEGACY_SDK" ]]; then
+    export SDKROOT="$LEGACY_SDK"
+    echo "SDK: utilisation de $SDKROOT (macros SwiftUI incompatibles SDK 27.x)"
+  fi
+fi
 LEGACY_DIST_LINK="$ROOT_DIR/dist"
 APP_BUNDLE="$DIST_DIR/$BUNDLE_NAME.app"
 APP_CONTENTS="$APP_BUNDLE/Contents"
@@ -62,6 +74,17 @@ cp "$BUILD_BINARY" "$APP_BINARY"
 chmod +x "$APP_BINARY"
 
 find "$BUILD_DIR" -maxdepth 1 -name '*.bundle' -exec cp -R {} "$APP_RESOURCES/" \;
+
+# Frameworks dynamiques (Sparkle) : embarquer dans Contents/Frameworks et
+# garantir le rpath du binaire (les exécutables SwiftPM ne l'incluent pas).
+APP_FRAMEWORKS="$APP_CONTENTS/Frameworks"
+mkdir -p "$APP_FRAMEWORKS"
+find "$BUILD_DIR" -maxdepth 1 -name '*.framework' -exec cp -R {} "$APP_FRAMEWORKS/" \;
+if compgen -G "$APP_FRAMEWORKS/*.framework" > /dev/null; then
+  if ! otool -l "$APP_BINARY" | grep -q "path @executable_path/../Frameworks"; then
+    install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP_BINARY"
+  fi
+fi
 
 ICON_SOURCE="$REPO_ROOT/submodules/jorts/data/icons/default/hicolor/512.png"
 STATUS_ICON_SOURCE="$REPO_ROOT/submodules/jorts/data/icons/default/hicolor/24.png"
