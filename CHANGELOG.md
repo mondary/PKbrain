@@ -5,6 +5,16 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.3] - 2026-11-11
+
+### Added
+- Landing bilingue FR/EN dans `store/website/` : détection automatique de la langue (`navigator.languages`, défaut FR), bascule manuelle mémorisée, commandes d'installation copiables (DMG, Homebrew, curl), CTA vers la release réelle et lien Ko-fi visible près du CTA.
+- Capture native « Notes archivées » (`store/website/assets/archives.png`, listing `04-notes-archivees.png`) ; harness de capture complété (`store/tools/capture-shims.swift`, scène Archives) et README du dossier `store/` mis à jour.
+
+### Changed
+- L'ancienne page « bureau Mac interactif » est archivée dans `store/archive/site/`.
+- Laïus store (`description-store.md`) : archivage ajouté aux fonctionnalités clés FR/EN et lien GitHub Releases réel ; READMEs FR/EN : le site est décrit comme la landing bilingue.
+
 ## [2026.11.2] - 2026-11-11
 
 ### Added

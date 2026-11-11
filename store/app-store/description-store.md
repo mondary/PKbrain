@@ -36,6 +36,7 @@ EN :
 - **Raccourcis globaux configurables** — focus sur la dernière note, création de note, raccourcis éditables dans les préférences
 - **Tiroir presse-papiers global** — capture texte, URL, images, fichiers et couleurs hex, avec recherche instantanée, filtres, favoris, épingles en tête, tags et collage direct dans la dernière app active
 - **Fenêtre PKClipboard** — grille paginée, raccourcis ⌘1–⌘9, aperçus agrandis, mode paramètres intégré
+- **Archivage des notes** — une note archivée quitte le bureau sans être supprimée : elle ne se rouvre ni au lancement ni avec « Afficher toutes les notes », et reste consultable/restaurable dans la vue Archives
 - **Stockage Markdown par note** — historique de versions, migration JSON, import/export, backups automatiques horodatés
 - **Internationalisation** — 5 langues : anglais, français, espagnol, allemand, italien
 - **Intégration Spotlight / Raycast / Alfred** — URLs `pkbrain://` (nouvelle note, dernière note, liste, clipboard)
@@ -52,6 +53,7 @@ EN :
 - **Configurable global shortcuts** — focus last note, create note, editable shortcuts in preferences
 - **Global clipboard drawer** — captures text, URLs, images, files, and hex colors, with instant search, filters, favorites, pinned block, tags, and direct paste into the last active app
 - **PKClipboard window** — paginated grid, ⌘1–⌘9 shortcuts, enlarged previews, built-in settings mode
+- **Note archiving** — an archived note leaves the desktop without being deleted: it no longer reopens at launch or with “Show all notes”, and stays viewable/restorable in the Archives view
 - **Markdown-first per-note storage** — version history, JSON migration, import/export, timestamped automatic backups
 - **Internationalization** — 5 languages: English, French, Spanish, German, Italian
 - **Spotlight / Raycast / Alfred integration** — `pkbrain://` URLs (new note, last note, list, clipboard)
@@ -64,6 +66,7 @@ EN :
 | `01-presse-papiers-tiroir.png` | Le tiroir presse-papiers natif : cartes par application, filtres, recherche |
 | `02-pkclipboard-par-application.png` | La fenêtre PKClipboard : collection classée par application, notes incluses |
 | `03-notes-autocollantes.png` | Les sticky notes natives (calcul inline, listes, couleurs) |
+| `04-notes-archivees.png` | La vue Notes archivées : consultation, restauration et mise à la corbeille |
 
 ## Offre
 
@@ -72,7 +75,7 @@ EN :
 
 ## Plateformes
 
-- GitHub Releases : —
+- GitHub Releases : https://github.com/mondary/PKbrain/releases
 
 ## Liens
 

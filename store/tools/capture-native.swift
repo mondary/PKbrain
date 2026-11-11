@@ -54,6 +54,30 @@ struct CaptureNative {
         try render(drawer, size: NSSize(width: 1440, height: 420), name: "drawer", output: output)
         let full = ClipboardStandardWindowView(clipboard: clipboard, settings: settings, storageRootURL: scratch, startsInSettingsMode: false, notesProvider: { entries }, onCreateNoteFromItem: { _ in }, onOpenNote: { _ in }, onCopyItem: { _ in }, onPaste: {}, onLoadFavicon: { _ in nil }, onLoadURLPreviewImage: { _ in nil }, onShowPreferences: {}, onOpenFinder: {}, onRunBackupNow: {})
         try render(full, size: NSSize(width: 1200, height: 760), name: "library", output: output)
+
+        let archivedNotes = [
+            NoteData(title: "Anciennes idées d’interface", theme: .grape, content: "Pistes abandonnées\n • Sidebar rétractable\n • Mode focus total\n\nGarder pour plus tard.", isArchived: true, updatedAt: Date().addingTimeInterval(-86_400 * 3)),
+            NoteData(title: "Liste de courses — été", theme: .mint, content: " • Café\n • Papier\n • Encre", isArchived: true, updatedAt: Date().addingTimeInterval(-86_400 * 9)),
+            NoteData(title: "Notes de réunion — août", theme: .banana, content: "Décisions\n • Relancer le prototype\n • Revoir les raccourcis", isArchived: true, updatedAt: Date().addingTimeInterval(-86_400 * 20))
+        ]
+        let archiveList = NotesListView(
+            documents: [NoteDocument(data: notes[0]), NoteDocument(data: notes[1])],
+            archivedNotes: archivedNotes,
+            trash: [],
+            onCreateNote: {},
+            onShowPreferences: {},
+            onOpenFinder: {},
+            onNoteSelected: { _ in },
+            onArchiveNote: { _ in },
+            onOpenArchived: { _ in },
+            onRestoreArchived: { _ in },
+            onMoveArchivedToTrash: { _ in },
+            onOpenTrashed: { _ in },
+            onRestoreTrashed: { _ in },
+            onDeleteTrashedPermanently: { _ in },
+            initialSelection: .archive
+        )
+        try render(archiveList, size: NSSize(width: 560, height: 620), name: "archives", output: output)
         for (name, bundleID) in [("safari", "com.apple.Safari"), ("mail", "com.apple.mail"), ("finder", "com.apple.finder"), ("code", "com.microsoft.VSCode"), ("figma", "com.figma.Desktop")] {
             if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) {
                 let icon = NSWorkspace.shared.icon(forFile: url.path)

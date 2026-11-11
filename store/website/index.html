@@ -1,80 +1,502 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#273832">
-  <meta name="description" content="PKbrain réunit historique du presse-papiers et sticky notes sur Mac. Retrouvez ce que vous copiez, transformez-le en note et ajoutez vos idées. Essayez le playground.">
-  <meta property="og:title" content="PKbrain — Copiez. Gardez. Faites-en une idée.">
-  <meta property="og:description" content="Un presse-papiers avec une suite : vos notes. Découvrez PKbrain sur un bureau Mac interactif.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/library.png">
-  <title>PKbrain — Ce que vous copiez n’est qu’un début.</title>
-  <link rel="icon" href="assets/icon.png">
-  <link rel="preload" as="image" href="assets/wallpaper-b.webp">
-  <link rel="stylesheet" href="style.css">
-  <script src="model.js" defer></script>
-  <script src="app.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PKbrain — Copiez. Retrouvez. Gardez.</title>
+<meta name="description" content="PKbrain mémorise tout ce que vous copiez sur votre Mac et transforme vos copies en sticky notes. Presse-papiers, notes, calcul inline — une seule app native macOS.">
+<meta property="og:title" content="PKbrain — Copiez. Retrouvez. Gardez.">
+<meta property="og:description" content="L'historique du presse-papiers et les sticky notes se rencontrent enfin. App native macOS, gratuite et open source.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/library.png">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+<link rel="icon" href="assets/icon.png" type="image/png">
+<script>
+// Détection de langue avant premier rendu — FR par défaut, choix manuel prioritaire.
+(function () {
+  var supported = ['fr', 'en'];
+  var pick = 'fr';
+  var list = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+  for (var i = 0; i < list.length; i++) {
+    var code = (list[i] || '').toLowerCase().split('-')[0];
+    if (supported.indexOf(code) >= 0) { pick = code; break; }
+  }
+  var stored = null;
+  try { stored = localStorage.getItem('pkbrain-lang'); } catch (e) {}
+  if (stored && supported.indexOf(stored) >= 0) { pick = stored; }
+  document.documentElement.lang = pick;
+  if (pick === 'en') { document.documentElement.classList.add('i18n-pending'); }
+  window.__PKLANG = pick;
+})();
+</script>
+<style>
+  :root {
+    --paper: #f6f3ec;
+    --paper-2: #efeadf;
+    --ink: #1d1a15;
+    --ink-soft: #5d574c;
+    --line: rgba(29, 26, 21, .12);
+    --accent: #eec53f;
+    --accent-ink: #241f0c;
+    --card: #fffdf7;
+    --shadow: 0 18px 50px rgba(60, 50, 20, .14);
+    --radius: 18px;
+    --max: 1120px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #151310;
+      --paper-2: #1d1a15;
+      --ink: #f1ece1;
+      --ink-soft: #a9a294;
+      --line: rgba(241, 236, 225, .13);
+      --accent: #f2ce55;
+      --accent-ink: #241f0c;
+      --card: #201d17;
+      --shadow: 0 22px 60px rgba(0, 0, 0, .5);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html.i18n-pending body { visibility: hidden; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: inherit; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  .top {
+    position: sticky; top: 0; z-index: 40;
+    background: var(--paper);
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top-inner { display: flex; align-items: center; gap: 14px; height: 62px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.02em; text-decoration: none; }
+  .brand img { width: 26px; height: 26px; border-radius: 7px; }
+  .top-nav { margin-left: auto; display: flex; align-items: center; gap: 18px; font-size: 14px; color: var(--ink-soft); }
+  .top-nav a { text-decoration: none; }
+  .top-nav a:hover { color: var(--ink); }
+  .lang-switch { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .lang-switch button {
+    border: 0; background: transparent; color: var(--ink-soft);
+    font: inherit; font-size: 12.5px; font-weight: 600; padding: 5px 11px; cursor: pointer;
+  }
+  .lang-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+  /* Hero */
+  .hero { padding: 66px 0 30px; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 44px; align-items: center; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-soft); margin-bottom: 18px;
+  }
+  .kicker::before { content: ""; width: 22px; height: 2px; background: var(--accent); }
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.2rem);
+    line-height: 1.02; letter-spacing: -.045em; font-weight: 800;
+    margin: 0 0 20px;
+  }
+  .lead { font-size: clamp(1.02rem, 1.6vw, 1.2rem); color: var(--ink-soft); max-width: 34em; margin: 0 0 28px; }
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 13px 22px; border-radius: 999px;
+    font-size: 15px; font-weight: 700; text-decoration: none;
+    border: 1px solid transparent; cursor: pointer; font-family: inherit;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--ink); color: var(--paper); box-shadow: 0 12px 30px rgba(0, 0, 0, .18); }
+  .btn-kofi { background: var(--accent); color: var(--accent-ink); }
+  .btn-kofi svg { width: 17px; height: 17px; }
+  .meta { margin-top: 14px; font-size: 13px; color: var(--ink-soft); }
+  .version-pill {
+    display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
+    color: var(--ink-soft); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px;
+    margin-left: 6px; vertical-align: 1px;
+  }
+
+  /* Hero notes composition */
+  .stack { position: relative; min-height: 360px; }
+  .stack img { position: absolute; border-radius: 14px; box-shadow: var(--shadow); }
+  .stack .sn1 { width: 57%; left: 0; top: 10%; transform: rotate(-5deg); }
+  .stack .sn2 { width: 57%; right: 0; top: 0; transform: rotate(3.5deg); }
+  .stack .sn3 { width: 57%; left: 32%; bottom: -2%; transform: rotate(-1.5deg); }
+
+  /* Section base */
+  section { padding: 64px 0; }
+  .sec-head { max-width: 640px; margin: 0 auto 40px; text-align: center; }
+  .sec-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.45rem); letter-spacing: -.035em; line-height: 1.1; margin: 0 0 12px; }
+  .sec-head p { color: var(--ink-soft); margin: 0; font-size: 1.02rem; }
+
+  /* Features */
+  .feature {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+    padding: 34px 0;
+  }
+  .feature + .feature { border-top: 1px solid var(--line); }
+  .feature.flip .shot { order: 2; }
+  .feature h3 { font-size: clamp(1.35rem, 2.4vw, 1.8rem); letter-spacing: -.025em; margin: 0 0 12px; line-height: 1.15; }
+  .feature p { color: var(--ink-soft); margin: 0; font-size: 1.01rem; }
+  .feature .new-badge {
+    display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+    background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 3px 9px; margin-bottom: 12px;
+  }
+  .shot img {
+    border-radius: 14px; box-shadow: var(--shadow); border: 1px solid var(--line);
+    background: var(--card);
+  }
+  .shot figcaption { font-size: 12.5px; color: var(--ink-soft); text-align: center; margin-top: 10px; }
+  .shot { margin: 0; }
+
+  /* Bullets */
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .fact {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px 20px 18px;
+  }
+  .fact h4 { margin: 0 0 6px; font-size: 15px; letter-spacing: -.01em; }
+  .fact p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+
+  /* Install */
+  .install { background: var(--paper-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .install-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .install-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .install-card h4 { margin: 0; font-size: 15px; }
+  .install-card p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+  .install-card .cmd {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+    padding: 9px 10px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px;
+    overflow-x: auto; white-space: nowrap;
+  }
+  .install-card .cmd code { flex: 1; }
+  .copy-btn {
+    border: 1px solid var(--line); background: var(--card); color: var(--ink-soft);
+    border-radius: 7px; font: inherit; font-size: 11px; font-weight: 700;
+    padding: 4px 8px; cursor: pointer; flex: 0 0 auto;
+  }
+  .copy-btn:hover { color: var(--ink); }
+  .install-note { text-align: center; color: var(--ink-soft); font-size: 13px; margin-top: 22px; }
+  .btn-ghost { border-color: var(--line); background: transparent; color: var(--ink); }
+  .install-card .btn { align-self: flex-start; padding: 9px 16px; font-size: 13.5px; }
+
+  /* Footer */
+  footer { padding: 44px 0 56px; color: var(--ink-soft); font-size: 13.5px; }
+  .foot-grid { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 16px; }
+  .foot-links a { text-decoration: none; }
+  .foot-links a:hover { color: var(--ink); }
+  .kofi-link { display: inline-flex; align-items: center; gap: 7px; font-weight: 700; color: var(--ink); }
+  .kofi-link svg { width: 16px; height: 16px; }
+  .fine { margin-top: 26px; font-size: 12px; color: var(--ink-soft); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(80px);
+    background: var(--ink); color: var(--paper); font-size: 13px; font-weight: 600;
+    padding: 9px 16px; border-radius: 999px; opacity: 0; pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease; z-index: 60;
+  }
+  .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 30px; }
+    .stack { min-height: 300px; max-width: 460px; margin: 0 auto; }
+    .feature, .feature.flip { grid-template-columns: 1fr; gap: 24px; }
+    .feature.flip .shot { order: 0; }
+    .facts, .install-grid { grid-template-columns: 1fr; }
+    .top-nav { gap: 12px; }
+    .top-nav .nav-secondary { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    .btn:hover { transform: none; }
+  }
+</style>
 </head>
 <body>
-  <a class="skip" href="#concept">Aller à la présentation</a>
-  <main>
-    <section class="desktop" id="desktop" data-bg="b" aria-label="Bureau Mac interactif de démonstration">
-      <img class="wallpaper" src="assets/wallpaper-b.webp" width="1672" height="941" alt="" fetchpriority="high">
-      <div class="desktop-shade" aria-hidden="true"></div>
-      <header class="menubar">
-        <div class="menu-left"><span class="apple" aria-hidden="true"></span><a class="menu-brand" href="#desktop">PKbrain</a><a href="#concept">Le concept</a><a href="#native">L’app en vrai</a><a href="#details">Les détails</a></div>
-        <div class="menu-right"><button type="button" id="menu-drawer" aria-label="Ouvrir le tiroir PKbrain" aria-expanded="false" aria-controls="drawer"><img src="assets/icon.png" width="21" height="21" alt=""><span class="menu-dot"></span></button><span class="wifi" aria-hidden="true">◔</span><span class="battery" aria-hidden="true"></span><span class="clock">Lun. 09:41</span></div>
-      </header>
 
-      <div class="menu-hint" id="menu-hint" aria-hidden="true"><span>C’est ici que tout commence</span><span class="hint-arrow">⤴</span></div>
-      <div class="desktop-caption"><span class="caption-dot"></span> UN MAC À EXPLORER, DIRECTEMENT ICI.</div>
-      <div id="notes-layer" class="notes-layer" aria-label="Sticky notes de démonstration"></div>
-
-      <div class="hero-copy" id="hero-copy">
-        <div class="hero-brand"><img src="assets/icon.png" width="42" height="42" alt=""><span>PKbrain</span></div>
-        <h1>Ce que vous copiez<br>n’est qu’un début.</h1>
-        <p>L’historique garde ce qui passe. Vos notes en font quelque chose.<br>Enfin réunis, dans une seule app pour Mac.</p>
-        <div class="hero-actions"><a class="button light" href="https://github.com/mondary/PKbrain/releases/latest/download/PKbrain.dmg" download><span aria-hidden="true">↓</span> Télécharger pour Mac</a><button type="button" class="button glass" id="start-tour"><span aria-hidden="true">▷</span> Voir le parcours</button><a class="button kofi" href="https://ko-fi.com/pouark" target="_blank" rel="noopener"><span aria-hidden="true">♥</span> Soutenir sur Ko-fi</a></div>
-        <span class="hero-meta">Gratuit · Open source · Natif macOS</span>
+<header class="top">
+  <div class="wrap top-inner">
+    <a class="brand" href="#">
+      <img src="assets/icon.png" alt="PKbrain" width="26" height="26">
+      <span>PKbrain</span>
+    </a>
+    <nav class="top-nav" aria-label="Navigation">
+      <a class="nav-secondary" href="#notes">Notes</a>
+      <a class="nav-secondary" href="#archives">Archives</a>
+      <a class="nav-secondary" href="#install">Installation</a>
+      <a href="https://github.com/mondary/PKbrain" rel="noopener noreferrer">GitHub ↗</a>
+      <div class="lang-switch" role="group" aria-label="Langue / Language">
+        <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
       </div>
+    </nav>
+  </div>
+</header>
 
-      <section id="drawer" class="drawer" aria-labelledby="drawer-title" inert>
-        <div class="drawer-grip" aria-hidden="true"></div>
-        <div class="drawer-toolbar"><div class="drawer-title"><img src="assets/icon.png" alt="" width="23" height="23"><strong id="drawer-title">Votre historique</strong></div><div class="type-filters" role="group" aria-label="Filtrer le tiroir"><button type="button" data-kind="all" aria-pressed="true">Tout</button><button type="button" data-kind="text" aria-pressed="false">Texte</button><button type="button" data-kind="color" aria-pressed="false">Couleurs</button><button type="button" data-kind="url" aria-pressed="false">Liens</button></div><label class="drawer-search"><span aria-hidden="true">⌕</span><input id="drawer-search" type="search" placeholder="Rechercher…" aria-label="Rechercher dans l’historique"></label><button type="button" class="icon-button" id="expand-library" aria-label="Ouvrir la fenêtre complète" title="Fenêtre complète">⤢</button><button type="button" class="icon-button" id="close-drawer" aria-label="Fermer le tiroir">×</button></div>
-        <div class="drawer-items" id="drawer-items" aria-label="Éléments copiés"></div>
-        <div class="drawer-bottom"><span><kbd>←</kbd> <kbd>→</kbd> Parcourir <span class="divider-dot">·</span> <kbd>⌘</kbd><kbd>↵</kbd> Garder en note</span><span>Démo · <span id="drawer-count">7 éléments</span></span></div>
-      </section>
+<main>
+  <div class="hero wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker" data-en="PKbrain · Native macOS app">PKbrain · Application native macOS</span>
+        <h1 data-en="Copy. Find. Keep.">Copiez. Retrouvez. Gardez.</h1>
+        <p class="lead" data-en="PKbrain remembers everything you copy — text, images, links, colors and files. Find an item, paste it back, or turn it into a sticky note. One native app, keyboard first.">
+          PKbrain mémorise tout ce que vous copiez — textes, images, liens, couleurs et fichiers. Retrouvez un élément, recollez-le, ou transformez-le en sticky note. Une seule app native, pensée pour le clavier.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/mondary/PKbrain/releases/latest/download/PKbrain.dmg"
+             data-en="Download for Mac" data-en-aria-label="Download PKbrain for Mac" aria-label="Télécharger PKbrain pour Mac">
+            Télécharger pour Mac
+          </a>
+          <a class="btn btn-kofi" href="https://ko-fi.com/pouark" target="_blank" rel="noopener noreferrer"
+             data-en="Support on Ko-fi">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h14a2 2 0 0 1 2 2v1h1.5A3.5 3.5 0 0 1 24 11.5v2A3.5 3.5 0 0 1 20.5 17H19v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V5Zm16 3v7h1.5a1.5 1.5 0 0 0 1.5-1.5v-2a1.5 1.5 0 0 0-1.5-1.5H19v-2Z"/></svg>
+            Soutenir sur Ko-fi
+          </a>
+        </div>
+        <p class="meta">
+          <span data-en="macOS 13+ · Apple Silicon · free &amp; open source">macOS 13+ · Apple Silicon · gratuit &amp; open source</span>
+          <span class="version-pill" id="version-pill">v2026.11.2</span>
+        </p>
+      </div>
+      <div class="stack" aria-hidden="true">
+        <img class="sn1" src="assets/note-1.png" alt="" width="400" height="360">
+        <img class="sn2" src="assets/note-3.png" alt="" width="400" height="360">
+        <img class="sn3" src="assets/note-2.png" alt="" width="400" height="360">
+      </div>
+    </div>
+  </div>
 
-      <section id="library" class="library" aria-labelledby="library-title" inert>
-        <div class="window-bar"><div class="traffic-lights"><button type="button" class="traffic close" id="close-library" aria-label="Fermer la fenêtre"><span>×</span></button><button type="button" class="traffic minimize" id="minimize-library" aria-label="Réduire au tiroir"><span>−</span></button><button type="button" class="traffic maximize" id="maximize-library" aria-label="Agrandir la fenêtre"><span>+</span></button></div><strong id="library-title">PKClipboard</strong><span class="window-subtitle">Votre mémoire, au même endroit.</span></div>
-        <div class="library-body"><aside class="library-sidebar" aria-label="Filtres de la collection"><button type="button" data-source="all" class="source-button selected" aria-pressed="true"><span class="source-symbol">▦</span> Tout <small id="all-count">7</small></button><button type="button" data-source="notes" class="source-button" aria-pressed="false"><span class="source-symbol">▤</span> Mes notes <small id="notes-count">3</small></button><button type="button" data-source="pinned" class="source-button" aria-pressed="false"><span class="source-symbol">◇</span> Épinglés <small id="pinned-count">1</small></button><p class="sidebar-label">Applications</p><div id="source-buttons"></div><p class="sidebar-label">Votre espace</p><span class="sidebar-foot"><span></span> Tout reste sur votre Mac.</span></aside><div class="library-main"><div class="library-heading"><div><h2 id="collection-title">Tout votre historique</h2><p id="collection-subtitle">Ce que vous avez copié. Ce que vous voulez garder.</p></div><label class="library-search"><span aria-hidden="true">⌕</span><input id="library-search" type="search" placeholder="Rechercher…" aria-label="Rechercher dans la collection"></label></div><div id="library-grid" class="library-grid"></div></div></div>
-        <div class="library-footer"><span id="library-count">7 éléments</span><span>Contenus d’exemple · Playground PKbrain</span><button type="button" id="library-new">＋ Nouvelle note</button></div>
-      </section>
+  <section class="wrap" id="clavier">
+    <div class="sec-head">
+      <h2 data-en="Two tools. One window.">Deux outils. Une seule fenêtre.</h2>
+      <p data-en="Your clipboard history and your sticky notes finally live together — and speak to each other.">
+        Votre historique de presse-papiers et vos sticky notes vivent enfin ensemble — et se parlent.
+      </p>
+    </div>
 
-      <aside class="tour-caption" id="tour-caption" hidden><span id="tour-number">01 / 04</span><div><strong id="tour-title">Copiez une idée.</strong><p id="tour-text">Elle entre dans votre historique.</p></div><button type="button" id="stop-tour" aria-label="Arrêter le parcours">×</button></aside>
-      <p id="demo-status" class="demo-status" role="status" aria-live="polite"></p>
-      <div class="desktop-bottom"><div class="bg-picker" role="group" aria-label="Choisir le fond d’écran"><span>Fond</span><button type="button" data-bg="b" aria-pressed="true" style="background-image:url(assets/wallpaper-b.webp)" title="Dunes claires"></button><button type="button" data-bg="c" aria-pressed="false" style="background-image:url(assets/wallpaper-c.webp)" title="Crépuscule sombre"></button><button type="button" data-bg="d" aria-pressed="false" style="background-image:url(assets/wallpaper-d.webp)" title="Sauge"></button><button type="button" data-bg="e" aria-pressed="false" style="background-image:url(assets/wallpaper-e.webp)" title="Azur"></button><button type="button" data-bg="f" aria-pressed="false" style="background-image:url(assets/wallpaper-f.webp)" title="Cacao nuit"></button><button type="button" data-bg="g" aria-pressed="false" style="background-image:url(assets/wallpaper-g.webp)" title="Violet nuit"></button></div><span class="demo-disclaimer">Démo interactive · données d’exemple</span><button type="button" class="reset-demo" id="reset-demo">↺ Recommencer</button></div>
-      <nav class="dock" aria-label="Explorer PKbrain"><button type="button" data-view="drawer" aria-label="Ouvrir le tiroir presse-papiers"><span class="dock-tooltip">Le tiroir <kbd>⌘ ⇧ V</kbd></span><img src="assets/icon.png" alt="" width="47" height="47"><span class="dock-dot"></span></button><span class="dock-separator"></span><button type="button" data-view="library" aria-label="Ouvrir la collection par application"><span class="dock-tooltip">La collection</span><span class="dock-library" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button><button type="button" data-view="notes" aria-label="Afficher les sticky notes"><span class="dock-tooltip">Les sticky notes</span><span class="dock-notes" aria-hidden="true"><i></i><i></i></span></button><button type="button" data-view="new" aria-label="Créer une sticky note"><span class="dock-tooltip">Nouvelle note</span><span class="dock-new" aria-hidden="true">＋</span></button></nav>
-    </section>
+    <div class="feature">
+      <div>
+        <h3 data-en="The history that gives you back your copies">L'historique qui vous rend vos copies</h3>
+        <p data-en="Search instantly, filter by source app or type, pin what matters. Press Enter to paste the selected item straight back into your last app.">
+          Recherche instantanée, filtres par application source ou par type, épingles pour ce qui compte. Appuyez sur Entrée pour recoller l'élément sélectionné directement dans votre dernière app.
+        </p>
+      </div>
+      <figure class="shot">
+        <img src="assets/library.png" alt="Fenêtre PKClipboard : historique groupé par application" data-en-alt="PKClipboard window: history grouped by app" width="600" height="380" loading="lazy">
+      </figure>
+    </div>
 
-    <section class="concept section" id="concept"><div class="section-label">L’HISTORIQUE ET LES NOTES, ENFIN ENSEMBLE.</div><h2>Une copie peut devenir<br>votre prochaine idée.</h2><p class="section-intro">Un extrait lu trop vite. Un message à retrouver. Une couleur pour plus tard.<br>Ce que vous copiez mérite parfois mieux que le prochain ⌘V.</p><div class="journey">
-      <article><span class="journey-number">01 <i></i></span><div class="journey-visual copy-visual"><span class="little-app"><img src="assets/app-safari.png" alt="Safari" width="23" height="23">Une phrase repérée</span><p><mark>Moins de friction.<br>Plus de place pour les idées.</mark></p><kbd>⌘ C</kbd></div><h3>Tout commence par une copie.</h3><p>PKbrain retient textes, images, liens, fichiers et couleurs, avec leur application d’origine.</p></article>
-      <article><span class="journey-number">02 <i></i></span><div class="journey-visual keep-visual"><img src="assets/app-safari.png" alt="" width="23" height="23"><p>Moins de friction.<br>Plus de place pour les idées.</p><button type="button" class="mini-convert" id="concept-convert">▤ &nbsp; Garder en note <span>↗</span></button></div><h3>Gardez ce qui vous parle.</h3><p>Une carte d’historique devient une sticky note. Vous emportez le contenu, pas juste son souvenir.</p></article>
-      <article><span class="journey-number">03 <i></i></span><div class="journey-visual thought-visual"><strong>Une idée à garder</strong><p>Moins de friction.<br>Plus de place pour les idées.</p><p class="handwritten">↳ À reprendre pour<br>&nbsp;&nbsp;&nbsp; notre prochain projet.</p></div><h3>Ajoutez votre propre regard.</h3><p>Complétez, organisez et calculez dans la note. L’historique devient votre matière à penser.</p></article>
-    </div></section>
+    <div class="feature flip" id="notes">
+      <div>
+        <h3 data-en="Every copy can become a note">Chaque copie peut devenir une note</h3>
+        <p data-en="Hit ⌘↵ on an item: it becomes a sticky note, ready to keep building on. Inline calculations, inline icons, pastel themes — and every note is a plain, readable Markdown file.">
+          ⌘↵ sur un élément : il devient une sticky note, prête à continuer de grandir. Calcul inline, icônes inline, thèmes pastel — et chaque note est un fichier Markdown simple et lisible.
+        </p>
+      </div>
+      <figure class="shot">
+        <img src="assets/note-1.png" alt="Sticky note PKbrain avec calcul inline et icônes" data-en-alt="PKbrain sticky note with inline calculation and icons" width="400" height="360" loading="lazy">
+      </figure>
+    </div>
 
-    <section class="native-section section" id="native"><div class="native-heading"><div class="section-label">L’APP EN VRAI</div><h2>Petit tiroir.<br>Grande mémoire.</h2><p class="section-intro">Les vues natives de PKbrain, capturées spécialement pour cette présentation.<br>Un espace propre. Juste l’app et vos idées.</p></div><div class="capture-tabs" role="tablist" aria-label="Captures natives"><button type="button" role="tab" id="tab-drawer" data-capture="drawer" aria-controls="capture-panel" aria-selected="true">Le tiroir</button><button type="button" role="tab" id="tab-library" data-capture="library" aria-controls="capture-panel" aria-selected="false" tabindex="-1">Par application</button><button type="button" role="tab" id="tab-notes" data-capture="notes" aria-controls="capture-panel" aria-selected="false" tabindex="-1">Les sticky notes</button></div>
-      <div class="capture-desktop" id="capture-panel" role="tabpanel" aria-labelledby="tab-drawer"><div class="capture-menubar" aria-hidden="true"><span> &nbsp; PKbrain</span><span>09:41</span></div><figure id="native-drawer" class="native-view"><img src="assets/drawer.png" width="2880" height="840" alt="Nouvelle capture du tiroir natif PKbrain, avec des cartes Safari, Figma, Mail et Visual Studio Code" loading="lazy"></figure><figure id="native-library" class="native-view" hidden><img src="assets/library.png" width="2400" height="1520" alt="Nouvelle capture de PKClipboard : sidebar par application et collection réunissant historique et notes" loading="lazy"></figure><div id="native-notes" class="native-view capture-notes" hidden><img src="assets/note-1.png" width="800" height="720" alt="Sticky note native jaune : une idée à garder" loading="lazy"><img src="assets/note-2.png" width="800" height="720" alt="Sticky note native bleue avec calculs du budget du projet" loading="lazy"><img src="assets/note-3.png" width="800" height="720" alt="Sticky note native verte : la liste pour demain" loading="lazy"></div><span class="capture-signature">PKbrain · SwiftUI / AppKit</span></div>
-      <div class="capture-caption"><p id="capture-description">⌘⇧V. Votre historique descend depuis la barre des menus. Retrouvez, épinglez, collez ou convertissez en note.</p><button type="button" class="inline-link" id="try-capture">Essayer dans le playground <span>↗</span></button></div>
-    </section>
+    <div class="feature" id="archives">
+      <div>
+        <span class="new-badge" data-en="New in 2026.11">Nouveau dans 2026.11</span>
+        <h3 data-en="Archive, never lose">Archivez, sans jamais perdre</h3>
+        <p data-en="An archived note leaves the desktop without being deleted. It no longer reopens at launch or with “Show all notes”, yet it stays safe in the Archives view — one click away from coming back.">
+          Une note archivée quitte le bureau sans être supprimée. Elle ne se rouvre plus au lancement ni avec « Afficher toutes les notes », mais reste au chaud dans la vue Archives — à un clic de revenir.
+        </p>
+      </div>
+      <figure class="shot">
+        <img src="assets/archives.png" alt="Vue Notes archivées dans PKbrain" data-en-alt="Archived notes view in PKbrain" width="560" height="620" loading="lazy">
+      </figure>
+    </div>
+  </section>
 
-    <section class="notes-section section" id="sticky-notes"><div class="notes-story"><div class="section-label">DES NOTES QUI ONT UNE VRAIE PLACE</div><h2>Pas un onglet de plus.<br>Un coin de votre bureau.</h2><p>Des couleurs douces. Une barre d’outils discrète. Vos mots, tout simplement. Les sticky notes restent des fenêtres natives, aussi agréables à écrire qu’à garder sous les yeux.</p><ul><li>Calcul inline, variables et conversions d’unités</li><li>Couleurs, contraste automatique et polices</li><li>Listes, monospace, zoom et historique de versions</li><li>Plus de 300 icônes techniques automatiques</li></ul><button type="button" class="inline-link" id="try-notes">Écrivez votre première note <span>↗</span></button></div><div class="native-note-stack"><img src="assets/note-3.png" width="800" height="720" loading="lazy" alt="La sticky note verte Pour demain"><img src="assets/note-2.png" width="800" height="720" loading="lazy" alt="La sticky note bleue Le budget du projet"></div></section>
+  <section class="wrap" id="details">
+    <div class="sec-head">
+      <h2 data-en="The details that matter">Les détails qui comptent</h2>
+      <p data-en="Everything you reach for, without leaving the keyboard.">Tout ce qu'il vous faut, sans quitter le clavier.</p>
+    </div>
+    <div class="facts">
+      <div class="fact">
+        <h4 data-en="Command palette">Palette de commandes</h4>
+        <p data-en="⌘K to search your notes, jump to one, or create a new one.">⌘K pour chercher vos notes, en ouvrir une, ou en créer une nouvelle.</p>
+      </div>
+      <div class="fact">
+        <h4 data-en="Global shortcuts">Raccourcis globaux</h4>
+        <p data-en="New note, last note, show all notes — from any app, on any space.">Nouvelle note, dernière note, afficher toutes les notes — depuis n'importe quelle app.</p>
+      </div>
+      <div class="fact">
+        <h4 data-en="Inline intelligence">Intelligence inline</h4>
+        <p data-en="Calculations, unit conversions, 300+ inline brand icons.">Calculs, conversions d'unités, plus de 300 icônes inline.</p>
+      </div>
+      <div class="fact">
+        <h4 data-en="Pastel themes">Thèmes pastel</h4>
+        <p data-en="A dozen colors, automatic text contrast, zoom and monospace.">Une douzaine de couleurs, contraste de texte automatique, zoom et monospace.</p>
+      </div>
+      <div class="fact">
+        <h4 data-en="Plain Markdown">Markdown lisible</h4>
+        <p data-en="One note, one .md file in ~/Documents/PKbrain — yours forever.">Une note, un fichier .md dans ~/Documents/PKbrain — à vous pour toujours.</p>
+      </div>
+      <div class="fact">
+        <h4 data-en="Built-in updates">Mises à jour intégrées</h4>
+        <p data-en="Stable or Dev channel, signed updates, no store account needed.">Canal Stable ou Dev, mises à jour signées, sans compte sur un store.</p>
+      </div>
+    </div>
+  </section>
 
-    <section class="details section" id="details"><h2>Simple en surface.<br>Soigné dans les détails.</h2><div class="detail-columns"><div><h3>Pour garder le rythme.</h3><details open><summary>Clavier d’abord <span>+</span></summary><p>Palette ⌘K, recherche titre et contenu, raccourcis globaux configurables, création et rappel de notes. Navigation complète dans l’historique et collage direct dans la dernière app active.</p></details><details><summary>Un historique organisé <span>+</span></summary><p>Filtres par application, type et tags ; favoris, épingles, verrouillage et corbeille. Aperçus enrichis des URL, images sans recadrage, Quick Look et couleurs Hex/RGB/HSL/OKLCH.</p></details><details><summary>Le bon format, au bon endroit <span>+</span></summary><p>Un tiroir sur l’un des quatre bords ou la fenêtre complète PKClipboard : grille paginée, raccourcis ⌘1 à ⌘9, aperçus agrandis et réglages intégrés.</p></details></div><div><h3>Pour garder la main.</h3><details open><summary>Vos données, vos fichiers <span>+</span></summary><p>Une note par fichier Markdown, un historique de versions, l’import/export et des sauvegardes automatiques horodatées dans le dossier de votre choix.</p></details><details><summary>Natif jusqu’au bout <span>+</span></summary><p>SwiftUI et AppKit, barre des menus, restauration du focus et des notes ouvertes. Liens pkbrain:// pour Spotlight, Raycast et Alfred. Capture OCR avec reconnaissance du texte.</p></details><details><summary>À votre façon <span>+</span></summary><p>Interface traduite en français, anglais, espagnol, allemand et italien. Couleurs des notes, raccourcis, position du tiroir et options de calcul se règlent depuis l’app.</p></details></div></div></section>
+  <section class="install" id="install">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 data-en="Install in one minute">Installez en une minute</h2>
+        <p data-en="Pick your channel — DMG, Homebrew or curl. Same signed build.">Choisissez votre canal — DMG, Homebrew ou curl. La même build signée.</p>
+      </div>
+      <div class="install-grid">
+        <div class="install-card">
+          <h4 data-en="Direct download">Téléchargement direct</h4>
+          <p data-en="Open the DMG, drag PKbrain to Applications. Done.">Ouvrez le DMG, glissez PKbrain dans Applications. C'est prêt.</p>
+          <a class="btn btn-primary" href="https://github.com/mondary/PKbrain/releases/latest/download/PKbrain.dmg" data-en="Download the DMG">Télécharger le DMG</a>
+        </div>
+        <div class="install-card">
+          <h4>Homebrew</h4>
+          <p data-en="Install and update through the mondary tap.">Installez et mettez à jour via le tap mondary.</p>
+          <div class="cmd"><code id="cmd-brew">brew install --cask mondary/tap/pkbrain</code><button class="copy-btn" type="button" data-copy="cmd-brew" data-en="Copy">Copier</button></div>
+          <div class="cmd"><code id="cmd-brew-up">brew upgrade --cask pkbrain</code><button class="copy-btn" type="button" data-copy="cmd-brew-up" data-en="Copy">Copier</button></div>
+        </div>
+        <div class="install-card">
+          <h4>Curl</h4>
+          <p data-en="The same DMG, straight from the latest release.">Le même DMG, directement depuis la dernière release.</p>
+          <div class="cmd"><code id="cmd-curl">curl -LO https://github.com/mondary/PKbrain/releases/latest/download/PKbrain.dmg</code><button class="copy-btn" type="button" data-copy="cmd-curl" data-en="Copy">Copier</button></div>
+        </div>
+      </div>
+      <p class="install-note" data-en="Requires macOS 13 or later · Apple Silicon build (arm64) · MIT licensed">
+        Nécessite macOS 13 ou plus récent · Build Apple Silicon (arm64) · Licence MIT
+      </p>
+    </div>
+  </section>
+</main>
 
-    <section class="download section"><img src="assets/icon.png" width="80" height="80" alt="PKbrain"><h2>Faites quelque chose<br>de vos bonnes idées.</h2><p>Un presse-papiers. Des sticky notes. Une seule app.</p><div class="download-actions"><a class="button dark" href="https://github.com/mondary/PKbrain/releases/latest/download/PKbrain.dmg" download>↓ &nbsp; Télécharger pour Mac (.dmg)</a><a class="button kofi" href="https://ko-fi.com/pouark" target="_blank" rel="noopener"><span aria-hidden="true">♥</span> Soutenir sur Ko-fi</a></div><span class="download-meta">Gratuit · Open source · macOS 13+</span><button type="button" class="brew copy-command" id="copy-brew" data-command="brew install --cask mondary/tap/pkbrain"><code>brew install --cask mondary/tap/pkbrain</code><span>Copier</span></button><button type="button" class="brew copy-command" id="copy-curl" data-command="curl -LO https://github.com/mondary/PKbrain/releases/latest/download/PKbrain.dmg"><code>curl -LO https://github.com/mondary/PKbrain/releases/latest/download/PKbrain.dmg</code><span>Copier</span></button><span id="brew-status" role="status"></span></section>
-  </main>
-  <footer><a class="footer-brand" href="#desktop"><img src="assets/icon.png" width="25" height="25" alt="">PKbrain</a><span>Un peu de mémoire. Beaucoup d’idées.</span><nav aria-label="Liens du projet"><a href="https://github.com/mondary/PKbrain">GitHub ↗</a><a href="https://github.com/mondary/PKbrain/blob/main/README.md">Documentation ↗</a><a href="https://ko-fi.com/pouark" target="_blank" rel="noopener">Soutenir sur Ko-fi ♥ ↗</a></nav></footer>
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-links">
+        <a href="https://github.com/mondary/PKbrain" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/mondary/PKbrain/blob/main/CHANGELOG.md" rel="noopener noreferrer" data-en="Changelog">Changelog</a>
+        <a href="https://github.com/mondary/PKbrain/issues" rel="noopener noreferrer">Issues</a>
+        <a class="kofi-link" href="https://ko-fi.com/pouark" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h14a2 2 0 0 1 2 2v1h1.5A3.5 3.5 0 0 1 24 11.5v2A3.5 3.5 0 0 1 20.5 17H19v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V5Zm16 3v7h1.5a1.5 1.5 0 0 0 1.5-1.5v-2a1.5 1.5 0 0 0-1.5-1.5H19v-2Z"/></svg>
+          <span data-en="Support on Ko-fi">Soutenir sur Ko-fi</span>
+        </a>
+      </div>
+      <div>© 2026 Mondary</div>
+    </div>
+    <p class="fine" data-en="PKbrain is an independent app. Inspired by Jorts (upstream open-source project); not affiliated with its authors. Pastel notes rendered from the real app with synthetic data.">
+      PKbrain est une application indépendante. Inspirée de Jorts (projet open source amont), sans affiliation avec ses auteurs. Les notes pastel sont rendues depuis l'app réelle avec des données fictives.
+    </p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  var supported = ['fr', 'en'];
+  var current = window.__PKLANG || 'fr';
+
+  function apply(lang) {
+    current = lang;
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-en]').forEach(function (el) {
+      if (!el.hasAttribute('data-fr-original')) {
+        el.setAttribute('data-fr-original', el.innerHTML);
+      }
+      el.innerHTML = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-fr-original');
+    });
+    document.querySelectorAll('[data-en-alt]').forEach(function (el) {
+      if (!el.hasAttribute('data-fr-alt')) { el.setAttribute('data-fr-alt', el.getAttribute('alt') || ''); }
+      el.setAttribute('alt', lang === 'en' ? el.getAttribute('data-en-alt') : el.getAttribute('data-fr-alt'));
+    });
+    document.querySelectorAll('[data-en-aria-label]').forEach(function (el) {
+      if (!el.hasAttribute('data-fr-aria-label')) { el.setAttribute('data-fr-aria-label', el.getAttribute('aria-label') || ''); }
+      el.setAttribute('aria-label', lang === 'en' ? el.getAttribute('data-en-aria-label') : el.getAttribute('data-fr-aria-label'));
+    });
+    document.querySelectorAll('.lang-switch button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang));
+    });
+    var fr = {
+      title: 'PKbrain — Copiez. Retrouvez. Gardez.',
+      desc: 'PKbrain mémorise tout ce que vous copiez sur votre Mac et transforme vos copies en sticky notes. Presse-papiers, notes, calcul inline — une seule app native macOS.'
+    };
+    var en = {
+      title: 'PKbrain — Copy. Find. Keep.',
+      desc: 'PKbrain remembers everything you copy on your Mac and turns copies into sticky notes. Clipboard, notes and inline calculations — one native macOS app.'
+    };
+    var m = lang === 'en' ? en : fr;
+    document.title = m.title;
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta) { meta.setAttribute('content', m.desc); }
+    try { localStorage.setItem('pkbrain-lang', lang); } catch (e) {}
+  }
+
+  document.querySelectorAll('.lang-switch button').forEach(function (b) {
+    b.addEventListener('click', function () { apply(b.getAttribute('data-lang')); });
+  });
+
+  if (current !== 'fr') { apply(current); }
+  else { apply('fr'); }
+  document.documentElement.classList.remove('i18n-pending');
+
+  // Copy buttons
+  var toast = document.getElementById('toast');
+  function flash(message) {
+    toast.textContent = message;
+    toast.classList.add('on');
+    setTimeout(function () { toast.classList.remove('on'); }, 1400);
+  }
+  document.querySelectorAll('.copy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var el = document.getElementById(btn.getAttribute('data-copy'));
+      if (!el) { return; }
+      var text = el.textContent.trim();
+      function done() { flash(current === 'en' ? 'Copied' : 'Copié'); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () { fallback(); });
+      } else { fallback(); }
+      function fallback() {
+        var r = document.createRange(); r.selectNodeContents(el);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        s.removeAllRanges();
+      }
+    });
+  });
+
+  // Version badge from the GitHub API (the download links always target /latest/).
+  var pill = document.getElementById('version-pill');
+  fetch('https://api.github.com/repos/mondary/PKbrain/releases/latest', { headers: { 'Accept': 'application/vnd.github+json' } })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (data) {
+      if (data && data.tag_name && pill) { pill.textContent = data.tag_name; }
+    })
+    .catch(function () {});
+})();
+</script>
 </body>
 </html>

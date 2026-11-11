@@ -16,7 +16,41 @@ struct NotesListView: View {
     let onRestoreTrashed: (UUID) -> Void
     let onDeleteTrashedPermanently: (UUID) -> Void
 
-    @State private var selection: ListSelection = .notes
+    @State private var selection: ListSelection
+
+    init(
+        documents: [NoteDocument],
+        archivedNotes: [NoteData],
+        trash: [TrashedNote],
+        onCreateNote: @escaping () -> Void,
+        onShowPreferences: @escaping () -> Void,
+        onOpenFinder: @escaping () -> Void,
+        onNoteSelected: @escaping (UUID) -> Void,
+        onArchiveNote: @escaping (UUID) -> Void,
+        onOpenArchived: @escaping (UUID) -> Void,
+        onRestoreArchived: @escaping (UUID) -> Void,
+        onMoveArchivedToTrash: @escaping (UUID) -> Void,
+        onOpenTrashed: @escaping (UUID) -> Void,
+        onRestoreTrashed: @escaping (UUID) -> Void,
+        onDeleteTrashedPermanently: @escaping (UUID) -> Void,
+        initialSelection: ListSelection = .notes
+    ) {
+        self.documents = documents
+        self.archivedNotes = archivedNotes
+        self.trash = trash
+        self.onCreateNote = onCreateNote
+        self.onShowPreferences = onShowPreferences
+        self.onOpenFinder = onOpenFinder
+        self.onNoteSelected = onNoteSelected
+        self.onArchiveNote = onArchiveNote
+        self.onOpenArchived = onOpenArchived
+        self.onRestoreArchived = onRestoreArchived
+        self.onMoveArchivedToTrash = onMoveArchivedToTrash
+        self.onOpenTrashed = onOpenTrashed
+        self.onRestoreTrashed = onRestoreTrashed
+        self.onDeleteTrashedPermanently = onDeleteTrashedPermanently
+        _selection = State(initialValue: initialSelection)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -195,7 +229,7 @@ struct NotesListView: View {
     }
 }
 
-private enum ListSelection: Hashable {
+enum ListSelection: Hashable {
     case notes
     case archive
     case trash

@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.11.2** — [Changelog](CHANGELOG.md)
+version **2026.11.3** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
@@ -199,7 +199,7 @@ version **2026.11.2** — [Changelog](CHANGELOG.md)
 
 ## 📥 Installation
 
-Le [site de présentation](store/website/) présente l'app : un bureau Mac interactif (tiroir presse-papiers, collection par application, sticky notes) avec des captures natives régénérables — voir `store/README.md`. Le dossier `store/website/` est 100 % autonome : c'est tout son contenu que l'on héberge. Le matériel de listing (laius, bannières, captures) vit dans `store/app-store/`. Aperçu local : `python3 -m http.server 8000 --directory store/website`, puis ouvrir `http://localhost:8000/`.
+Le [site de présentation](store/website/) est une landing bilingue FR/EN (détection automatique de la langue, bascule manuelle mémorisée) qui présente l'app avec ses captures natives régénérables — voir `store/README.md`. Le dossier `store/website/` est 100 % autonome : c'est tout son contenu que l'on héberge. Le matériel de listing (laius, bannières, captures) vit dans `store/app-store/`. Aperçu local : `python3 -m http.server 8000 --directory store/website`, puis ouvrir `http://localhost:8000/`.
 
 ```sh
 brew install --cask mondary/tap/pkbrain
