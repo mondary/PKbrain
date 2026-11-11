@@ -2,11 +2,16 @@ import SwiftUI
 
 struct NotesListView: View {
     let documents: [NoteDocument]
+    let archivedNotes: [NoteData]
     let trash: [TrashedNote]
     let onCreateNote: () -> Void
     let onShowPreferences: () -> Void
     let onOpenFinder: () -> Void
     let onNoteSelected: (UUID) -> Void
+    let onArchiveNote: (UUID) -> Void
+    let onOpenArchived: (UUID) -> Void
+    let onRestoreArchived: (UUID) -> Void
+    let onMoveArchivedToTrash: (UUID) -> Void
     let onOpenTrashed: (UUID) -> Void
     let onRestoreTrashed: (UUID) -> Void
     let onDeleteTrashedPermanently: (UUID) -> Void
@@ -19,6 +24,8 @@ struct NotesListView: View {
 
             if selection == .notes && documents.isEmpty {
                 emptyState
+            } else if selection == .archive && archivedNotes.isEmpty {
+                archiveEmptyState
             } else if selection == .trash && trash.isEmpty {
                 trashEmptyState
             } else {
@@ -32,7 +39,7 @@ struct NotesListView: View {
     private var header: some View {
         VStack(spacing: 0) {
             HStack {
-                Text(selection == .trash ? localizedString("trash_title") : localizedString("all_my_notes"))
+                Text(headerTitle)
                     .font(.title2.weight(.semibold))
 
                 Spacer()
@@ -59,7 +66,17 @@ struct NotesListView: View {
                 .help(localizedString("open_notes_folder"))
 
                 Button {
-                    selection = (selection == .trash) ? .notes : .trash
+                    selection = selection == .archive ? .notes : .archive
+                } label: {
+                    Image(systemName: selection == .archive ? "archivebox.fill" : "archivebox")
+                        .frame(width: 28, height: 28)
+                }
+                .buttonStyle(.plain)
+                .help(localizedString("show_archived_notes"))
+                .accessibilityLabel(localizedString("show_archived_notes"))
+
+                Button {
+                    selection = selection == .trash ? .notes : .trash
                 } label: {
                     Image(systemName: selection == .trash ? "arrow.uturn.backward.circle.fill" : "arrow.uturn.backward.circle")
                         .frame(width: 28, height: 28)
@@ -71,6 +88,14 @@ struct NotesListView: View {
             .padding(.vertical, 12)
         }
         .background(Color(NSColor.controlBackgroundColor))
+    }
+
+    private var headerTitle: String {
+        switch selection {
+        case .notes: localizedString("all_my_notes")
+        case .archive: localizedString("archived_notes")
+        case .trash: localizedString("trash_title")
+        }
     }
 
     private var emptyState: some View {
@@ -103,6 +128,19 @@ struct NotesListView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    private var archiveEmptyState: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "archivebox")
+                .font(.system(size: 48))
+                .foregroundColor(.secondary)
+
+            Text(localizedString("no_archived_notes"))
+                .font(.title3)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     private var list: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
@@ -112,6 +150,27 @@ struct NotesListView: View {
                         NoteRow(document: document)
                             .onTapGesture {
                                 onNoteSelected(document.id)
+                            }
+                            .contextMenu {
+                                Button(localizedString("archive_note")) {
+                                    onArchiveNote(document.id)
+                                }
+                            }
+                        Divider()
+                    }
+                case .archive:
+                    ForEach(archivedNotes) { note in
+                        ArchivedNoteRow(note: note)
+                            .onTapGesture {
+                                onOpenArchived(note.id)
+                            }
+                            .contextMenu {
+                                Button(localizedString("restore_from_archive")) {
+                                    onRestoreArchived(note.id)
+                                }
+                                Button(localizedString("move_to_trash"), role: .destructive) {
+                                    onMoveArchivedToTrash(note.id)
+                                }
                             }
                         Divider()
                     }
@@ -138,7 +197,39 @@ struct NotesListView: View {
 
 private enum ListSelection: Hashable {
     case notes
+    case archive
     case trash
+}
+
+struct ArchivedNoteRow: View {
+    let note: NoteData
+
+    var body: some View {
+        HStack(spacing: 12) {
+            note.theme.backgroundColor.frame(width: 4).cornerRadius(2)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(note.title.isEmpty ? localizedString("untitled") : note.title)
+                    .font(.headline)
+                    .foregroundColor(note.theme.foregroundColor)
+
+                Text(note.content.isEmpty ? localizedString("no_content") : String(note.content.prefix(100)))
+                    .font(.body)
+                    .foregroundColor(note.theme.foregroundColor.opacity(0.7))
+                    .lineLimit(2)
+            }
+
+            Spacer()
+
+            Image(systemName: "archivebox")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(note.theme.backgroundColor.opacity(0.35))
+        .contentShape(Rectangle())
+    }
 }
 
 struct NoteRow: View {

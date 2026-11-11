@@ -7,6 +7,7 @@ final class NotesListWindowController: NSWindowController, NSWindowDelegate {
     private let onNoteSelected: (UUID) -> Void
     private let onShowPreferences: () -> Void
     private var trashedPreviewControllers: [UUID: NoteWindowController] = [:]
+    private var archivedPreviewControllers: [UUID: NoteWindowController] = [:]
     private var hostingController: NSHostingController<NotesListView>?
 
     init(
@@ -21,11 +22,16 @@ final class NotesListWindowController: NSWindowController, NSWindowDelegate {
         self.onShowPreferences = onShowPreferences
         self.hostingController = NSHostingController(rootView: NotesListView(
             documents: manager.documents,
+            archivedNotes: manager.archivedNotes,
             trash: manager.trashedNotes,
             onCreateNote: { manager.createNote() },
             onShowPreferences: onShowPreferences,
             onOpenFinder: { NSWorkspace.shared.activateFileViewerSelecting([manager.storageURL]) },
             onNoteSelected: onNoteSelected,
+            onArchiveNote: { _ in },
+            onOpenArchived: { _ in },
+            onRestoreArchived: { _ in },
+            onMoveArchivedToTrash: { _ in },
             onOpenTrashed: { _ in },
             onRestoreTrashed: { _ in },
             onDeleteTrashedPermanently: { _ in }
@@ -60,6 +66,7 @@ final class NotesListWindowController: NSWindowController, NSWindowDelegate {
     private func updateListView() {
         hostingController?.rootView = NotesListView(
             documents: manager.documents,
+            archivedNotes: manager.archivedNotes,
             trash: manager.trashedNotes,
             onCreateNote: { [weak self] in
                 self?.manager.createNote()
@@ -76,6 +83,21 @@ final class NotesListWindowController: NSWindowController, NSWindowDelegate {
                     self?.close()
                 }
             },
+            onArchiveNote: { [weak self] noteID in
+                self?.manager.archiveNote(documentID: noteID)
+                self?.updateListView()
+            },
+            onOpenArchived: { [weak self] in self?.openArchivedNote($0) },
+            onRestoreArchived: { [weak self] archivedID in
+                self?.manager.restoreFromArchive(archivedID)
+                self?.closeArchivedPreview(archivedID)
+                self?.updateListView()
+            },
+            onMoveArchivedToTrash: { [weak self] archivedID in
+                self?.manager.moveArchivedToTrash(archivedID)
+                self?.closeArchivedPreview(archivedID)
+                self?.updateListView()
+            },
             onOpenTrashed: { [weak self] in self?.openTrashedNote($0) },
             onRestoreTrashed: { [weak self] trashedID in
                 self?.manager.restoreFromTrash(trashedID)
@@ -90,6 +112,51 @@ final class NotesListWindowController: NSWindowController, NSWindowDelegate {
                 self?.updateListView()
             }
         )
+    }
+
+    private func closeArchivedPreview(_ archivedID: UUID) {
+        archivedPreviewControllers[archivedID]?.close()
+        archivedPreviewControllers.removeValue(forKey: archivedID)
+    }
+
+    private func openArchivedNote(_ archivedID: UUID) {
+        if let existing = archivedPreviewControllers[archivedID] {
+            existing.showWindow(nil)
+            existing.window?.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        guard let note = manager.archivedNote(id: archivedID) else { return }
+
+        let document = NoteDocument(data: note)
+        let controller = NoteWindowController(
+            document: document,
+            settings: settings,
+            onNew: {},
+            onDelete: {},
+            onArchive: {},
+            onSave: {},
+            onShowEmoji: {},
+            onShowList: {},
+            mode: .archive,
+            onRestoreFromArchive: { [weak self] in
+                self?.manager.restoreFromArchive(archivedID)
+                self?.closeArchivedPreview(archivedID)
+                self?.updateListView()
+            },
+            onMoveArchivedToTrash: { [weak self] in
+                self?.manager.moveArchivedToTrash(archivedID)
+                self?.closeArchivedPreview(archivedID)
+                self?.updateListView()
+            },
+            onDocumentChanged: {}
+        )
+
+        archivedPreviewControllers[archivedID] = controller
+        controller.showWindow(nil)
+        controller.window?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     private func openTrashedNote(_ trashedID: UUID) {

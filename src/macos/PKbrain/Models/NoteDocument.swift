@@ -83,6 +83,8 @@ final class NoteDocument: ObservableObject, Identifiable {
         }
     }
 
+    @Published var isArchived: Bool
+
     @Published var isFocused = true
     @Published var listToggleRequestToken = 0
     @Published var versions: [NoteVersion]
@@ -107,6 +109,7 @@ final class NoteDocument: ObservableObject, Identifiable {
         position = data.x != nil && data.y != nil ? CGPoint(x: data.x!, y: data.y!) : nil
         versions = data.versions
         pinned = data.pinned
+        isArchived = data.isArchived
         updatedAt = data.updatedAt
     }
 
@@ -127,7 +130,7 @@ final class NoteDocument: ObservableObject, Identifiable {
     }
 
     func package() -> NoteData {
-        NoteData(
+        var data = NoteData(
             title: title,
             theme: theme,
             content: content,
@@ -137,12 +140,14 @@ final class NoteDocument: ObservableObject, Identifiable {
             width: Int(size.width.rounded()),
             height: Int(size.height.rounded()),
             x: position.map { Double($0.x) },
-            y: position.map { Double($0.y) }
-            ,
+            y: position.map { Double($0.y) },
             versions: versions,
             pinned: pinned,
+            isArchived: isArchived,
             updatedAt: updatedAt
         )
+        data.id = id
+        return data
     }
 
     func updateFrame(_ frame: CGRect) {

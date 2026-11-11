@@ -5,6 +5,15 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.1] - 2026-11-11
+
+### Added
+- Archivage des sticky notes : bouton « Archiver » dans la barre d'action d'une note et clic droit sur une carte de la fenêtre Toutes mes notes. Une note archivée quitte le bureau sans être supprimée : elle ne se rouvre ni au lancement ni via « Afficher toutes les notes », et reste consultable dans la nouvelle vue Archives (lecture seule) avec restauration en un clic ou mise à la corbeille.
+- Chaînes d'archivage localisées FR/EN/IT/DE/ES.
+
+### Fixed
+- Build local cassé par le SDK par défaut des CommandLineTools (27.x, plugin des macros SwiftUI absent du toolchain) : `scripts/build_macos.sh` et `scripts/restart_pkbrain.sh` retombent automatiquement sur le SDK 26.x présent quand aucun Xcode n'est sélectionné.
+
 ## [2026.10.7] - 2026-10-23
 
 ### Added

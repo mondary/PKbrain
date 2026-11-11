@@ -185,6 +185,9 @@ final class NoteStorage {
             if let deletedAt = frontMatter["deletedAt"] {
                 extra["deletedAt"] = deletedAt
             }
+            if parseBool(frontMatter["archived"]) == true {
+                extra["archived"] = "true"
+            }
             let text = serialize(note: note, extraFrontMatter: extra)
             try text.write(to: url, atomically: true, encoding: .utf8)
         }
@@ -382,6 +385,7 @@ final class NoteStorage {
         existing.x = incoming.x ?? existing.x
         existing.y = incoming.y ?? existing.y
         existing.macFrameVersion = incoming.macFrameVersion
+        existing.isArchived = incoming.isArchived
         return existing
     }
 
@@ -443,6 +447,7 @@ final class NoteStorage {
             "height": String(note.height),
             "macFrameVersion": String(note.macFrameVersion)
         ]
+        if note.isArchived { metadata["archived"] = "true" }
         if let x = note.x { metadata["x"] = String(x) }
         if let y = note.y { metadata["y"] = String(y) }
         for (k, v) in extraFrontMatter {
@@ -517,7 +522,7 @@ final class NoteStorage {
     private func serializeTrailingMetadata(_ metadata: [String: String]) -> String {
         let preferredOrder = [
             "id", "title", "theme", "monospace", "fontFamily", "zoom",
-            "width", "height", "x", "y", "macFrameVersion", "deletedAt"
+            "width", "height", "x", "y", "macFrameVersion", "archived", "deletedAt"
         ]
 
         var lines: [String] = ["<!-- JORTS_META"]
@@ -552,7 +557,8 @@ final class NoteStorage {
             x: Double(frontMatter["x"] ?? ""),
             y: Double(frontMatter["y"] ?? ""),
             macFrameVersion: Int(frontMatter["macFrameVersion"] ?? "") ?? NoteData.currentMacFrameVersion,
-            versions: [] // versions stay in JSON for now
+            versions: [], // versions stay in JSON for now
+            isArchived: parseBool(frontMatter["archived"]) ?? false
         )
         if let idString = frontMatter["id"], let id = UUID(uuidString: idString) {
             note.id = id

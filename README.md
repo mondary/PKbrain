@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.10.7** — [Changelog](CHANGELOG.md)
+version **2026.11.1** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
@@ -45,6 +45,7 @@ version **2026.10.7** — [Changelog](CHANGELOG.md)
   - effets de frappe
 - Fenêtre liste des notes (notes actives + corbeille).
 - Restauration des notes depuis corbeille.
+- Archivage des notes : une note archivée quitte le bureau sans être supprimée — elle ne se rouvre plus au lancement ni via « Afficher toutes les notes », et reste consultable/restaurable depuis la vue Archives de la fenêtre Toutes mes notes.
 - Gestion couleurs/thèmes:
   - sélecteur couleur
   - contraste texte auto

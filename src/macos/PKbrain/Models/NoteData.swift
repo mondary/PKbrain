@@ -23,6 +23,7 @@ struct NoteData: Codable, Identifiable {
     var versions: [NoteVersion]
     var pinned: Bool
     var isOpen: Bool
+    var isArchived: Bool
     var updatedAt: Date?
 
     enum CodingKeys: String, CodingKey {
@@ -41,6 +42,7 @@ struct NoteData: Codable, Identifiable {
         case versions
         case pinned
         case isOpen
+        case isArchived
         case updatedAt
     }
 
@@ -59,6 +61,7 @@ struct NoteData: Codable, Identifiable {
         versions: [NoteVersion] = [],
         pinned: Bool = false,
         isOpen: Bool = true,
+        isArchived: Bool = false,
         updatedAt: Date? = nil
     ) {
         self.title = title
@@ -75,6 +78,7 @@ struct NoteData: Codable, Identifiable {
         self.versions = versions
         self.pinned = pinned
         self.isOpen = isOpen
+        self.isArchived = isArchived
         self.updatedAt = updatedAt
     }
 
@@ -95,6 +99,7 @@ struct NoteData: Codable, Identifiable {
         versions = try container.decodeIfPresent([NoteVersion].self, forKey: .versions) ?? []
         pinned = try container.decodeIfPresent(Bool.self, forKey: .pinned) ?? false
         isOpen = try container.decodeIfPresent(Bool.self, forKey: .isOpen) ?? true
+        isArchived = try container.decodeIfPresent(Bool.self, forKey: .isArchived) ?? false
         updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
 
         if macFrameVersion == 0 && decodedWidth <= 260 && decodedHeight <= 300 {
@@ -131,6 +136,9 @@ struct NoteData: Codable, Identifiable {
         }
         if !isOpen {
             try container.encode(isOpen, forKey: .isOpen)
+        }
+        if isArchived {
+            try container.encode(isArchived, forKey: .isArchived)
         }
         if let updatedAt = updatedAt {
             try container.encode(updatedAt, forKey: .updatedAt)

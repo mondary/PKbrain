@@ -5,6 +5,7 @@ final class NoteManager {
     private let storage: NoteStorage
     private var controllers: [UUID: NoteWindowController] = [:]
     private var orderedNoteIDs: [UUID] = []
+    private var archived: [NoteData] = []
     private var trash: [TrashedNote] = []
     private var saveWorkItem: DispatchWorkItem?
     private var latestTheme: NoteTheme = .blueberry
@@ -34,9 +35,10 @@ final class NoteManager {
     func launch() {
         let state = storage.loadState()
         trash = state.trash
-        let loadedNotes = state.notes
+        archived = state.notes.filter(\.isArchived)
+        let loadedNotes = state.notes.filter { !$0.isArchived }
 
-        if loadedNotes.isEmpty {
+        if loadedNotes.isEmpty && archived.isEmpty {
             createNote(NoteData(theme: .blueberry), activate: true, scheduleSave: true)
         } else {
             let lastEditedID = loadedNotes.max(by: {
@@ -83,8 +85,10 @@ final class NoteManager {
         scheduleSave: Bool = true,
         initiallyVisible: Bool = true
     ) {
-        latestTheme = data.theme
-        let document = NoteDocument(data: data)
+        var activeData = data
+        activeData.isArchived = false
+        latestTheme = activeData.theme
+        let document = NoteDocument(data: activeData)
         let controller = NoteWindowController(
             document: document,
             settings: settings,
@@ -92,6 +96,10 @@ final class NoteManager {
             onDelete: { [weak self, weak document] in
                 guard let document else { return }
                 self?.deleteNote(documentID: document.id)
+            },
+            onArchive: { [weak self, weak document] in
+                guard let document else { return }
+                self?.archiveNote(documentID: document.id)
             },
             onSave: { [weak self] in self?.saveNow() },
             onShowEmoji: { NSApp.orderFrontCharacterPalette(nil) },
@@ -133,7 +141,9 @@ final class NoteManager {
 
     func showAllNotes() {
         if controllers.isEmpty {
-            createNote(NoteData(theme: .blueberry), activate: true, scheduleSave: true)
+            if archived.isEmpty {
+                createNote(NoteData(theme: .blueberry), activate: true, scheduleSave: true)
+            }
             return
         }
 
@@ -170,7 +180,24 @@ final class NoteManager {
         orderedNoteIDs.removeAll { $0 == documentID }
         let data = controller.noteDocument.package()
         trash.insert(TrashedNote(note: data), at: 0)
-        controller.closeForDelete()
+        controller.closeForRemoval()
+        saveNow()
+    }
+
+    func archiveNote(documentID: UUID) {
+        guard let controller = controllers.removeValue(forKey: documentID) else { return }
+        orderedNoteIDs.removeAll { $0 == documentID }
+
+        var note = controller.noteDocument.package()
+        note.isArchived = true
+        note.isOpen = false
+        archived.removeAll { $0.id == note.id }
+        archived.insert(note, at: 0)
+        if lastFocusedNoteID == documentID {
+            lastFocusedNoteID = orderedNoteIDs.first
+        }
+
+        controller.closeForRemoval()
         saveNow()
     }
 
@@ -265,9 +292,15 @@ final class NoteManager {
             data.isOpen = controller.window?.isVisible ?? true
             return data
         }
+        let archivePayload = archived.map { archivedNote -> NoteData in
+            var note = archivedNote
+            note.isArchived = true
+            note.isOpen = false
+            return note
+        }
 
         let state = SavedState(
-            notes: notePayload,
+            notes: notePayload + archivePayload,
             trash: trash
         )
         storage.saveState(state)
@@ -277,14 +310,40 @@ final class NoteManager {
         trash
     }
 
+    var archivedNotes: [NoteData] {
+        archived.sorted { ($0.updatedAt ?? .distantPast) > ($1.updatedAt ?? .distantPast) }
+    }
+
     func trashedNote(id: UUID) -> TrashedNote? {
         trash.first(where: { $0.id == id })
+    }
+
+    func archivedNote(id: UUID) -> NoteData? {
+        archived.first(where: { $0.id == id })
     }
 
     func restoreFromTrash(_ trashedID: UUID) {
         guard let index = trash.firstIndex(where: { $0.id == trashedID }) else { return }
         let item = trash.remove(at: index)
         createNote(item.note, activate: true, scheduleSave: true)
+        saveNow()
+    }
+
+    func restoreFromArchive(_ archivedID: UUID) {
+        guard let index = archived.firstIndex(where: { $0.id == archivedID }) else { return }
+        var note = archived.remove(at: index)
+        note.isArchived = false
+        note.isOpen = true
+        createNote(note, activate: true, scheduleSave: true)
+        saveNow()
+    }
+
+    func moveArchivedToTrash(_ archivedID: UUID) {
+        guard let index = archived.firstIndex(where: { $0.id == archivedID }) else { return }
+        var note = archived.remove(at: index)
+        note.isArchived = false
+        note.isOpen = false
+        trash.insert(TrashedNote(note: note), at: 0)
         saveNow()
     }
 

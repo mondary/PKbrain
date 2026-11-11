@@ -7,6 +7,7 @@ struct TitleTextField: NSViewRepresentable {
     let textColor: NSColor
     let onTabToEditor: () -> Void
     let isNewNote: Bool
+    let isEditable: Bool
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -24,6 +25,8 @@ struct TitleTextField: NSViewRepresentable {
         field.delegate = context.coordinator
         field.maximumNumberOfLines = 1
         field.lineBreakMode = .byTruncatingTail
+        field.isEditable = isEditable
+        field.isSelectable = isEditable
         return field
     }
 
@@ -35,6 +38,8 @@ struct TitleTextField: NSViewRepresentable {
         nsView.font = font
         nsView.textColor = textColor
         nsView.alignment = .center
+        nsView.isEditable = isEditable
+        nsView.isSelectable = isEditable
     }
 
     final class Coordinator: NSObject, NSTextFieldDelegate {

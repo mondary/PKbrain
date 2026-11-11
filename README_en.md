@@ -2,7 +2,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.10.7** — [Changelog](CHANGELOG.md)
+version **2026.11.1** — [Changelog](CHANGELOG.md)
 
 [🇬🇧 EN](README_en.md) · [🇫🇷 FR](README.md)
 
@@ -44,6 +44,7 @@ version **2026.10.7** — [Changelog](CHANGELOG.md)
   - typing effects
 - Notes list window (active notes + trash).
 - Restore notes from trash.
+- Note archiving: an archived note leaves the desktop without being deleted — it no longer reopens at launch or via “Show all notes”, and stays viewable/restorable from the Archives view of the All Notes window.
 - Color/theme system:
   - color picker
   - automatic text contrast
