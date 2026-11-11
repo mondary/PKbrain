@@ -5,6 +5,11 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.2] - 2026-11-11
+
+### Added
+- Initialisation agent-ready du dépôt (skill `-pk-init`) : entrées `.env.*` et `.tmp-*` complétées dans le `.gitignore` (les symlinks `.agent`/`.inspi` étaient déjà en place).
+
 ## [2026.11.1] - 2026-11-11
 
 ### Added
