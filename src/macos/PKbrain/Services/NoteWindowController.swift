@@ -129,11 +129,23 @@ final class NoteWindowController: NSWindowController, NSWindowDelegate {
         super.showWindow(sender)
         DispatchQueue.main.async { [weak self] in
             guard let self, let content = self.window?.contentView else { return }
-            let length = Self.firstTextView(in: content).map { ($0.string as NSString).length } ?? -1
-            NSLog(
-                "PKbrain: fenêtre « %@ » — document %d chars, NSTextView %d chars",
-                self.noteDocument.title, self.noteDocument.content.count, length
+            let textView = Self.firstTextView(in: content)
+            let length = textView.map { ($0.string as NSString).length } ?? -1
+            Self.writeDebugTrace(
+                "showWindow « \(self.noteDocument.title) » document=\(self.noteDocument.content.count) NSTextView=\(length) windowVisible=\(self.window?.isVisible ?? false) frame=\(self.window?.frame ?? .zero) tvFrame=\(textView?.frame ?? .zero) tvHidden=\(textView?.isHidden ?? true) tvAlpha=\(textView?.alphaValue ?? -1) scroll=\(textView?.enclosingScrollView?.frame ?? .zero) contentBounds=\(content.bounds)"
             )
+        }
+    }
+
+    static func writeDebugTrace(_ message: String) {
+        let line = "\(Date()) \(message)\n"
+        let url = URL(fileURLWithPath: "/tmp/pkbrain-display.log")
+        if let handle = try? FileHandle(forWritingTo: url) {
+            handle.seekToEndOfFile()
+            handle.write(line.data(using: .utf8) ?? Data())
+            try? handle.close()
+        } else {
+            try? line.data(using: .utf8)?.write(to: url)
         }
     }
 

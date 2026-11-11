@@ -5,6 +5,12 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.5] - 2026-11-11
+
+### Fixed
+- Fenêtres de notes vides : le `NSTextView` conservait une largeur de 0 px quand la fenêtre était montée avant le premier layout de son conteneur (notes ouvertes depuis la liste). `EffectHostView` resynchronise désormais la largeur du texte à chaque layout et le contenu s'affiche à nouveau.
+- Trace de diagnostic `/tmp/pkbrain-display.log` (longueurs et géométrie réelles à l'ouverture) conservée pour vérifier l'affichage.
+
 ## [2026.11.4] - 2026-11-11
 
 ### Fixed

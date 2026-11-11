@@ -37,6 +37,7 @@ struct NoteTextView: NSViewRepresentable {
         textView.isEditable = isEditable
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
+        textView.autoresizingMask = [.width]
         textView.textContainerInset = NSSize(width: 12, height: 8)
         textView.textContainer?.widthTracksTextView = true
         textView.textContainer?.containerSize = NSSize(width: scrollView.contentSize.width, height: .greatestFiniteMagnitude)
@@ -628,6 +629,20 @@ final class EffectHostView: NSView {
 
     required init?(coder: NSCoder) {
         nil
+    }
+
+    override func layout() {
+        super.layout()
+        synchronizeTextViewWidth()
+    }
+
+    /// Sans cette synchronisation, un NSTextView monté avant le premier layout du
+    /// scrollView conserve une largeur de 0 px et n'affiche jamais son texte.
+    private func synchronizeTextViewWidth() {
+        guard let textView else { return }
+        let width = scrollView.contentSize.width
+        guard width > 0, abs(textView.frame.width - width) > 0.5 else { return }
+        textView.frame.size.width = width
     }
 
     func emit(effect: TypingEffect, at point: CGPoint, direction: CGVector? = nil) {

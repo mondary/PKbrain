@@ -207,6 +207,7 @@ final class NoteManager {
             return
         }
         NSLog("PKbrain: focusNote — %@ (%d chars)", controller.noteDocument.title, controller.noteDocument.content.count)
+        NoteWindowController.writeDebugTrace("focusNote « \(controller.noteDocument.title) » document=\(controller.noteDocument.content.count) chars")
 
         controller.showWindow(nil)
         controller.window?.deminiaturize(nil)
