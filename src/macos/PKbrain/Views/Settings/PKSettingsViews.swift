@@ -161,6 +161,10 @@ enum PKSettingsSearch {
         .init(settingKey: "data_backup_full", section: .clipboard, keywords: "backup full complète export restore restaurer données"),
         // Drawer
         .init(settingKey: "drawer_position", section: .drawer, keywords: "drawer tiroir position edge bord haut bas gauche droite"),
+        .init(settingKey: "drawer.strip.title", section: .drawer, keywords: "animation onde wave bandeau strip static masquer"),
+        .init(settingKey: "drawer.surface.title", section: .drawer, keywords: "liquid glass verre dépoli frosted appearance apparence"),
+        .init(settingKey: "drawer.opacity", section: .drawer, keywords: "opacité opacity transparence transparency fond"),
+        .init(settingKey: "widgets.title", section: .stickies, keywords: "widget widgets bureau desktop autoriser partager note"),
         // Stickies
         .init(settingKey: "randomize_new_note_position", section: .stickies, keywords: "randomize aléatoire position nouvelles notes"),
         .init(settingKey: "show_results_while_typing", section: .stickies, keywords: "inline calculs calculations results résultats typing frappe"),

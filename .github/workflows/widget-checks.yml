@@ -1,0 +1,49 @@
+name: Widget and drawer checks
+on:
+  push:
+    paths:
+      - "src/widgets/**"
+      - "packaging/widgets/**"
+      - "src/macos/PKbrain/**"
+      - "scripts/check_features.sh"
+      - "scripts/embed_widgets.sh"
+      - "Tests/**"
+      - ".github/workflows/widget-checks.yml"
+  pull_request:
+    paths:
+      - "src/widgets/**"
+      - "packaging/widgets/**"
+      - "Tests/**"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check synthetic snapshots, permissions and WidgetKit types
+        run: bash scripts/check_features.sh
+      - name: Generate extension project
+        run: |
+          command -v xcodegen || brew install xcodegen
+          mkdir -p "$RUNNER_TEMP/widgets"
+          xcodegen generate --spec packaging/widgets/project.yml --project "$RUNNER_TEMP/widgets"
+      - name: Build extension with metadata (unsigned CI validation)
+        run: |
+          xcodebuild -project "$RUNNER_TEMP/widgets/PKbrainWidgets.xcodeproj" \
+            -scheme PKbrainWidgets -configuration Release -destination 'platform=macOS' \
+            -derivedDataPath "$RUNNER_TEMP/widgets-build" CODE_SIGNING_ALLOWED=NO \
+            PK_WIDGET_APP_GROUP=group.io.github.mondary.pkbrain \
+            PK_WIDGET_CONFIG_DIR="$GITHUB_WORKSPACE/packaging/widgets" \
+            MARKETING_VERSION="$(sed -nE 's/^## \[([0-9.]+)\].*/\1/p' CHANGELOG.md | head -1)" \
+            CURRENT_PROJECT_VERSION=1 build
+      - name: Archive unsigned extension for local signing
+        run: |
+          ditto -c -k --keepParent \
+            "$RUNNER_TEMP/widgets-build/Build/Products/Release/PKbrainWidgets.appex" \
+            "$RUNNER_TEMP/PKbrainWidgets.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PKbrainWidgets-unsigned
+          path: ${{ runner.temp }}/PKbrainWidgets.zip

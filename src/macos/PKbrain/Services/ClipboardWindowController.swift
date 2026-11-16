@@ -80,6 +80,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
     private func makeClipboardView() -> ClipboardView {
         ClipboardView(
             clipboard: clipboard,
+            settings: settings,
             drawerEdge: settings.clipboardDrawerEdge,
             notesProvider: { [weak manager] in
                 (manager?.documents ?? []).map { doc in
@@ -325,6 +326,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
 
     private func presentAnimated() {
         guard let window else { return }
+        settings.drawerIsPresented = true
         updateDrawerMinSize(for: settings.clipboardDrawerEdge)
 
         let activeVisibleFrame = preferredVisibleFrame(fallbackWindow: window)
@@ -423,6 +425,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
     }
 
     private func dismissAnimated() {
+        settings.drawerIsPresented = false
         guard let window else { return }
         clipboard.markDrawerPresented()
         let visible = window.screen?.visibleFrame ?? lastKnownVisibleFrame ?? NSRect(x: 0, y: 0, width: 1200, height: 800)
@@ -448,6 +451,7 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         }
 
         let targetPID = app.processIdentifier
+        settings.drawerIsPresented = false
         window?.orderOut(nil)
         window?.alphaValue = 1
         standardWindowController?.window?.orderOut(nil)

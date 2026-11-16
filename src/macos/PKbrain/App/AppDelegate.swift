@@ -859,6 +859,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // - pkbrain://list
         guard url.scheme?.lowercased() == "pkbrain" else { return }
 
+        if url.host?.lowercased() == "note" {
+            guard let id = UUID(uuidString: url.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))) else { return }
+            DispatchQueue.main.async { [weak self] in
+                self?.manager.focusNote(documentID: id)
+            }
+            return
+        }
+
         let parsedAction = externalAction(from: url)
         guard let action = parsedAction else { return }
         DispatchQueue.main.async { [weak self] in

@@ -41,7 +41,7 @@ APP_RESOURCES="$APP_CONTENTS/Resources"
 APP_BINARY="$APP_MACOS/$APP_NAME"
 INFO_PLIST="$APP_CONTENTS/Info.plist"
 
-if pgrep -x "$APP_NAME" >/dev/null 2>&1; then
+if [[ "$MODE" != "--build-only" ]] && pgrep -x "$APP_NAME" >/dev/null 2>&1; then
   /usr/bin/osascript -e "tell application \"$BUNDLE_NAME\" to quit" >/dev/null 2>&1 || true
 
   for _ in {1..20}; do
@@ -170,6 +170,9 @@ cat >"$INFO_PLIST" <<PLIST
 PLIST
 
 codesign --force --deep --sign - "$APP_BUNDLE"
+if [[ "${PK_WIDGETS_ENABLED:-0}" == "1" ]]; then
+  bash "$ROOT_DIR/scripts/embed_widgets.sh" "$APP_BUNDLE"
+fi
 
 # Ensure LaunchServices registers the URL scheme for the freshly built bundle.
 LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
@@ -182,6 +185,9 @@ open_app() {
 }
 
 case "$MODE" in
+  --build-only)
+    echo "Bundle construit sans lancement: $APP_BUNDLE"
+    ;;
   run)
     open_app
     ;;
@@ -202,7 +208,7 @@ case "$MODE" in
     pgrep -x "$APP_NAME" >/dev/null
     ;;
   *)
-    echo "usage: $0 [run|--debug|--logs|--telemetry|--verify]" >&2
+    echo "usage: $0 [run|--build-only|--debug|--logs|--telemetry|--verify]" >&2
     exit 2
     ;;
 esac

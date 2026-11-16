@@ -251,6 +251,17 @@ struct NoteView: View {
             }
             .buttonStyle(.borderless)
 
+            Divider()
+            Toggle(localizedString("widgets.share_note"), isOn: Binding(
+                get: { settings.isSharedWithWidgets(document.id) },
+                set: { settings.setSharedWithWidgets($0, id: document.id) }
+            ))
+            .toggleStyle(.switch)
+            .disabled(!NoteWidgetPublisher.isConfigured)
+            Text(localizedString(NoteWidgetPublisher.isConfigured ? "widgets.note_hint" : "widgets.unavailable"))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
         }
         .padding(14)
         .foregroundColor(Color(NSColor.labelColor))

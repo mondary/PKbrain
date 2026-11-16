@@ -50,7 +50,7 @@ struct CaptureNative {
             window.setContentSize(NSSize(width: 400, height: 360))
             try capture(window: window, name: "note-\(index + 1)", output: output)
         }
-        let drawer = ClipboardView(clipboard: clipboard, drawerEdge: .top, notesProvider: { entries }, onCreateNoteFromItem: { _ in }, onOpenNote: { _ in }, onCopyItem: { _ in }, onDismiss: {}, onPaste: {}, shouldHandleKeyboard: { false }, onContextStateChanged: { _ in }, onToggleStandardWindow: {}, onShowPreferences: {}, onOpenFinder: {}, onRunBackupNow: {})
+        let drawer = ClipboardView(clipboard: clipboard, settings: settings, drawerEdge: .top, notesProvider: { entries }, onCreateNoteFromItem: { _ in }, onOpenNote: { _ in }, onCopyItem: { _ in }, onDismiss: {}, onPaste: {}, shouldHandleKeyboard: { false }, onContextStateChanged: { _ in }, onToggleStandardWindow: {}, onShowPreferences: {}, onOpenFinder: {}, onRunBackupNow: {})
         try render(drawer, size: NSSize(width: 1440, height: 420), name: "drawer", output: output)
         let full = ClipboardStandardWindowView(clipboard: clipboard, settings: settings, storageRootURL: scratch, startsInSettingsMode: false, notesProvider: { entries }, onCreateNoteFromItem: { _ in }, onOpenNote: { _ in }, onCopyItem: { _ in }, onPaste: {}, onLoadFavicon: { _ in nil }, onLoadURLPreviewImage: { _ in nil }, onShowPreferences: {}, onOpenFinder: {}, onRunBackupNow: {})
         try render(full, size: NSSize(width: 1200, height: 760), name: "library", output: output)

@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 
 final class NoteManager {
     private let settings: AppSettings
@@ -11,6 +12,7 @@ final class NoteManager {
     private var latestTheme: NoteTheme = .blueberry
     private let maxVersionsPerNote = 25
     private var lastFocusedNoteID: UUID?
+    private var widgetSelectionObserver: AnyCancellable?
 
     var onShowList: (() -> Void)?
 
@@ -30,6 +32,10 @@ final class NoteManager {
     init(settings: AppSettings, storage: NoteStorage? = nil) {
         self.settings = settings
         self.storage = storage ?? NoteStorage(storageDirectoryOverride: settings.storageDirectoryURL)
+        widgetSelectionObserver = settings.$widgetNoteIDs
+            .dropFirst()
+            .debounce(for: .milliseconds(200), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in self?.publishWidgets() }
     }
 
     func launch() {
@@ -49,6 +55,7 @@ final class NoteManager {
             }
             lastFocusedNoteID = lastEditedID
         }
+        publishWidgets()
     }
 
     func createNote() {
@@ -307,6 +314,14 @@ final class NoteManager {
             trash: trash
         )
         storage.saveState(state)
+        NoteWidgetPublisher.publish(notes: notePayload, allowedIDs: settings.widgetNoteIDs)
+    }
+
+    private func publishWidgets() {
+        NoteWidgetPublisher.publish(
+            notes: orderedControllers().map { $0.noteDocument.package() },
+            allowedIDs: settings.widgetNoteIDs
+        )
     }
 
     var trashedNotes: [TrashedNote] {

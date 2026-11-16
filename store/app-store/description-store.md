@@ -1,6 +1,15 @@
 # PKbrain — Dossier du store
 
 Matériel de présentation de l'application.
+Les réglages d’apparence du drawer (bandeau masqué/statique/animé, verre dépoli,
+Liquid Glass et opacité du fond) sont disponibles dans les sources Dev 2026.11.6 ;
+ils ne sont pas annoncés comme inclus dans le DMG Stable actuel. L’extension widget
+nécessite une build signée avec App Group ; voir `../../docs/WIDGETS.md`.
+
+Drawer appearance settings (hidden/static/animated strip, frosted glass,
+Liquid Glass and background opacity) are in the 2026.11.6 development sources,
+not advertised as part of the current Stable DMG. Widgets require a signed
+App Group build; see `../../docs/WIDGETS.md`.
 Site/landing interactive : `../website/` — dossier 100 % autonome, c'est tout son contenu que l'on héberge (aperçu : `python3 -m http.server 8000 --directory store/website`).
 Captures : `screenshots/` (dérivées des captures natives, régénérables — voir `../README.md`).
 

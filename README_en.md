@@ -2,7 +2,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.11.5** — [Changelog](CHANGELOG.md)
+version **2026.11.6** — [Changelog](CHANGELOG.md)
 
 [🇬🇧 EN](README_en.md) · [🇫🇷 FR](README.md)
 
@@ -45,11 +45,14 @@ version **2026.11.5** — [Changelog](CHANGELOG.md)
 - Notes list window (active notes + trash).
 - Restore notes from trash.
 - Note archiving: an archived note leaves the desktop without being deleted — it no longer reopens at launch or via “Show all notes”, and stays viewable/restorable from the Archives view of the All Notes window.
+- macOS 14+ widgets: WidgetKit extension with a chosen, explicitly allowed note and small/medium/large sizes. A signed extension and shared App Group are required; the ad-hoc build does not enable widgets. Status, prerequisites and validation: [docs/WIDGETS.md](docs/WIDGETS.md).
 - Color/theme system:
   - color picker
   - automatic text contrast
   - color previews
 - Global clipboard drawer:
+  - Settings → Drawer: hidden/static/animated strip, a gentle wave replacing scrolling characters, classic/frosted/Liquid Glass backgrounds and background opacity (text stays opaque)
+  - Liquid Glass on macOS 26+ (frosted fallback on older versions), respecting Reduce Motion and Reduce Transparency
   - captures text, URLs, images, files, and hex colors
   - persistent history in the storage folder
   - source app icon for each item

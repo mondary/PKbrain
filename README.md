@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.11.5** — [Changelog](CHANGELOG.md)
+version **2026.11.6** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
@@ -46,11 +46,14 @@ version **2026.11.5** — [Changelog](CHANGELOG.md)
 - Fenêtre liste des notes (notes actives + corbeille).
 - Restauration des notes depuis corbeille.
 - Archivage des notes : une note archivée quitte le bureau sans être supprimée — elle ne se rouvre plus au lancement ni via « Afficher toutes les notes », et reste consultable/restaurable depuis la vue Archives de la fenêtre Toutes mes notes.
+- Widgets macOS 14+ : extension WidgetKit avec choix d’une note autorisée et formats petit/moyen/grand. Une build avec extension signée et App Group est requise ; le build ad-hoc ne les active pas. État, prérequis et validation : [docs/WIDGETS.md](docs/WIDGETS.md).
 - Gestion couleurs/thèmes:
   - sélecteur couleur
   - contraste texte auto
   - prévisualisation des couleurs
 - Clipboard drawer global:
+  - Réglages → Drawer : bandeau masqué/statique/animé, onde douce à la place des caractères défilants, fonds classique/verre dépoli/Liquid Glass et opacité du fond (texte toujours opaque)
+  - Liquid Glass sur macOS 26+ (repli verre dépoli ailleurs), respect des préférences macOS de réduction des animations et de la transparence
   - refonte visuelle inspirée `deck2.html` (header/toolbar/viewport/cartes/actions)
   - capture texte, URL, images, fichiers et couleurs hex
   - historique persistant dans le dossier de stockage

@@ -163,6 +163,9 @@ PLIST
 
 codesign --force --deep --sign - --timestamp=none "$APP_BUNDLE"
 codesign --verify --deep --strict "$APP_BUNDLE"
+if [[ "${PK_WIDGETS_ENABLED:-0}" == "1" ]]; then
+  bash "$ROOT_DIR/scripts/embed_widgets.sh" "$APP_BUNDLE"
+fi
 
 # Ensure LaunchServices registers the URL scheme for the freshly built bundle.
 LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"

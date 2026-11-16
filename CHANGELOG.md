@@ -5,6 +5,17 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.6] - 2026-11-16
+
+### Added
+- Drawer : bandeau inférieur masqué, statique ou animé ; onde discrète remplaçant les caractères Braille, arrêt de l’animation lorsque le drawer est masqué, respect de Réduire les animations.
+- Apparence du drawer : classique, verre dépoli et Liquid Glass (macOS 26+, repli verre dépoli), opacité du fond réglable sans atténuer les textes ; respect de Réduire la transparence et réglages recherchables FR/EN/DE/ES/IT.
+- Extension WidgetKit macOS 14+ : choix d’une note autorisée, tailles petit/moyen/grand et lien `pkbrain://note/<UUID>` ; projection partagée en lecture seule, autorisation explicite par note, retrait des archives/suppressions. L’installation nécessite une extension construite avec Xcode et une signature/App Group communs ; le build ad-hoc sans extension indique cette limite.
+- Projet XcodeGen, intégration optionnelle (`scripts/embed_widgets.sh`), CI de compilation WidgetKit et huit vérifications locales sur données fictives (`scripts/check_features.sh`). Aucune migration du stockage Markdown.
+
+### Changed
+- `scripts/build_macos.sh --build-only` construit le bundle sans fermer ni lancer l’app.
+
 ## [2026.11.5] - 2026-11-11
 
 ### Fixed

@@ -34,6 +34,7 @@ struct ClipboardView: View {
     }
 
     @ObservedObject var clipboard: ClipboardManager
+    @ObservedObject var settings: AppSettings
     let drawerEdge: ClipboardDrawerEdge
     let notesProvider: () -> [NoteDeckItem]
     let onCreateNoteFromItem: (ClipboardManager.Item) -> Void
@@ -64,7 +65,6 @@ struct ClipboardView: View {
     @State private var lightboxImage: NSImage?
     @State private var quickLookURLs: [URL] = []
     @State private var searchExpanded: Bool = false
-    @State private var stripAnimated: Bool = false
     @FocusState private var searchFocused: Bool
     @State private var keyMonitor: Any?
     private var isVerticalDrawer: Bool { drawerEdge == .left || drawerEdge == .right }
@@ -90,7 +90,7 @@ struct ClipboardView: View {
 
     var body: some View {
         ZStack {
-            VibrancyBackground()
+            DrawerSurface(style: settings.drawerSurfaceStyle, opacity: settings.drawerBackgroundOpacity)
                 .ignoresSafeArea()
             VStack(spacing: 0) {
                 if isVerticalDrawer {
@@ -102,7 +102,7 @@ struct ClipboardView: View {
                     deck2WindowHeader
                     deck2Toolbar
                     deck2ScrollViewport
-                    deck2BottomStrip
+                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: settings.drawerIsPresented)
                 }
             }
             .padding(.top, isVerticalDrawer ? 12 : 0)
@@ -110,7 +110,7 @@ struct ClipboardView: View {
             .padding(.bottom, 0)
             .background(
                 BottomRoundedRectangle(radius: 28)
-                    .fill(Color(NSColor.windowBackgroundColor))
+                    .fill(Color.clear)
                     .overlay(
                         BottomRoundedRectangle(radius: 28)
                             .stroke(Color.primary.opacity(0.08), lineWidth: 1)
@@ -490,41 +490,6 @@ struct ClipboardView: View {
                 .padding(20)
                 .frame(minWidth: 600, minHeight: 400)
         }
-    }
-
-    private var deck2BottomStrip: some View {
-        GeometryReader { geo in
-            let pattern = "⠿⠟⠛⠻⠽⠾⠷⠯⠟⠿   "
-            let line = String(repeating: pattern, count: 70)
-            ZStack {
-                Color(NSColor.separatorColor).opacity(0.1)
-                HStack(spacing: 0) {
-                    Text(line)
-                        .lineLimit(1)
-                        .fixedSize(horizontal: true, vertical: false)
-                    Text(line)
-                        .lineLimit(1)
-                        .fixedSize(horizontal: true, vertical: false)
-                }
-                .font(.system(size: 12, weight: .medium, design: .monospaced))
-                .foregroundStyle(Color(NSColor.tertiaryLabelColor).opacity(0.5))
-                .tracking(2.2)
-                .frame(width: geo.size.width * 2, alignment: .leading)
-                .offset(x: stripAnimated ? -(geo.size.width) : 0)
-                .animation(.linear(duration: 50).repeatForever(autoreverses: false), value: stripAnimated)
-            }
-            .onAppear {
-                stripAnimated = true
-            }
-        }
-        .frame(height: 40)
-        .frame(maxWidth: .infinity)
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(Color(NSColor.separatorColor).opacity(0.4))
-                .frame(height: 1)
-        }
-        .clipped()
     }
 
     private var drawerHeader: some View {
@@ -2270,6 +2235,41 @@ struct DrawerSettingsView: View {
                 }
                 .padding(12)
             }
+            GroupBox {
+                VStack(alignment: .leading, spacing: 12) {
+                    Picker(localizedString("drawer.strip.title"), selection: $settings.drawerStripStyle) {
+                        ForEach(DrawerStripStyle.allCases) { style in
+                            Text(localizedString(style.localizationKey)).tag(style)
+                        }
+                    }
+                    .modifier(SettingHighlight(title: localizedString("drawer.strip.title")))
+
+                    Picker(localizedString("drawer.surface.title"), selection: $settings.drawerSurfaceStyle) {
+                        ForEach(DrawerSurfaceStyle.allCases) { style in
+                            Text(localizedString(style.localizationKey)).tag(style)
+                        }
+                    }
+                    .modifier(SettingHighlight(title: localizedString("drawer.surface.title")))
+
+                    HStack {
+                        Text(localizedString("drawer.opacity"))
+                        Slider(value: $settings.drawerBackgroundOpacity, in: 0...1, step: 0.05)
+                            .accessibilityLabel(localizedString("drawer.opacity"))
+                            .disabled(settings.drawerSurfaceStyle == .classic)
+                        Text("\(Int((settings.drawerBackgroundOpacity * 100).rounded())) %")
+                            .monospacedDigit()
+                            .frame(width: 48, alignment: .trailing)
+                    }
+                    .modifier(SettingHighlight(title: localizedString("drawer.opacity")))
+                    Text(localizedString("drawer.appearance.hint"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: true)
+                        .background(DrawerSurface(style: settings.drawerSurfaceStyle, opacity: settings.drawerBackgroundOpacity))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                .padding(12)
+            }
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -2283,6 +2283,21 @@ struct StickiesSettingsView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text(localizedString("stickies_settings"))
                 .font(.title3.weight(.semibold))
+            GroupBox {
+                VStack(alignment: .leading, spacing: 8) {
+                    Label(localizedString("widgets.title"), systemImage: "square.grid.2x2")
+                        .font(.headline)
+                        .modifier(SettingHighlight(title: localizedString("widgets.title")))
+                    Text(localizedString(NoteWidgetPublisher.isConfigured ? "widgets.setup" : "widgets.unavailable"))
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                    Text(localizedString("widgets.privacy"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+            }
             GroupBox {
                 VStack(alignment: .leading, spacing: 10) {
                     Toggle(localizedString("randomize_new_note_position"), isOn: $settings.randomizeNewNotePosition)
@@ -3757,18 +3772,6 @@ private struct FileIconView: View {
             .aspectRatio(contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 4))
     }
-}
-
-private struct VibrancyBackground: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let v = NSVisualEffectView()
-        v.material = .hudWindow
-        v.blendingMode = .withinWindow
-        v.state = .active
-        return v
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
 private struct LightboxImage: Identifiable {
