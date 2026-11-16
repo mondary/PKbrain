@@ -7,6 +7,13 @@
   formats petit/moyen/grand, lien vers la note).
 - Les sources de l'extension sont vérifiées par le compilateur, les exports
   par des tests sur données fictives.
+- Le build complet de l'extension avec métadonnées App Intents a réussi
+  dans la [CI du commit af45c7ad](https://github.com/mondary/PKbrain/actions/runs/43839333888).
+- Vérifications locales du 16 novembre 2026 : bundle `2026.11.7-dev` installé
+  dans `/Applications/PKbrain.app`, signature vérifiée, diagnostic
+  `widgetExtensionEmbedded=true appGroupAvailable=true`, extension reconnue
+  par `pluginkit` comme `com.apple.widgetkit-extension` avec le bon parent.
+  Cela ne remplace pas un ajout manuel depuis la galerie.
 - **L'apparition dans la galerie reste à tester sur ce Mac.** Xcode complet
   n'y est pas installé ; une extension construite en CI peut être signée
   localement avec un App Group macOS préfixé par le Team ID. Une compilation
@@ -101,7 +108,15 @@ Cela valide le build et les métadonnées, pas l'installation chez l'utilisateur
 bash scripts/check_features.sh
 ```
 
-8 vérifications : bornes d'opacité, partage vide par défaut, liste
+Après intégration, vérifier la présence de l'extension et l'accès au conteneur
+partagé sans ouvrir de fenêtre ni charger les notes :
+
+```sh
+/Applications/PKbrain.app/Contents/MacOS/PKbrain --widget-status
+```
+
+9 vérifications : bornes d'opacité, arrêt des animations selon la visibilité,
+l’activation et Réduire les animations, partage vide par défaut, liste
 d'autorisation, exclusion des archives et des notes absentes, UUID/lien,
 couleurs de tous les thèmes, écriture atomique/révocation et original intact,
 fichiers corrompus/schéma inconnu. Toutes les données sont fictives.

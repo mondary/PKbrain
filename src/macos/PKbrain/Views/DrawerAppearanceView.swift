@@ -49,10 +49,15 @@ struct DrawerWaveStrip: View {
     let style: DrawerStripStyle
     let isPresented: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.scenePhase) private var scenePhase
+    // NSHostingController in an AppKit app has no SwiftUI WindowGroup scene.
+    // Observe AppKit activation instead of relying on a default scenePhase.
+    @State private var applicationIsActive = NSApp.isActive
 
     private var animates: Bool {
-        style == .animatedWave && isPresented && !reduceMotion && scenePhase == .active
+        DrawerAppearance.shouldAnimate(
+            style: style, isPresented: isPresented,
+            reduceMotion: reduceMotion, applicationIsActive: applicationIsActive
+        )
     }
 
     var body: some View {
@@ -87,6 +92,13 @@ struct DrawerWaveStrip: View {
             .clipped()
             .allowsHitTesting(false)
             .accessibilityHidden(true)
+            .onAppear { applicationIsActive = NSApp.isActive }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+                applicationIsActive = true
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
+                applicationIsActive = false
+            }
         }
     }
 }

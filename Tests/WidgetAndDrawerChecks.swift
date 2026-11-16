@@ -6,6 +6,7 @@ struct WidgetAndDrawerChecks {
     static func main() throws {
         let checks = WidgetAndDrawerChecks()
         checks.testOpacityBoundsAndInvalidValues()
+        checks.testAnimationOnlyRunsWhenAllowed()
         checks.testNoNoteIsSharedByDefault()
         checks.testOnlyAllowlistedNotesAreExported()
         checks.testArchivedAndRemovedNotesAreExcluded()
@@ -13,7 +14,7 @@ struct WidgetAndDrawerChecks {
         checks.testAllThemeTextContrastsArePreserved()
         try checks.testSnapshotRoundTripAndRevocationDoNotTouchOriginals()
         try checks.testMalformedAndUnknownSchemaAreSafe()
-        print("PASS: 8 widget/drawer checks, all note themes tested, synthetic data only.")
+        print("PASS: 9 widget/drawer checks, all note themes tested, synthetic data only.")
     }
 
     func testOpacityBoundsAndInvalidValues() {
@@ -22,6 +23,26 @@ struct WidgetAndDrawerChecks {
         XCTAssertEqual(DrawerAppearance.clampedOpacity(0.65), 0.65)
         XCTAssertEqual(DrawerAppearance.clampedOpacity(.nan), 0.35)
         XCTAssertEqual(DrawerAppearance.clampedOpacity(.infinity), 0.35)
+    }
+
+    func testAnimationOnlyRunsWhenAllowed() {
+        XCTAssertTrue(DrawerAppearance.shouldAnimate(
+            style: .animatedWave, isPresented: true, reduceMotion: false, applicationIsActive: true
+        ))
+        for style in DrawerStripStyle.allCases where style != .animatedWave {
+            XCTAssertFalse(DrawerAppearance.shouldAnimate(
+                style: style, isPresented: true, reduceMotion: false, applicationIsActive: true
+            ))
+        }
+        XCTAssertFalse(DrawerAppearance.shouldAnimate(
+            style: .animatedWave, isPresented: false, reduceMotion: false, applicationIsActive: true
+        ))
+        XCTAssertFalse(DrawerAppearance.shouldAnimate(
+            style: .animatedWave, isPresented: true, reduceMotion: true, applicationIsActive: true
+        ))
+        XCTAssertFalse(DrawerAppearance.shouldAnimate(
+            style: .animatedWave, isPresented: true, reduceMotion: false, applicationIsActive: false
+        ))
     }
 
     func testNoNoteIsSharedByDefault() {

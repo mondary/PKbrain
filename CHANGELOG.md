@@ -5,6 +5,15 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.7] - 2026-11-16
+
+### Fixed
+- Animation du drawer hébergé en AppKit : suivi de l’activation via les notifications macOS plutôt que via un `scenePhase` SwiftUI sans scène ; arrêt lorsque l’app est inactive, neuvième vérification locale dédiée.
+
+### Changed
+- Extension WidgetKit construite avec succès en CI, métadonnées App Intents incluses ; intégration locale possible sans Xcode via l’artefact CI et la signature d’équipe macOS. L’ajout dans la galerie reste à valider manuellement.
+- Diagnostic `--widget-status` : vérifie l’extension embarquée et l’accès à l’App Group sans lancer l’interface ni charger les notes.
+
 ## [2026.11.6] - 2026-11-16
 
 ### Added
