@@ -5,6 +5,14 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.9] - 2026-11-16
+
+### Changed
+- Bandeau du drawer simplifié à trois choix : **Masqué** (libère réellement la hauteur du drawer), **Original** (le discret caractères) et **Vague** (vraie onde sinusoïdale animée, lisible, à la place des « filtres » défilants). Suppression des surfaces Classique / Verre dépoli / Liquid Glass et du réglage d’opacité, jugés mal réalisés ; retour au fond propre d’origine.
+
+### Fixed
+- « Masqué » ne laisse plus d’espace vide : le bandeau passe à 0 pt et la hauteur du drawer diminue d’autant.
+
 ## [2026.11.8] - 2026-11-16
 
 ### Fixed

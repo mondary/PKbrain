@@ -2,7 +2,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.11.8** — [Changelog](CHANGELOG.md)
+version **2026.11.9** — [Changelog](CHANGELOG.md)
 
 [🇬🇧 EN](README_en.md) · [🇫🇷 FR](README.md)
 
@@ -51,8 +51,7 @@ version **2026.11.8** — [Changelog](CHANGELOG.md)
   - automatic text contrast
   - color previews
 - Global clipboard drawer:
-  - Settings → Drawer: hidden/static/animated strip, a gentle wave replacing scrolling characters, classic/frosted/Liquid Glass backgrounds and background opacity (text stays opaque)
-  - Liquid Glass on macOS 26+ (frosted fallback on older versions), respecting Reduce Motion and Reduce Transparency
+  - Settings → Drawer: **Hidden / Original / Wave** strip — Hidden frees up the height, Original is discreet, Wave rolls a real animated wave; respects Reduce Motion
   - captures text, URLs, images, files, and hex colors
   - persistent history in the storage folder
   - source app icon for each item

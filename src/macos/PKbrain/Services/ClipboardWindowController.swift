@@ -577,8 +577,11 @@ final class ClipboardWindowController: NSWindowController, NSWindowDelegate {
         switch edge {
         case .top, .bottom:
             let width = visible.width - inset * 2
+            // The strip is 40 pt tall when shown and 0 when hidden, so the whole
+            // drawer shrinks by that amount when the user hides it.
+            let contentMin: CGFloat = 380 + DrawerAppearance.stripHeight(for: settings.drawerStripStyle)
             let reducedHeight = current.height * 0.86
-            let height = min(max(420, reducedHeight), min(visible.height * 0.62, 640))
+            let height = min(max(contentMin, reducedHeight), min(visible.height * 0.62, 640))
             let x = visible.minX + inset
             let y: CGFloat = (edge == .top)
                 ? (visible.maxY - height + Self.topEdgeOverlap)

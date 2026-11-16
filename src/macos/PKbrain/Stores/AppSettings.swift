@@ -35,9 +35,6 @@ final class AppSettings: ObservableObject {
         static let inlineBrandIcons = "inline-brand-icons"
         static let clipboardDrawerEdge = "clipboard-drawer-edge"
         static let drawerStripStyle = "drawer-strip-style"
-        static let drawerStripPattern = "drawer-strip-pattern"
-        static let drawerSurfaceStyle = "drawer-surface-style"
-        static let drawerBackgroundOpacity = "drawer-background-opacity"
         static let widgetNoteIDs = "widget-note-ids"
         static let clipboardMaxItems = "clipboard-max-items"
         static let clipboardMaxAgeDays = "clipboard-max-age-days"
@@ -137,22 +134,6 @@ final class AppSettings: ObservableObject {
         didSet { defaults.set(drawerStripStyle.rawValue, forKey: Keys.drawerStripStyle) }
     }
 
-    @Published var drawerStripPattern: DrawerStripPattern {
-        didSet { defaults.set(drawerStripPattern.rawValue, forKey: Keys.drawerStripPattern) }
-    }
-
-    @Published var drawerSurfaceStyle: DrawerSurfaceStyle {
-        didSet { defaults.set(drawerSurfaceStyle.rawValue, forKey: Keys.drawerSurfaceStyle) }
-    }
-
-    @Published var drawerBackgroundOpacity: Double {
-        didSet {
-            let clamped = DrawerAppearance.clampedOpacity(drawerBackgroundOpacity)
-            if drawerBackgroundOpacity != clamped { drawerBackgroundOpacity = clamped }
-            defaults.set(clamped, forKey: Keys.drawerBackgroundOpacity)
-        }
-    }
-
     // Presentation state, deliberately not persisted. Stop decorative rendering
     // as soon as the drawer is hidden, even though its hosting view stays alive.
     @Published var drawerIsPresented = false
@@ -233,10 +214,7 @@ final class AppSettings: ObservableObject {
             Keys.inlineCalculations: true,
             Keys.inlineBrandIcons: true,
             Keys.clipboardDrawerEdge: ClipboardDrawerEdge.top.rawValue,
-            Keys.drawerStripStyle: DrawerStripStyle.animatedWave.rawValue,
-            Keys.drawerStripPattern: DrawerStripPattern.ribbon.rawValue,
-            Keys.drawerSurfaceStyle: DrawerSurfaceStyle.classic.rawValue,
-            Keys.drawerBackgroundOpacity: 0.35,
+            Keys.drawerStripStyle: DrawerStripStyle.wave.rawValue,
             Keys.widgetNoteIDs: [String](),
             Keys.clipboardMaxItems: 5000,
             Keys.clipboardMaxAgeDays: 365,
@@ -269,10 +247,7 @@ final class AppSettings: ObservableObject {
         inlineBrandIcons = defaults.bool(forKey: Keys.inlineBrandIcons)
         let edgeRaw = defaults.string(forKey: Keys.clipboardDrawerEdge) ?? ClipboardDrawerEdge.top.rawValue
         clipboardDrawerEdge = ClipboardDrawerEdge(rawValue: edgeRaw) ?? .top
-        drawerStripStyle = DrawerStripStyle(rawValue: defaults.string(forKey: Keys.drawerStripStyle) ?? "") ?? .animatedWave
-        drawerStripPattern = DrawerStripPattern(rawValue: defaults.string(forKey: Keys.drawerStripPattern) ?? "") ?? .ribbon
-        drawerSurfaceStyle = DrawerSurfaceStyle(rawValue: defaults.string(forKey: Keys.drawerSurfaceStyle) ?? "") ?? .classic
-        drawerBackgroundOpacity = DrawerAppearance.clampedOpacity(defaults.double(forKey: Keys.drawerBackgroundOpacity))
+        drawerStripStyle = DrawerStripStyle(stored: defaults.string(forKey: Keys.drawerStripStyle))
         widgetNoteIDs = defaults.stringArray(forKey: Keys.widgetNoteIDs) ?? []
         // Migration floor for existing installs: keep at least 5000 items / 365 days
         // unless the user explicitly sets higher values later.

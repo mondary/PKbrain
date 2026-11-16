@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.11.8** — [Changelog](CHANGELOG.md)
+version **2026.11.9** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
@@ -52,8 +52,7 @@ version **2026.11.8** — [Changelog](CHANGELOG.md)
   - contraste texte auto
   - prévisualisation des couleurs
 - Clipboard drawer global:
-  - Réglages → Drawer : bandeau masqué/statique/animé, onde douce à la place des caractères défilants, fonds classique/verre dépoli/Liquid Glass et opacité du fond (texte toujours opaque)
-  - Liquid Glass sur macOS 26+ (repli verre dépoli ailleurs), respect des préférences macOS de réduction des animations et de la transparence
+  - Réglages → Drawer : bandeau **Masqué / Original / Vague** — Masqué libère la hauteur, Original est discret, Vague déroule une vraie onde animée ; respect de Réduire les animations
   - refonte visuelle inspirée `deck2.html` (header/toolbar/viewport/cartes/actions)
   - capture texte, URL, images, fichiers et couleurs hex
   - historique persistant dans le dossier de stockage

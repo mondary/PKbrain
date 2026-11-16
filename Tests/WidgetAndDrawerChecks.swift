@@ -5,9 +5,9 @@ import Foundation
 struct WidgetAndDrawerChecks {
     static func main() throws {
         let checks = WidgetAndDrawerChecks()
-        checks.testOpacityBoundsAndInvalidValues()
         checks.testAnimationOnlyRunsWhenAllowed()
-        checks.testRibbonTileIsPeriodicAndCoversAnyWidth()
+        checks.testWaveIsPeriodicAndStaysWithinBounds()
+        checks.testHiddenStyleReservesNoHeight()
         checks.testNoNoteIsSharedByDefault()
         checks.testOnlyAllowlistedNotesAreExported()
         checks.testArchivedAndRemovedNotesAreExcluded()
@@ -15,64 +15,53 @@ struct WidgetAndDrawerChecks {
         checks.testAllThemeTextContrastsArePreserved()
         try checks.testSnapshotRoundTripAndRevocationDoNotTouchOriginals()
         try checks.testMalformedAndUnknownSchemaAreSafe()
-        print("PASS: 10 widget/drawer checks, ribbon periodicity verified, synthetic data only.")
-    }
-
-    func testOpacityBoundsAndInvalidValues() {
-        XCTAssertEqual(DrawerAppearance.clampedOpacity(-0.2), 0)
-        XCTAssertEqual(DrawerAppearance.clampedOpacity(1.2), 1)
-        XCTAssertEqual(DrawerAppearance.clampedOpacity(0.65), 0.65)
-        XCTAssertEqual(DrawerAppearance.clampedOpacity(.nan), 0.35)
-        XCTAssertEqual(DrawerAppearance.clampedOpacity(.infinity), 0.35)
+        print("PASS: 10 widget/drawer checks, wave periodicity verified, synthetic data only.")
     }
 
     func testAnimationOnlyRunsWhenAllowed() {
-        XCTAssertTrue(DrawerAppearance.shouldAnimate(
-            style: .animatedWave, isPresented: true, reduceMotion: false, windowIsVisible: true
-        ))
-        for style in DrawerStripStyle.allCases where style != .animatedWave {
-            XCTAssertFalse(DrawerAppearance.shouldAnimate(
+        for style in [DrawerStripStyle.original, .wave] {
+            XCTAssertTrue(DrawerAppearance.shouldAnimate(
                 style: style, isPresented: true, reduceMotion: false, windowIsVisible: true
             ))
         }
+        // Never animate a hidden strip.
         XCTAssertFalse(DrawerAppearance.shouldAnimate(
-            style: .animatedWave, isPresented: false, reduceMotion: false, windowIsVisible: true
+            style: .hidden, isPresented: true, reduceMotion: false, windowIsVisible: true
         ))
         XCTAssertFalse(DrawerAppearance.shouldAnimate(
-            style: .animatedWave, isPresented: true, reduceMotion: true, windowIsVisible: true
+            style: .wave, isPresented: false, reduceMotion: false, windowIsVisible: true
         ))
-        // The drawer panel is nonactivating: it must animate while visible even
-        // if the app is not frontmost, so window visibility is what matters.
         XCTAssertFalse(DrawerAppearance.shouldAnimate(
-            style: .animatedWave, isPresented: true, reduceMotion: false, windowIsVisible: false
+            style: .wave, isPresented: true, reduceMotion: true, windowIsVisible: true
+        ))
+        XCTAssertFalse(DrawerAppearance.shouldAnimate(
+            style: .wave, isPresented: true, reduceMotion: false, windowIsVisible: false
         ))
     }
 
-    func testRibbonTileIsPeriodicAndCoversAnyWidth() {
-        let period = DrawerRibbonGeometry.tileWidth
-        let half = period / 2
+    func testWaveIsPeriodicAndStaysWithinBounds() {
+        let wavelength = DrawerWaveGeometry.wavelength
         XCTAssertEqual(
-            DrawerRibbonGeometry.centerY(at: 0),
-            DrawerRibbonGeometry.centerY(at: period),
+            DrawerWaveGeometry.centerY(at: 0),
+            DrawerWaveGeometry.centerY(at: wavelength),
             accuracy: 0.0001
         )
         XCTAssertEqual(
-            DrawerRibbonGeometry.centerY(at: half),
-            DrawerRibbonGeometry.centerY(at: half + period),
+            DrawerWaveGeometry.centerY(at: wavelength * 0.3),
+            DrawerWaveGeometry.centerY(at: wavelength * 1.3),
             accuracy: 0.0001
         )
-        // Tiles must cover the width plus one extra period on both edges.
-        XCTAssertGreaterThanOrEqual(
-            Double(DrawerRibbonGeometry.tileCount(for: 3840)) * period,
-            3840 + period
-        )
-        XCTAssertEqual(DrawerRibbonGeometry.tileCount(for: 0), 2)
-        XCTAssertEqual(DrawerRibbonGeometry.tileCount(for: .nan), 2)
-        // Wave stays inside the strip.
+        // The wave stays inside the strip for any phase.
         for step in 0...80 {
-            let y = DrawerRibbonGeometry.centerY(at: period * Double(step) / 80)
-            XCTAssertTrue(y >= 0 && y <= DrawerRibbonGeometry.height)
+            let y = DrawerWaveGeometry.centerY(at: wavelength * Double(step) / 80)
+            XCTAssertTrue(y >= 0 && y <= DrawerWaveGeometry.height)
         }
+    }
+
+    func testHiddenStyleReservesNoHeight() {
+        XCTAssertEqual(DrawerAppearance.stripHeight(for: .hidden), 0)
+        XCTAssertTrue(DrawerAppearance.stripHeight(for: .original) > 0)
+        XCTAssertTrue(DrawerAppearance.stripHeight(for: .wave) > 0)
     }
 
     func testNoNoteIsSharedByDefault() {

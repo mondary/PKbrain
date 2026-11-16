@@ -90,8 +90,6 @@ struct ClipboardView: View {
 
     var body: some View {
         ZStack {
-            DrawerSurface(style: settings.drawerSurfaceStyle, opacity: settings.drawerBackgroundOpacity)
-                .ignoresSafeArea()
             VStack(spacing: 0) {
                 if isVerticalDrawer {
                     deck2SidebarHeader
@@ -102,7 +100,7 @@ struct ClipboardView: View {
                     deck2WindowHeader
                     deck2Toolbar
                     deck2ScrollViewport
-                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: settings.drawerIsPresented, pattern: settings.drawerStripPattern)
+                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: settings.drawerIsPresented)
                 }
             }
             .padding(.top, isVerticalDrawer ? 12 : 0)
@@ -110,7 +108,7 @@ struct ClipboardView: View {
             .padding(.bottom, 0)
             .background(
                 BottomRoundedRectangle(radius: 28)
-                    .fill(Color.clear)
+                    .fill(Color(NSColor.windowBackgroundColor))
                     .overlay(
                         BottomRoundedRectangle(radius: 28)
                             .stroke(Color.primary.opacity(0.08), lineWidth: 1)
@@ -119,7 +117,10 @@ struct ClipboardView: View {
             )
         }
         .clipShape(BottomRoundedRectangle(radius: 28))
-        .frame(minWidth: isVerticalDrawer ? 55 : 900, minHeight: isVerticalDrawer ? 560 : 420)
+        .frame(
+            minWidth: isVerticalDrawer ? 55 : 900,
+            minHeight: isVerticalDrawer ? 560 : 380 + DrawerAppearance.stripHeight(for: settings.drawerStripStyle)
+        )
         .onAppear {
             installKeyMonitorIfNeeded()
             notifyContextState()
@@ -2237,44 +2238,20 @@ struct DrawerSettingsView: View {
             }
             GroupBox {
                 VStack(alignment: .leading, spacing: 12) {
-                    Picker(localizedString("drawer.strip.title"), selection: $settings.drawerStripStyle) {
+                    Text(localizedString("drawer.strip.title"))
+                        .modifier(SettingHighlight(title: localizedString("drawer.strip.title")))
+                    Picker("", selection: $settings.drawerStripStyle) {
                         ForEach(DrawerStripStyle.allCases) { style in
                             Text(localizedString(style.localizationKey)).tag(style)
                         }
                     }
-                    .modifier(SettingHighlight(title: localizedString("drawer.strip.title")))
-
-                    Picker(localizedString("drawer.pattern.title"), selection: $settings.drawerStripPattern) {
-                        ForEach(DrawerStripPattern.allCases) { pattern in
-                            Text(localizedString(pattern.localizationKey)).tag(pattern)
-                        }
-                    }
                     .pickerStyle(.segmented)
-                    .modifier(SettingHighlight(title: localizedString("drawer.pattern.title")))
-
-                    Picker(localizedString("drawer.surface.title"), selection: $settings.drawerSurfaceStyle) {
-                        ForEach(DrawerSurfaceStyle.allCases) { style in
-                            Text(localizedString(style.localizationKey)).tag(style)
-                        }
-                    }
-                    .modifier(SettingHighlight(title: localizedString("drawer.surface.title")))
-
-                    HStack {
-                        Text(localizedString("drawer.opacity"))
-                        Slider(value: $settings.drawerBackgroundOpacity, in: 0...1, step: 0.05)
-                            .accessibilityLabel(localizedString("drawer.opacity"))
-                            .disabled(settings.drawerSurfaceStyle == .classic)
-                        Text("\(Int((settings.drawerBackgroundOpacity * 100).rounded())) %")
-                            .monospacedDigit()
-                            .frame(width: 48, alignment: .trailing)
-                    }
-                    .modifier(SettingHighlight(title: localizedString("drawer.opacity")))
-                    Text(localizedString("drawer.appearance.hint"))
+                    Text(localizedString("drawer.strip.hint"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: true, pattern: settings.drawerStripPattern)
-                        .background(DrawerSurface(style: settings.drawerSurfaceStyle, opacity: settings.drawerBackgroundOpacity))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: true)
+                        .background(Color(NSColor.separatorColor).opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .padding(12)
             }
