@@ -156,6 +156,7 @@ final class NoteManager {
 
         orderedControllers().forEach { controller in
             controller.showWindow(nil)
+            controller.window?.deminiaturize(nil)
             controller.window?.orderFront(nil)
         }
 

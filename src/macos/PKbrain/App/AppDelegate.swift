@@ -2,7 +2,7 @@ import AppKit
 import Combine
 import Carbon.HIToolbox
 
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let settings = AppSettings()
     private lazy var manager = NoteManager(settings: settings)
     private var notesListWindowController: NotesListWindowController?
@@ -22,6 +22,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var globalHotKeyHandlerRef: EventHandlerRef?
     private var globalShowAllNotesMonitor: Any?
     private var lastShowAllNotesToggleTime: TimeInterval = 0
+    private weak var toggleAllNotesMenuItem: NSMenuItem?
     private var lastExternalApplication: NSRunningApplication?
     private lazy var autoBackupService = AutoBackupService(
         settings: settings,
@@ -481,7 +482,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func showAllNotes(_ sender: Any?) {
-        manager.showAllNotes()
+        // ⌘⌥A must always toggle, matching the global hotkey. When the app is
+        // focused the menu key equivalent fires alongside the hotkey; if this
+        // only "showed", it would immediately re-open the notes the hotkey just
+        // hid. Both paths go through the debounced toggle.
+        toggleAllNotesVisibility()
     }
 
     private func toggleAllNotesVisibility() {
@@ -495,6 +500,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             manager.showAllNotes()
         }
+    }
+
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        // Keep the Window menu label in sync with the actual state so ⌘⌥A
+        // reads as "Hide all notes" when the notes are currently shown.
+        guard let item = toggleAllNotesMenuItem, menu === item.menu else { return }
+        let showHideKey = manager.areAllNotesVisible ? "hide_all_notes" : "show_all_notes"
+        item.title = localizedString(showHideKey)
     }
 
     @objc private func showPreferences(_ sender: Any?) {
@@ -759,7 +772,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         mainMenu.addItem(windowMenuItem)
         let windowMenu = NSMenu(title: localizedString("window"))
         windowMenuItem.submenu = windowMenu
-        windowMenu.addItem(menuItem(localizedString("show_all_notes"), action: #selector(showAllNotes(_:)), shortcut: .showAllNotes))
+        let toggleAllNotesItem = menuItem(localizedString("show_all_notes"), action: #selector(showAllNotes(_:)), shortcut: .showAllNotes)
+        windowMenu.addItem(toggleAllNotesItem)
+        self.toggleAllNotesMenuItem = toggleAllNotesItem
+        windowMenu.delegate = self
         windowMenu.addItem(menuItem(localizedString("show_notes_list"), action: #selector(showNotesList(_:)), shortcut: .showNotesList))
         windowMenu.addItem(menuItem(localizedString("clipboard"), action: #selector(showClipboard(_:)), key: "v", modifiers: [.command, .shift]))
         windowMenu.addItem(menuItem(localizedString("show_clipboard_window"), action: #selector(showClipboardWindow(_:)), shortcut: .showClipboardWindow))

@@ -5,6 +5,11 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.10] - 2026-11-16
+
+### Fixed
+- ⌘⌥A (« Afficher toutes les notes ») ne masquait pas à la deuxième pression : le raccourci du menu Fenêtre ré-affichait les notes juste après que le hotkey global les avait masquées. Tous les chemins basculent désormais via le même basculement dédoublonné, et « Afficher » inclut les fenêtres réduites. Le libellé du menu Fenêtre reflète l’état (Afficher / Masquer).
+
 ## [2026.11.9] - 2026-11-16
 
 ### Changed
