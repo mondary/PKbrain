@@ -446,6 +446,9 @@
 "drawer.strip.hidden" = "Ausgeblendet";
 "drawer.strip.staticWave" = "Statische Welle";
 "drawer.strip.animatedWave" = "Animierte Welle";
+"drawer.pattern.title" = "Muster";
+"drawer.pattern.ribbon" = "Band";
+"drawer.pattern.original" = "Original";
 "drawer.surface.title" = "Drawer-Darstellung";
 "drawer.surface.classic" = "Klassisch";
 "drawer.surface.frosted" = "Milchglas";

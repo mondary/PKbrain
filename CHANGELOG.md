@@ -5,6 +5,11 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.8] - 2026-11-16
+
+### Fixed
+- Bandeau du drawer figé et rendu trop discret : le décalage est désormais piloté par l'heure (mouvement garanti, indépendant d'un changement d'état), l'animation démarre et s'arrête correctement. Nouveau ruban animé à l'accent macOS (onde dégradée, onde d'écho en parallaxe, chapelet de points), plus lisible que les caractères Braille ; l'ancien motif reste sélectionnable.
+
 ## [2026.11.7] - 2026-11-16
 
 ### Fixed

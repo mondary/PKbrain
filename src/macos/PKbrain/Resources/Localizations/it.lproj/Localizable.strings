@@ -446,6 +446,9 @@
 "drawer.strip.hidden" = "Nascosta";
 "drawer.strip.staticWave" = "Onda statica";
 "drawer.strip.animatedWave" = "Onda animata";
+"drawer.pattern.title" = "Motivo";
+"drawer.pattern.ribbon" = "Nastro";
+"drawer.pattern.original" = "Originale";
 "drawer.surface.title" = "Aspetto del drawer";
 "drawer.surface.classic" = "Classico";
 "drawer.surface.frosted" = "Vetro smerigliato";

@@ -162,6 +162,7 @@ enum PKSettingsSearch {
         // Drawer
         .init(settingKey: "drawer_position", section: .drawer, keywords: "drawer tiroir position edge bord haut bas gauche droite"),
         .init(settingKey: "drawer.strip.title", section: .drawer, keywords: "animation onde wave bandeau strip static masquer"),
+        .init(settingKey: "drawer.pattern.title", section: .drawer, keywords: "motif pattern ruban points dots origine original morse"),
         .init(settingKey: "drawer.surface.title", section: .drawer, keywords: "liquid glass verre dépoli frosted appearance apparence"),
         .init(settingKey: "drawer.opacity", section: .drawer, keywords: "opacité opacity transparence transparency fond"),
         .init(settingKey: "widgets.title", section: .stickies, keywords: "widget widgets bureau desktop autoriser partager note"),

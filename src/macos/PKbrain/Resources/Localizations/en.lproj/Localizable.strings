@@ -447,6 +447,9 @@
 "drawer.strip.hidden" = "Hidden";
 "drawer.strip.staticWave" = "Static wave";
 "drawer.strip.animatedWave" = "Animated wave";
+"drawer.pattern.title" = "Pattern";
+"drawer.pattern.ribbon" = "Ribbon";
+"drawer.pattern.original" = "Original";
 "drawer.surface.title" = "Drawer appearance";
 "drawer.surface.classic" = "Classic";
 "drawer.surface.frosted" = "Frosted glass";

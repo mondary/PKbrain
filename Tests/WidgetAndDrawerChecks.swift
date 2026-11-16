@@ -7,6 +7,7 @@ struct WidgetAndDrawerChecks {
         let checks = WidgetAndDrawerChecks()
         checks.testOpacityBoundsAndInvalidValues()
         checks.testAnimationOnlyRunsWhenAllowed()
+        checks.testRibbonTileIsPeriodicAndCoversAnyWidth()
         checks.testNoNoteIsSharedByDefault()
         checks.testOnlyAllowlistedNotesAreExported()
         checks.testArchivedAndRemovedNotesAreExcluded()
@@ -14,7 +15,7 @@ struct WidgetAndDrawerChecks {
         checks.testAllThemeTextContrastsArePreserved()
         try checks.testSnapshotRoundTripAndRevocationDoNotTouchOriginals()
         try checks.testMalformedAndUnknownSchemaAreSafe()
-        print("PASS: 9 widget/drawer checks, all note themes tested, synthetic data only.")
+        print("PASS: 10 widget/drawer checks, ribbon periodicity verified, synthetic data only.")
     }
 
     func testOpacityBoundsAndInvalidValues() {
@@ -27,22 +28,51 @@ struct WidgetAndDrawerChecks {
 
     func testAnimationOnlyRunsWhenAllowed() {
         XCTAssertTrue(DrawerAppearance.shouldAnimate(
-            style: .animatedWave, isPresented: true, reduceMotion: false, applicationIsActive: true
+            style: .animatedWave, isPresented: true, reduceMotion: false, windowIsVisible: true
         ))
         for style in DrawerStripStyle.allCases where style != .animatedWave {
             XCTAssertFalse(DrawerAppearance.shouldAnimate(
-                style: style, isPresented: true, reduceMotion: false, applicationIsActive: true
+                style: style, isPresented: true, reduceMotion: false, windowIsVisible: true
             ))
         }
         XCTAssertFalse(DrawerAppearance.shouldAnimate(
-            style: .animatedWave, isPresented: false, reduceMotion: false, applicationIsActive: true
+            style: .animatedWave, isPresented: false, reduceMotion: false, windowIsVisible: true
         ))
         XCTAssertFalse(DrawerAppearance.shouldAnimate(
-            style: .animatedWave, isPresented: true, reduceMotion: true, applicationIsActive: true
+            style: .animatedWave, isPresented: true, reduceMotion: true, windowIsVisible: true
         ))
+        // The drawer panel is nonactivating: it must animate while visible even
+        // if the app is not frontmost, so window visibility is what matters.
         XCTAssertFalse(DrawerAppearance.shouldAnimate(
-            style: .animatedWave, isPresented: true, reduceMotion: false, applicationIsActive: false
+            style: .animatedWave, isPresented: true, reduceMotion: false, windowIsVisible: false
         ))
+    }
+
+    func testRibbonTileIsPeriodicAndCoversAnyWidth() {
+        let period = DrawerRibbonGeometry.tileWidth
+        let half = period / 2
+        XCTAssertEqual(
+            DrawerRibbonGeometry.centerY(at: 0),
+            DrawerRibbonGeometry.centerY(at: period),
+            accuracy: 0.0001
+        )
+        XCTAssertEqual(
+            DrawerRibbonGeometry.centerY(at: half),
+            DrawerRibbonGeometry.centerY(at: half + period),
+            accuracy: 0.0001
+        )
+        // Tiles must cover the width plus one extra period on both edges.
+        XCTAssertGreaterThanOrEqual(
+            Double(DrawerRibbonGeometry.tileCount(for: 3840)) * period,
+            3840 + period
+        )
+        XCTAssertEqual(DrawerRibbonGeometry.tileCount(for: 0), 2)
+        XCTAssertEqual(DrawerRibbonGeometry.tileCount(for: .nan), 2)
+        // Wave stays inside the strip.
+        for step in 0...80 {
+            let y = DrawerRibbonGeometry.centerY(at: period * Double(step) / 80)
+            XCTAssertTrue(y >= 0 && y <= DrawerRibbonGeometry.height)
+        }
     }
 
     func testNoNoteIsSharedByDefault() {
@@ -133,4 +163,12 @@ private func XCTAssertFalse(_ value: Bool, file: StaticString = #file, line: UIn
 
 private func XCTAssertEqual<T: Equatable>(_ lhs: T, _ rhs: T, file: StaticString = #file, line: UInt = #line) {
     precondition(lhs == rhs, "Values differ", file: file, line: line)
+}
+
+private func XCTAssertEqual(_ lhs: Double, _ rhs: Double, accuracy: Double, file: StaticString = #file, line: UInt = #line) {
+    precondition(abs(lhs - rhs) <= accuracy, "Values differ", file: file, line: line)
+}
+
+private func XCTAssertGreaterThanOrEqual<T: Comparable>(_ lhs: T, _ rhs: T, file: StaticString = #file, line: UInt = #line) {
+    precondition(lhs >= rhs, "Expected lhs >= rhs", file: file, line: line)
 }

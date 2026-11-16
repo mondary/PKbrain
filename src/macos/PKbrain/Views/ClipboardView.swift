@@ -102,7 +102,7 @@ struct ClipboardView: View {
                     deck2WindowHeader
                     deck2Toolbar
                     deck2ScrollViewport
-                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: settings.drawerIsPresented)
+                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: settings.drawerIsPresented, pattern: settings.drawerStripPattern)
                 }
             }
             .padding(.top, isVerticalDrawer ? 12 : 0)
@@ -2244,6 +2244,14 @@ struct DrawerSettingsView: View {
                     }
                     .modifier(SettingHighlight(title: localizedString("drawer.strip.title")))
 
+                    Picker(localizedString("drawer.pattern.title"), selection: $settings.drawerStripPattern) {
+                        ForEach(DrawerStripPattern.allCases) { pattern in
+                            Text(localizedString(pattern.localizationKey)).tag(pattern)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .modifier(SettingHighlight(title: localizedString("drawer.pattern.title")))
+
                     Picker(localizedString("drawer.surface.title"), selection: $settings.drawerSurfaceStyle) {
                         ForEach(DrawerSurfaceStyle.allCases) { style in
                             Text(localizedString(style.localizationKey)).tag(style)
@@ -2264,7 +2272,7 @@ struct DrawerSettingsView: View {
                     Text(localizedString("drawer.appearance.hint"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: true)
+                    DrawerWaveStrip(style: settings.drawerStripStyle, isPresented: true, pattern: settings.drawerStripPattern)
                         .background(DrawerSurface(style: settings.drawerSurfaceStyle, opacity: settings.drawerBackgroundOpacity))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }

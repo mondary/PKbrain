@@ -35,6 +35,7 @@ final class AppSettings: ObservableObject {
         static let inlineBrandIcons = "inline-brand-icons"
         static let clipboardDrawerEdge = "clipboard-drawer-edge"
         static let drawerStripStyle = "drawer-strip-style"
+        static let drawerStripPattern = "drawer-strip-pattern"
         static let drawerSurfaceStyle = "drawer-surface-style"
         static let drawerBackgroundOpacity = "drawer-background-opacity"
         static let widgetNoteIDs = "widget-note-ids"
@@ -136,6 +137,10 @@ final class AppSettings: ObservableObject {
         didSet { defaults.set(drawerStripStyle.rawValue, forKey: Keys.drawerStripStyle) }
     }
 
+    @Published var drawerStripPattern: DrawerStripPattern {
+        didSet { defaults.set(drawerStripPattern.rawValue, forKey: Keys.drawerStripPattern) }
+    }
+
     @Published var drawerSurfaceStyle: DrawerSurfaceStyle {
         didSet { defaults.set(drawerSurfaceStyle.rawValue, forKey: Keys.drawerSurfaceStyle) }
     }
@@ -229,6 +234,7 @@ final class AppSettings: ObservableObject {
             Keys.inlineBrandIcons: true,
             Keys.clipboardDrawerEdge: ClipboardDrawerEdge.top.rawValue,
             Keys.drawerStripStyle: DrawerStripStyle.animatedWave.rawValue,
+            Keys.drawerStripPattern: DrawerStripPattern.ribbon.rawValue,
             Keys.drawerSurfaceStyle: DrawerSurfaceStyle.classic.rawValue,
             Keys.drawerBackgroundOpacity: 0.35,
             Keys.widgetNoteIDs: [String](),
@@ -264,6 +270,7 @@ final class AppSettings: ObservableObject {
         let edgeRaw = defaults.string(forKey: Keys.clipboardDrawerEdge) ?? ClipboardDrawerEdge.top.rawValue
         clipboardDrawerEdge = ClipboardDrawerEdge(rawValue: edgeRaw) ?? .top
         drawerStripStyle = DrawerStripStyle(rawValue: defaults.string(forKey: Keys.drawerStripStyle) ?? "") ?? .animatedWave
+        drawerStripPattern = DrawerStripPattern(rawValue: defaults.string(forKey: Keys.drawerStripPattern) ?? "") ?? .ribbon
         drawerSurfaceStyle = DrawerSurfaceStyle(rawValue: defaults.string(forKey: Keys.drawerSurfaceStyle) ?? "") ?? .classic
         drawerBackgroundOpacity = DrawerAppearance.clampedOpacity(defaults.double(forKey: Keys.drawerBackgroundOpacity))
         widgetNoteIDs = defaults.stringArray(forKey: Keys.widgetNoteIDs) ?? []

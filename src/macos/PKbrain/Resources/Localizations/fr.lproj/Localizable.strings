@@ -447,6 +447,9 @@
 "drawer.strip.hidden" = "Masqué";
 "drawer.strip.staticWave" = "Onde statique";
 "drawer.strip.animatedWave" = "Onde animée";
+"drawer.pattern.title" = "Motif";
+"drawer.pattern.ribbon" = "Ruban";
+"drawer.pattern.original" = "Original";
 "drawer.surface.title" = "Apparence du drawer";
 "drawer.surface.classic" = "Classique";
 "drawer.surface.frosted" = "Verre dépoli";
