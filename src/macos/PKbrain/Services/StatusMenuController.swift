@@ -236,6 +236,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         quit.target = self
         Self.setInlineMenuIcon(Self.menuSymbol("rectangle.portrait.and.arrow.right"), on: quit)
         menu.addItem(quit)
+        appendVersionFooter(to: menu)
     }
 
     /// Bloc d'actions compact du clic droit : Settings, Ko-fi, Updates,
@@ -269,7 +270,23 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         quit.target = self
         Self.setInlineMenuIcon(Self.menuSymbol("rectangle.portrait.and.arrow.right"), on: quit)
         compact.addItem(quit)
+        appendVersionFooter(to: compact)
         return compact
+    }
+
+    /// Keep the exact version of the running bundle visible in both status-item
+    /// menus. Dev builds include their build suffix, so they are distinguishable
+    /// from Stable without opening Preferences.
+    private func appendVersionFooter(to menu: NSMenu) {
+        menu.addItem(.separator())
+        let version = NSMenuItem(
+            title: "\(localizedString("about.installedVersion")): \(AppVersion.current)",
+            action: nil,
+            keyEquivalent: ""
+        )
+        version.isEnabled = false
+        Self.setInlineMenuIcon(Self.menuSymbol("number"), on: version)
+        menu.addItem(version)
     }
 
     @objc private func checkForUpdates(_ sender: NSMenuItem) {

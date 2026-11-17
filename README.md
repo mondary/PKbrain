@@ -3,7 +3,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.11.11** — [Changelog](CHANGELOG.md)
+version **2026.11.12** — [Changelog](CHANGELOG.md)
 
 [🇫🇷 FR](README.md) · [🇬🇧 EN](README_en.md)
 
@@ -116,7 +116,7 @@ version **2026.11.11** — [Changelog](CHANGELOG.md)
       - `Crédits` : projets d’origine, ressources utilisées et inspirations séparés ; `Soutenir` : carte Ko-fi et liens GitHub/Issues ; `Bibliothèque de projets` : collection PK partagée
    - `Cmd+,` redirigé vers `PKClipboard` en mode paramètres (plus de popup séparé)
    - Sparkle : mises à jour in-app avec canaux Stable/Dev
-   - clic droit sur l'icône de barre de menus : menu compact Réglages / Soutenir sur Ko-fi / Mises à jour / À propos / Quitter, pictos alignés sur le logo Ko-fi
+   - clic droit sur l'icône de barre de menus : menu compact Réglages / Soutenir sur Ko-fi / Mises à jour / À propos / Quitter, avec la version installée en pied de menu
     - section backup complète dans paramètres clipboard (export/restore dossier de données complet)
 - Persistance et stockage:
   - stockage Markdown par note

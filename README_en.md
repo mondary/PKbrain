@@ -2,7 +2,7 @@
 
 ![Project icon](icon.png)
 
-version **2026.11.11** — [Changelog](CHANGELOG.md)
+version **2026.11.12** — [Changelog](CHANGELOG.md)
 
 [🇬🇧 EN](README_en.md) · [🇫🇷 FR](README.md)
 
@@ -82,7 +82,7 @@ version **2026.11.11** — [Changelog](CHANGELOG.md)
   - settings shell shared across PK apps (same rendering as PKmonitor): 220 pt sidebar with deep setting search (targeted highlight), APP / NOTES / PK PROJECTS groups, language flags (instant switch FR/EN/IT/DE/ES), version in the footer
   - General, Shortcuts, Lab, Stickies, PKClipboard, Drawer, Credits, Project Library, Support and About sections; About shows the installed version, exact Stable/Dev build status and a freshly checked update feed
   - Credits separates upstream resources from interface inspirations; Project Library and Support have their own dedicated pages
-  - in-app Sparkle updates with Stable/Dev channels; right-click the menu bar icon for a compact Settings / Support on Ko-fi / Check for Updates / About / Quit menu
+  - in-app Sparkle updates with Stable/Dev channels; right-click the menu bar icon for a compact Settings / Support on Ko-fi / Check for Updates / About / Quit menu, with the installed version in its footer
   - open storage folder in Finder
 - Internationalization:
   - 5 languages: English, French, Spanish, German, Italian

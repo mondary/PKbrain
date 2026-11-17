@@ -5,6 +5,11 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.12] - 2026-11-17
+
+### Added
+- Le menu de l’icône de barre des menus affiche désormais la version installée en pied de menu. La build Dev conserve son suffixe pour être distinguée d’une version Stable.
+
 ## [2026.11.11] - 2026-11-17
 
 ### Fixed
