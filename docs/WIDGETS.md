@@ -115,11 +115,17 @@ partagé sans ouvrir de fenêtre ni charger les notes :
 /Applications/PKbrain.app/Contents/MacOS/PKbrain --widget-status
 ```
 
-9 vérifications : bornes d'opacité, arrêt des animations selon la visibilité,
-l’activation et Réduire les animations, partage vide par défaut, liste
-d'autorisation, exclusion des archives et des notes absentes, UUID/lien,
-couleurs de tous les thèmes, écriture atomique/révocation et original intact,
+10 vérifications : arrêt des animations selon la visibilité et Réduire les
+animations, périodicité de l’onde, hauteur nulle du bandeau masqué, partage vide
+par défaut, liste d'autorisation, exclusion des archives et des notes absentes,
+UUID/lien, couleurs des thèmes, écriture atomique/révocation et original intact,
 fichiers corrompus/schéma inconnu. Toutes les données sont fictives.
+
+Un test de layout SwiftUI reproduit l’ancienne marge transparente de 5 pt, puis
+vérifie le fond pleine hauteur et l’alignement en haut sur les trois modes de
+bandeau, à deux hauteurs. Il instancie uniquement des `NSHostingView`, sans
+fenêtre, capture ni interaction avec la session. Cela ne remplace pas la
+validation visuelle du drawer sous la barre de menus sur un écran réel.
 
 Recette manuelle après configuration de la signature : ajouter deux widgets
 avec deux notes différentes ; modifier/renommer une note ; retirer son

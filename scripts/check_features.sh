@@ -11,13 +11,18 @@ if [[ -z "$SDK" ]]; then
   fi
 fi
 SCRATCH="$(mktemp -d "${PKBRAIN_TEST_TEMP:-${TMPDIR:-/tmp}}/pkbrain-checks.XXXXXX")"
-trap 'rm -f "$SCRATCH/checks"; rmdir "$SCRATCH"' EXIT
+trap 'rm -f "$SCRATCH/checks" "$SCRATCH/layout-checks"; rmdir "$SCRATCH"' EXIT
 swiftc -swift-version 5 -sdk "$SDK" -whole-module-optimization -Onone \
   src/macos/PKbrain/Models/{NoteData,NoteTheme,NoteVersion,FontFamily,RandomContent,NoteDocument,DrawerAppearance,WidgetNoteSnapshot}.swift \
   src/macos/PKbrain/Support/{Comparable+Clamp,Color+Hex,NoteTheme+Colors}.swift \
   src/macos/PKbrain/Services/NoteWidgetPublisher.swift \
   Tests/WidgetAndDrawerChecks.swift -o "$SCRATCH/checks"
 "$SCRATCH/checks"
+swiftc -swift-version 5 -sdk "$SDK" -whole-module-optimization -Onone \
+  src/macos/PKbrain/Models/DrawerAppearance.swift \
+  src/macos/PKbrain/Views/DrawerPanelLayout.swift \
+  Tests/DrawerPanelLayoutChecks.swift -o "$SCRATCH/layout-checks"
+"$SCRATCH/layout-checks"
 # Type-check the actual widget against the macOS 14+ extension API surface.
 swiftc -typecheck -parse-as-library -application-extension -swift-version 5 \
   -target "$(uname -m)-apple-macos14.0" -sdk "$SDK" \

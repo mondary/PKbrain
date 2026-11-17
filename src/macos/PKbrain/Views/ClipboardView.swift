@@ -1,28 +1,5 @@
 import SwiftUI
 
-private struct BottomRoundedRectangle: Shape {
-    let radius: CGFloat
-
-    func path(in rect: CGRect) -> Path {
-        let cornerRadius = min(radius, rect.width / 2, rect.height / 2)
-        var path = Path()
-        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - cornerRadius))
-        path.addQuadCurve(
-            to: CGPoint(x: rect.maxX - cornerRadius, y: rect.maxY),
-            control: CGPoint(x: rect.maxX, y: rect.maxY)
-        )
-        path.addLine(to: CGPoint(x: rect.minX + cornerRadius, y: rect.maxY))
-        path.addQuadCurve(
-            to: CGPoint(x: rect.minX, y: rect.maxY - cornerRadius),
-            control: CGPoint(x: rect.minX, y: rect.maxY)
-        )
-        path.closeSubpath()
-        return path
-    }
-}
-
 struct ClipboardView: View {
     struct NoteDeckItem: Identifiable, Equatable {
         let id: UUID
@@ -106,21 +83,11 @@ struct ClipboardView: View {
             .padding(.top, isVerticalDrawer ? 12 : 0)
             .padding(.horizontal, 0)
             .padding(.bottom, 0)
-            .background(
-                BottomRoundedRectangle(radius: 28)
-                    .fill(Color(NSColor.windowBackgroundColor))
-                    .overlay(
-                        BottomRoundedRectangle(radius: 28)
-                            .stroke(Color.primary.opacity(0.08), lineWidth: 1)
-                    )
-                    .shadow(color: .black.opacity(0.35), radius: 34, x: 0, y: 20)
-            )
+            .modifier(DrawerPanelLayout(
+                minimumWidth: isVerticalDrawer ? 55 : 900,
+                minimumHeight: isVerticalDrawer ? 560 : 380 + DrawerAppearance.stripHeight(for: settings.drawerStripStyle)
+            ))
         }
-        .clipShape(BottomRoundedRectangle(radius: 28))
-        .frame(
-            minWidth: isVerticalDrawer ? 55 : 900,
-            minHeight: isVerticalDrawer ? 560 : 380 + DrawerAppearance.stripHeight(for: settings.drawerStripStyle)
-        )
         .onAppear {
             installKeyMonitorIfNeeded()
             notifyContextState()

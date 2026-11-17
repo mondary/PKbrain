@@ -5,6 +5,12 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.11] - 2026-11-17
+
+### Fixed
+- Drawer en haut : le fond remplit désormais toute la fenêtre et le contenu reste aligné en haut, y compris avec le bandeau masqué. Suppression de la marge transparente qui laissait apparaître les fenêtres derrière, sans rétablir la hauteur du bandeau.
+- Vérification de régression du layout SwiftUI sur les trois modes de bandeau, à deux hauteurs, sans ouvrir de fenêtre.
+
 ## [2026.11.10] - 2026-11-16
 
 ### Fixed
