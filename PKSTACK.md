@@ -1,7 +1,7 @@
 # PKSTACK — PKbrain
 
 Cartographie des skills du hub agent utilisées sur ce projet et de leurs livrables
-(convention `-pk-COMMIT` §4). Dernière mise à jour : 2026.11.12.
+(convention `-pk-COMMIT` §4). Dernière mise à jour : 2026.11.13.
 
 | Skill | Usage sur le projet | Livrables |
 |---|---|---|

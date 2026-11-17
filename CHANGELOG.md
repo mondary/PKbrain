@@ -5,6 +5,11 @@ Format Keep a Changelog — les versions suivent le CalVer `YYYY.MM.PATCH`.
 lisent en tête de fichier ; `src/macos/PKbrain/Resources/VERSION` n'est qu'un
 repli embarqué, régénéré à chaque version).
 
+## [2026.11.13] - 2026-11-17
+
+### Changed
+- README anglais : alignement du bandeau V3 avec la version française ; versions affichées synchronisées.
+
 ## [2026.11.12] - 2026-11-17
 
 ### Added
